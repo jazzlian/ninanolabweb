@@ -1,0 +1,921 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Unknown</title>
+  <link href="../Styles/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/page_styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="calibre">
+  <h1 class="tochead">4 Graph Convolutional Networks and GraphSage</h1>
+
+  <p class="colisthead">This chapter covers</p>
+
+  <p class="colistbulletcxspfirst">·&nbsp;&nbsp;&nbsp;&nbsp;Introducing GraphSage and GCN and how they fit into the GNN universe</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;&nbsp;Understanding convolution and how is it applied to graphs and graph learning</p>
+
+  <p class="colistbulletcxsplast">·&nbsp;&nbsp;&nbsp;&nbsp;Implementing convolutional GNNs in a node-prediction problem</p>
+
+  <p class="body">In part 1 of the book and appendix A, we explored fundamental concepts related to graphs and graph representations. All of this served to set us up for part 2, where we will explore distinct types of GNN architectures, including convolutional GNNs, Graph Attention Networks, and Graph Auto-Encoders.</p>
+
+  <p class="body">In this chapter, our goal is to understand and apply Graph Convolutional Networks (GCN) [Kipf] and GraphSage [Hamilton]. These two architectures are part of a larger class of GNNs that are based on applying convolutions to graph data when doing deep learning. Convolutional operations are well used in deep learning, particularly for image problems. Up until recently, applying them to graphs has been challenging for reasons explained in this chapter.</p>
+
+  <p class="callout"><span class="callouthead">Note</span> While the name <i class="charitalics">GraphSage</i> refers to a specific individual architecture, it may be confusing that the name <i class="charitalics">GCN</i> also refers to a specific architecture and not the entire class of GNNs based on convolutions. So, in this chapter, I will use <i class="charitalics">convolutional GNNs</i> to refer to this entire class of GNNs, which include GraphsSage and GCN. I will use <i class="charitalics">GCN</i> or <i class="charitalics">graph convolutional networks</i> to refer to the individual architecture introduced in the Kipf paper.)</p>
+
+  <p class="body">These two architectures are important to understand because they have been applied to a wide variety of node- and graph-learning problems, and are used widely as baselines for such problems.</p>
+
+  <p class="body">In this chapter, we want to first acquaint you with the concepts underlying convolutional GNNs, including convolution itself, convolutions applied to learning on graphs, and some theoretical background of GCN and GraphSage. After you understand the general underlying principles, we will put them to work solving an example task of predicting the categories of Amazon.com products using GCN and GraphSage. This is essentially a node prediction problem, and we will use the Open Graph Benchmark dataset <a href="https://ogb.stanford.edu/docs/nodeprop/#ogbn-products">ogbn-products</a> to solve it.</p>
+
+  <p class="body">This will be done in the following sections and using code in our Github repo (<a href="https://github.com/keitabroadwater/gnns_in_action">https://github.com/keitabroadwater/gnns_in_action</a>). Section 4.1 will cover background and theory of convolutional GNNs. Section 4.2 will introduce the example problem. Section 4.3 will explain how a GNN solution is implemented in code. Code snippets will be used to explain the process, but the majority of code and annotation will be in the repo. Finally in section 4.4, we briefly discuss the use of benchmarks in solving such problems.</p>
+
+  <h2 class="head" id="sigil_toc_id_47">4.1&nbsp;Five Important Concepts for Convolutional GNNs</h2>
+
+  <h4 class="head2 sigil_not_in_toc">The GNNs we will use: GCN and GraphSage</h4>
+
+  <p class="body">Where do GraphSage and GCN fit in the universe of GNNs? And why are they in the same chapter? Before we get into the problem, in this section I’ll briefly provide some context and background by touching on a few theoretical and technical concepts related to these types of GNNs.</p>
+
+  <p class="body">If you can understand these two GNNs, you will be able to pick up on many GNN variants that either build upon or use similar elements.</p>
+
+  <p class="body">What is covered in this section:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;GNN Layers and their components</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Convolution, as a type of GNN filter</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Spectral and spatial convolutional filters</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Message Passing, a way to implement convolution which provides another perspective of GNNs</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;GNNs and GraphSage explained in context of the preceding concepts</p>
+
+  <p class="body">Figure 4.1 I’ve is one representation of the relationships between these concepts and how they are introduced in this section.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_109" src="../Images/04image001.png" /></p>
+
+    <p class="figureacaption">Figure 4.1 Mapping of the concepts described in the section.</p>
+  </div>
+
+  <h4 class="head2 sigil_not_in_toc">Concept 1: Elements of a GNN Layer</h4>
+
+  <p class="body">Let’s dig deeper into the elements of a GNN, and NN in general. In chapter 3, we introduced the idea of using GNN layers to produce a prediction or create embeddings. Here’s that architecture diagram again (figure 4.2).</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_1" src="../Images/04image002.png" /></p>
+
+    <p class="figureacaption">Figure 4.2 Node embedding architecture diagram from chapter 3.</p>
+  </div>
+
+  <p class="body">Let’s get below the surface of a GNN layer and examine its elements. Then we’ll tie this to the concept of convolution.</p>
+
+  <p class="body">A layer can be interpreted as a sequence of operations that are applied to input data:</p>
+
+  <p class="equation">Layer = Filter + Activation Function + Pooling</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_110" src="../Images/04image003.png" /></p>
+
+    <p class="figureacaption">Figure 4.3 Elements of our message passing layer. Each message passing layer consists of a filter, an activation, and a pooling layer.</p>
+  </div>
+
+  <p class="body">The output of each entire layer would be a set of node embeddings.These operations consist of:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Filter (or Kernel) - A process that transforms input data. In the context of this book, our filter will be used to highlight some specific feature of the input data and will consist of learnable weights that can be optimized to some objective.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Activation Function - A non-linear transformation applied to the filter output</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Pooling - An operation that reduces the size of the filter output for graph-level learning tasks. For node-level learning, this part can be omitted.</p>
+
+  <p class="body">As we explore different GNNs in this book, we’ll return to this set of operations, as most types of GNNs can be seen as modifications of these elements.</p>
+
+  <p class="body">The next section introduces a special type of filter, the convolutional filter.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Concept 2: Convolution Methods for Graphs</h4>
+
+  <p class="body">GCN and GraphSage share a common foundation: the concept of convolution. At a high level and from the context of neural networks, convolution is all about learning by <b class="charbold">establishing hierarchies of localized patterns</b> in the data. Whether we are talking about convolutional neural networks (CNNs or convnets) for image classification or graph convolutional networks (GCNs) for node classification, convolution-driven processes use layers (the hierarchy part) of such filters that concentrate on a set of nearby image pixels or graph nodes (the <i class="charitalics">localized</i> part).</p>
+
+  <p class="body">I refer to the <i class="charitalics">concept</i> of convolution above because the idea of convolution is not applied in a single theoretical and computational way. This is especially true for Graph Neural Networks; in the literature, convolution is tackled with a plethora of methods.</p>
+
+  <p class="body">Let’s looks at two methods of convolution relevant to graph neural networks:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Sliding a window (filter) across a graph</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Filtering a graph signal</p>
+
+  <p class="body"><span class="charunderline">“Sliding Window” Methods</span>. In traditional deep learning, convolutional processes learn data representations by applying a special filter called a convolutional kernel to input data. This kernel is smaller in size than the input data, and is applied by moving it across the input data.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_111" src="../Images/04image004.png" /></p>
+
+    <p class="figureacaption">Figure 4.4 A convolution of an input image (left). The kernel (middle) is passed over the image of an animal, resulting in a distinct representation (right) of the input image. In a deep learning process the parameters of the filter (the numbers in the matrix) are learned parameters.</p>
+  </div>
+
+  <p class="body">This use of convolutional networks is most familiar in the computer vision domain. For example, when learning on 2-D images we can apply a simple convolutional neural network of a few layers. In each layer, we pass a 2-D filter (kernel) over each 2-D image. The 3x3 filter above works on an image many times its size. We can produce learned representations of the input image by doing this over successive layers.</p>
+
+  <p class="body">For graphs, we want to apply this same idea of moving a window across our data, but now we need to make adjustments to account for the different shape of the data. With images, we are dealing with rigid 2D grids. With graphs we are dealing with more amorphous data with no rigid shape or order. Without a predefined ordering of the nodes in a graph, we use the concept of a <b class="charbold">neighborhood,</b> consisting of a central node, and all its 1-hop neighbors (that is all nodes within one hop from the central node). Then our sliding window moves across a graph by moving across its node neighborhoods.</p>
+
+  <p class="body">In figure 4.5, we see an illustration contrasting convolution applied to grid data and graph data. While in the grid case pixel values are filtered, for a graph node attributes would be filtered. The filtering involves an aggregation operation; for example, all the node weights in a neighborhood are averaged.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_112" src="../Images/04image005.png" /></p>
+
+    <p class="figureacaption">Figure 4.5 A comparison of convolution over grid data (such as a 2-D image), and over a graph (credit).</p>
+  </div>
+
+  <p class="body"><span class="charunderline">Methods that filter a Graph Signal</span>. To introduce the second main method of convolution, let’s examine the concept of a graph signal. In the field of information processing, we have the concept of a signal, which can be examined in the time and frequency domains. When studying a signal in the time domain, we see how it changes over time. From the frequency domain, we can see how much of the signal lies within each frequency band.</p>
+
+  <p class="body">We can also study the signal of a graph in an analogous way. To do this, we define a <b class="charbold">graph signal</b> as a vector of node features. Thus, for a given graph, its set of node weights can be used to construct its signal. As a visual example, in figure 4.6 we have a graph with values associated with each node (the height of each respective bar)[Shuman].</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_113" src="../Images/04image006.png" /></p>
+
+    <p class="figureacaption">Figure 4.6 A random positive graph signal on the vertices of the Petersen graph. The height of each blue bar represents the signal value at the vertex where the bar originates. [Shuman]</p>
+  </div>
+
+  <p class="body">To operate on this graph signal, we can represent a graph signal as a 2D matrix, where each row is a set of features associated with a particular node.</p>
+
+  <p class="body">Using a graph signal, we can apply operations of signal processing to graphs. One critical operation is that of the Fourier transform. The Fourier transform can express a graph signal, its set of node features, into a frequency representation. Conversely, an inverse Fourier transform will revert the frequency representation into a graph signal.</p>
+
+  <p class="body">So, with these notions of a graph signal, its matrix representation, and Fourier transforms, we can summarize this second method of convolutions on graphs. In a mathematical form, the convolutional operation is expressed as an operation on two functions that produces a third function:</p>
+
+  <p class="equation">Convolution = g(x) = f(x) ⊙ h(x)</p>
+
+  <p class="equationcaption">(4.1)</p>
+
+  <p class="body">Where f(x) and h(x) are functions and the operator represents element-wise multiplication. In the context of CNNs, the image and the kernel matrices are the functions in equation 4.1:</p>
+
+  <p class="equation">Convolution = image() ⊙ filter()</p>
+
+  <p class="equationcaption">(4.2)</p>
+
+  <p class="body">This mathematical operation is interpreted as the kernel sliding over the image, as in the sliding window method.</p>
+
+  <p class="body">To apply the convolution of 4.1 to graphs, we use the following ingredients:</p>
+
+  <p class="listbullet">·&nbsp;&nbsp;&nbsp;Use matrix representations of the graph</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Vector <b class="charbold">x</b> as the graph signal</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Adjacency matrix <b class="charbold">A</b></p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Laplacian matrix <b class="charbold">L</b></p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;A matrix of eigenvectors of the Laplacian <b class="charbold">U</b></p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Use a parameterized matrix for the weights, <b class="charbold">H</b></p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Apply Fourier Transform Using matrix Operations <b class="charbold">U</b><sup class="charsuperscript">T</sup><b class="charbold">x</b></p>
+
+  <p class="body">This leads to the expression for convolution over a graph:</p>
+
+  <p class="equation">Graph Convolution = <b class="charbold">x</b> *<sub class="charsubscript">G</sub> <b class="charbold">H</b> = <b class="charbold">U</b> ( <b class="charbold">U</b><sup class="charsuperscript">T</sup><b class="charbold">x</b> ∘ <b class="charbold">U</b><sup class="charsuperscript">T</sup><b class="charbold">H</b>)</p>
+
+  <p class="equationcaption">(4.3)</p>
+
+  <p class="body">Since this operation is not a simple element-wise multiplication, we are using the symbol *<sub class="charsubscript">G</sub> to express this operation. Several convolutional-based GNNs build on equation 4.3; below we will examine the GCN version.</p>
+
+  <p class="body">(Note: Rather than go into the details, I’m going to continue to skim the surface here. I have included a list of references that derive the math behind convolution for graphs and graph neural networks.)</p>
+
+  <div class="calibre33">
+    <p class="sidebarhead">Above and Beyond: Limitations of Traditional Deep Learning Methods to Graphs</p>
+  </div>
+
+  <p class="sidebarbody">Why can’t 4.1 be applied to a graph structure, that is why can’t we simply apply the same convnet described above to a graph? The reason is because graph representations have an ambiguity that image representations don’t. Convnets, and traditional deep learning tools in general, are not able to resolve this ambiguity. A neural network that can deal with this ambiguity is said to be <b class="charbold">permutation equivariant</b> or <b class="charbold">permutation invariant</b>.</p>
+
+  <p class="sidebarbody">&nbsp;</p>
+
+  <p class="sidebarbody">Let’s illustrate the ambiguity of a graph vs an image by considering the image of the rodent above. A simple representation of this set of pixels is as a 2D matrix (with dimensions for height, width). This representation would be unique: if we swap out two rows of the image, or two columns, we don’t have an equivalent image. Similarly, if we swap out two columns or rows of the matrix representation of the image (as shown in figure 4.7), we don’t have an equivalent matrix.</p>
+
+  <p class="sidebarfigures"><img alt="" class="pcalibre2" id="Picture_114" src="../Images/04image008.png" /></p>
+
+  <p class="sidebarcaptions">Figure 4.7 The image of a rodent is unique. If we swap out two columns (right image), we end up with a distinct photo with respect to the original.</p>
+
+  <p class="sidebarbody">&nbsp;</p>
+
+  <p class="sidebarbody">This is not the case of a graph. Graphs can be represented by adjacency matrices (appendix A), where each row and column stand for a node. Cell values stand for adjacency between nodes; if a cell is non-zero, it means that the row-node and column node are linked. Given such a matrix, we can repeat our experiment above and swap out two rows as we did the image. Unlike the case of the image, we end up with a matrix that represents the graph we started with. We can do any number of permutations or rows and columns and end up with a matrix that represents the same graph.</p>
+
+  <p class="sidebarbody">&nbsp;</p>
+
+  <p class="sidebarbody">Getting back to the convolution operation, to successfully apply a convolutional filter or a convnet to the graph’s matrix representation, such an operation or layer would have to yield the same result no matter the ordering of the adjacency matrix (since every ordering describes the same thing). Convnets fail in this respect.</p>
+
+  <p class="sidebarbody">&nbsp;</p>
+
+  <p class="sidebarbody">Finding convolutional filters that can be applied to graphs has been solved in a variety of ways. In this chapter we will examine two ways this has been done: spatial and spectral methods. For a deeper discussion and derivation of convolutional filters applied to graphs, see <i class="charitalics">Hamilton</i>.</p>
+
+  <div class="calibre34">
+    <p class="sidebarend">&nbsp;</p>
+  </div>
+
+  <h4 class="head2 sigil_not_in_toc">Concept 3: Spectral vs Spatial Methods</h4>
+
+  <p class="body">In the last section, we talked about interpreting convolution via a thought experiment of sliding a window filter across part of a graph consisting of a local neighborhood of linked nodes. We also interpreted convolution as processing graph signal data through a filter.</p>
+
+  <p class="body">It turns out that these two interpretations highlight two branches of convolutional graph neural networks: spatial and spectral methods. ‘Sliding window’ and other methods that rely on a graph’s geometrical structure to perform convolution are known as <b class="charbold">spatial methods</b>. Graph signal filters are grouped as <b class="charbold">spectral methods</b>.</p>
+
+  <p class="body">It should be said that there is no clear demarcation between spectral and spatial methods, and often one type can be interpreted as the other. For example, one contribution of GCN is that it demonstrated that its spectral derivation could be interpreted in a spatial way.</p>
+
+  <p class="body"><span class="charunderline">Practical Differences Between Spatial and Spectral Methods.</span> At the time of writing, spatial methods are preferred since they have less restrictions and in general offer less computational complexity. Let’s walk through some of the areas of difference between spatial and spectral methods.</p>
+
+  <p class="body">Domain dependence. Domains refer to a mathematical property and are often extended to the layperson’s concept of this word, meaning a sphere of knowledge. From a mathematical point of view, we can talk about a graph’s eigenvectors and eigenvectors, and their limiting values. For a graph that is defined for a social network versus one defined for a chemical, we can imagine that the structure and possible values will be starkly different.</p>
+
+  <p class="tablecaption">Table 4.1 A comparison of spectral and spatial convolutional methods.</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td class="calibre35" width="50%">
+        <p class="tablehead">Spectral</p>
+      </td>
+
+      <td class="calibre36" width="50%">
+        <p class="tablehead">Spatial</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre37" width="50%">
+        <p class="tablebodycxspfirst">Operation: performing a convolution using a graph’s eigenvalues.</p>
+      </td>
+
+      <td class="calibre38" width="50%">
+        <p class="tablebodycxsplast">Operation: aggregation of node features in node neighborhoods</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre37" width="50%">
+        <p class="tablebodycxspfirst">·&nbsp;&nbsp;&nbsp;Graphs must be undirected</p>
+
+        <p class="tablebodycxspmiddle">·&nbsp;&nbsp;&nbsp;Highly domain dependent</p>
+
+        <p class="tablebodycxspmiddle">·&nbsp;&nbsp;&nbsp;Operation relies upon node features</p>
+
+        <p class="tablebodycxspmiddle">·&nbsp;&nbsp;&nbsp;Generally less computationally efficient</p>
+      </td>
+
+      <td class="calibre38" width="50%">
+        <p class="tablebodycxspmiddle">·&nbsp;&nbsp;&nbsp;Undirectedness not a requirement</p>
+
+        <p class="tablebodycxspmiddle">·&nbsp;&nbsp;&nbsp;Less domain dependent</p>
+
+        <p class="tablebodycxspmiddle">·&nbsp;&nbsp;&nbsp;Operation not dependent upon node features</p>
+
+        <p class="tablebodycxsplast">·&nbsp;&nbsp;&nbsp;Generally more computationally efficient</p>
+      </td>
+    </tr>
+  </table>
+
+  <h4 class="head2 sigil_not_in_toc">Concept 4: Message Passing</h4>
+
+  <p class="body">All graph neural networks operate under the process of updating and sharing node information across the network. This process and computation is known as message passing. For convolutional networks, in addition to the convolutional frameworks described above, we can also view these GNNs from the perspective of the message passing operation.</p>
+
+  <p class="body">Let’s re-examine the GNN layer from above, adding more detail. Before, we said that a GNN layer contained a filter, an activation function, and a pooling operation, and that this layer serves to update an embedding. Let’s drill down on the filter element. We can break down the filter into two operations, which we will call AGGREGATE-NODES and UPDATE-EMBEDDING.</p>
+
+  <p class="body">Thus, a second way to interpret a GNN layer:</p>
+
+  <p class="equation">Filter (UPDATE-EMBEDDING + AGGREGATE-NODES) + Activation Function + Pooling = Layer</p>
+
+  <p class="listbullet">·&nbsp;&nbsp;&nbsp;Filter</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;AGGREGATE-NODES - Operation that aggregates data for each node from that node’s neighbors.</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;UPDATE-EMBEDDING - Operation that updates the node embedding by combining the result from the AGGREGATION step with the previous embedding</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Activation Function - A non-linear transformation applied to the filter output</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Pooling - An operation that reduces the size of the filter output for graph-level learning tasks. For node-level learning, this part can be omitted.</p>
+
+  <p class="body">Hamilton(ref), expressed a simplified message passing layer for node-level tasks as:</p>
+
+  <p class="equation"><img alt="h(k)u-inline" src="../Images/equation_4_4.png" /></p>
+
+  <p class="equationcaption">(4.4)</p>
+
+  <p class="body">and</p>
+
+  <p class="equation">AGGREGATE = Σ <sub class="charsubscript">v∈n(u)</sub> h<sub class="charsubscript">v</sub></p>
+
+  <p class="equationcaption">(4.5)</p>
+
+  <p class="body">Where <span class="calibre41"><img alt="h(k)u-inline" class="calibre42" src="../Images/04image011-inline.gif" /></span>is the updated embedding for the kth layer and for node <i class="charitalics">u,</i> h<sub class="charsubscript">v</sub> is an embedding for a node in node u’s neighborhood. Wa and Wb are learnable weights. σ is an activation function.</p>
+
+  <p class="body">With the concept of message passing, we also adjust the concept of a GNN layer. For the message passing formulas above, we see that a node and its neighborhood play a central part. If we run the AGGREGATE and UPDATE operations once, or <i class="charitalics">k=1</i> times, we are aggregating the information from the neighbors 1 hop away from our central node. If we run these operations for two iterations, or <i class="charitalics">k</i>=2, we aggregate nodes within 2 hops of our central node. And so on. Thus, the number of GNN layers is directly tied to the size of the neighborhoods we are interrogating with our model.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Concept 5: GCNs and GraphSage</h4>
+
+  <p class="body">So given the above, we can dive into what the GCN and GraphSage models are and the nature of how they vary as convolutional GNNs.</p>
+
+  <p class="body"><b class="charbold">GCN</b> is a spectral-based GNN that builds upon several improvements to the convolution equation (4.3) to simplify operations and to reduce computational cost. These involve using a filter based on a polynomial rather than set of matrices, and to limit the number of hops to k=1. In terms of computational complexity it reduces the computational complexity from a quadratic to a linear complexity, which is significant.</p>
+
+  <p class="body">Looking at the GCN from the message passing point of view, we also see adjustments from the equations above. One adjustment is to replace the UPDATE operation (equation 4.4) with an AGGREGATE operation that involves self loops (recall from the appendix that a <b class="charbold">self loop</b> consists of a node with an edge that connects back to the node itself). We see that equation 4.4 has two terms, the first of which involves updating the embeddings of the central node, <i class="charitalics">u</i>. We eliminate that first term, and adjust the second term (the AGGREGATE term) so that it involves not only node u’s neighborhood, but includes node u itself.</p>
+
+  <p class="body">Another adjustment involves <b class="charbold">normalization</b> of the AGGREGATE operation. In equation 4.5, aggregation of the embeddings is a sum. This can lead to problems in graphs where there are nodes with widely varying numbers of direct neighbors. If a graph contains nodes whose degrees are high, those nodes will dominate a summed AGGREGATION. In using normalization to solve this, one method is to replace summing (eq 4.5) with averaging (eq 4.6, below). The normalization technique GCN introduced is called <b class="charbold">symmetric normalization.</b> It’s AGGREGATION function is expressed:</p>
+
+  <p class="equation"><img alt="" class="pcalibre2" src="../Images/04image013.png" /></p>
+
+  <p class="equationcaption">(4.6)</p>
+
+  <p class="body">With these adjustments, we have the GCN layer:</p>
+
+  <p class="equation"><img alt="" src="../Images/equation_4_7.png" /></p>
+
+  <p class="equationcaption">(4.7)</p>
+
+  <p class="body">GCN has proven to be an effective and popular GNN layer to build upon. However, since the aggregation in 4.7 happens over the entire neighborhood of each node, it can be computationally expensive to use, especially for graphs with nodes that have degrees over 1000. <b class="charbold">GraphSAGE</b> improved upon this by limiting the amount of neighboring nodes that are aggregated during an iteration. It aggregates from a randomly selected sample from the neighborhood. The aggregation used is flexible (e.g., a sum, average, etc). This layer is expressed as:</p>
+
+  <p class="equation"><i class="charitalics">h</i>(k) = <i class="charitalics">σ</i>(<i class="charitalics">W</i>(<i class="charitalics">k</i>) · <b class="charbolditalics"><i class="italics">f</i></b> (<i class="charitalics">h</i>(<i class="italics"><sub class="charsubscript">k−1</sub></i>), {<i class="charitalics">h</i>(<i class="italics"><sub class="charsubscript">k−1</sub></i>), ∀<i class="charitalics">u</i> ∈ <i class="charitalics">S</i>}))</p>
+
+  <p class="equationcaption">(4.8)</p>
+
+  <p class="body">Where <b class="charbolditalics"><i class="italics">f</i></b> is the aggregation function (sum, average, or other), and ∀<i class="charitalics">u</i> ∈ <i class="charitalics">S</i> denotes that the neighborhood is picked from a random sample, <i class="charitalics">S</i>.</p>
+
+  <h2 class="head" id="sigil_toc_id_48">4.2&nbsp;Problem Description: Predicting Consumer Product Categories</h2>
+
+  <p class="body">With the overview of needed concepts complete, we can turn back to our application. As you may recall from the introduction, our problem for this chapter explores the domain of online retail and product relationships.</p>
+
+  <p class="body">Whether shopping in a local department store or browsing online stores, it’s helpful when a store understands how individual products or categories of products are related to another. One use of this information is to make the shopping experience easier by having similar items closer to one another. For example, in a brick-and-mortar store, similar products are placed in proximity to each other. A good store manager wouldn’t place shoe accessories too far away from shoes, or printer supplies too far away from printers. More or less, all shoes and accessories would be in the same location in our brick and mortar store.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_115" src="../Images/04image015.png" /></p>
+
+    <p class="figureacaption">Figure 4.8 Illustration of digital shopping with product categories.</p>
+  </div>
+
+  <p class="body">Online stores are able to point to similar items by using a link hierarchy (e.g., having a clothing page as a parent page, a shoe specific page as a child, and a shoe accessories page a child to the shoe page). They also help consumers find related items by devoting sections of a webpage to ‘related items’ and <i class="charitalics">‘others users also looked at</i>’ highlights.</p>
+
+  <p class="body">For obvious product relationships, one could argue that machine learning is overkill for this task, though for stores with millions of products, the scale could necessitate some automated solution. But what about less obvious product relationships? One less obvious relationship could be pairing a basketball shoe with a basketball. Or a running shoe with joint and muscle pain reliever cream. Or less obvious still, pairing basketball shoes to basketball movies.</p>
+
+  <p class="body">Sometimes, non-obvious product relationships are established via customer behavior; innovative consumers discover an appealing pairing which appeals to the crowd. If such innovations are popular enough, they may lead to new product categories. An example of a surprising product pairing is <a href="https://www.yahoo.com/lifestyle/dunkin-dove-teaming-away-years-160012035.html">coffee and dry shampoo</a> used in mid-day physical workouts: coffee is used to enhance the workout, while dry shampoo is used to quickly groom afterward.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Problem Definition: Identify a Product’s Category</h4>
+
+  <p class="body"><b class="charbold">Our Dataset: The Amazon Product Co-Purchasing Network</b></p>
+
+  <p class="body">To explore the product relationships, we will use the Amazon product co-purchasing graph, a dataset of products that have been bought together in the same transaction (which we will define as a co-purchase). In this dataset, products are represented by nodes, while co-purchases are represented by vertices. The dataset we will use, <i class="charitalics">ogbn-products</i>, consists of 2.5 million nodes, and 61.9 million edges (a larger version of the dataset, <i class="charitalics">ogbn-products100M</i>, contains 111 million nodes and 1,616 million edges). This means that this dataset consists of 2.5 million products, and 61.9 established co-purchases.</p>
+
+  <p class="body">The construction of this dataset is a long journey in itself, very much of interest to graph construction, and the decisions that have to be made to get a meaningful and useful dataset. Put simply, this dataset was derived from purchasing log data from Amazon, which directly showed co-purchases, and from text data from product reviews, which was used to indirectly show product relationships. For the in-depth story, I refer you to [McCauly].</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_116" src="../Images/04image016.png" /></p>
+
+    <p class="figureacaption">Figure 4.9 Examples of co-purchases on Amazon.com. Each product is represented by a picture, a plain text product title, and a bold text product category. We see that some co-purchases feature products that are obvious complements of one another, while other groupings are less so.</p>
+  </div>
+
+  <p class="body">To further illustrate the concept of co-purchases, in figure 4.x we show 6 co-purchases of an amazon.com customer. For each product, we include a picture, a plain text product label, and a bold text category label.</p>
+
+  <p class="body">Some of these co-purchase groups seem to fit together well, as the book purchases, or the clothing purchase. Other co-purchases are less explainable, such as an Apple Ipod being purchased with instant meals, or beans being purchased with a wireless speaker.</p>
+
+  <p class="body">In those less obvious groupings, maybe there is some latent product relationship. Or maybe it’s mere coincidence. Examining the data at scale can provide clues.</p>
+
+  <p class="body">To show how the co-purchasing graph would appear at a small scale, 4.x takes one of the co-purchases above and represents the products as nodes, with the edges between them representing each co-purchase. For one customer and one purchase, this is a small graph, with 4 nodes, and 6 edges. But for the same customer over time, or for a larger set of customers with the same tastes in food, or all of amazon’s customers, it’s easy to imagine how this graph could scale with more products and product connections branching from these 4 products.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_117" src="../Images/04image017.png" /></p>
+
+    <p class="figureacaption">Figure 4.10 A graph representation of one of the co-purchases from figure 4.x. Each product’s picture is a node, and the co-purchases are the edges (shown as lines) between the products. For the 4 products shown here, this graph is only the co-purchasing graph of one customer. If we show the corresponding graph for all customers of Amazon, the number of products and edges could feature tens of thousands of product nodes and millions of co-purchasing edges.</p>
+  </div>
+
+  <p class="body"><b class="charbold">GNN interpretation of problem: A semi-supervised classification problem</b></p>
+
+  <p class="body">We will use GCN and Graphsage to predict the categories of these products. For this purpose, there are 47 categories that will be used as targets in a classification task.</p>
+
+  <p class="body">Why is such a prediction task important? Being able to categorize a particular product with a model can aid a general categorization task at scale, and be used to find non-intuitive categories and product relationships.</p>
+
+  <p class="body">Though we will cover some preprocessing, much of that heavy lifting with this dataset has been done already. The dataset (with included dataloaders) has been provided by Open Graph Benchmark product, with an usage license from Amazon.</p>
+
+  <h2 class="head" id="sigil_toc_id_49">4.3&nbsp;Implementation in PyG</h2>
+
+  <p class="body">In this section, we will solve the node-classification problem outlined in the last section using the architectures explained in section 4.1: Kipf’s GCN and GraphSage. The details and full code are in the github repository. Here, we will highlight the major components of a solution.</p>
+
+  <p class="body">We will also give more detail to how GCN and GraphSAGE are implemented in pytorch geometric. We’ll follow the following steps in this chapter:</p>
+
+  <p class="figurea1"><img alt="" class="pcalibre2" id="Picture_118" src="../Images/04image018.png" /></p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Preprocess - Prep the data</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Define model - Define the architecture</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Define training - Set of the training loop and learning criteria</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Train - Execute the training process</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Model Saving - Save the model</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Inference - Use the saved model to make predictions</p>
+
+  <h4 class="head2 sigil_not_in_toc">Needed Software</h4>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Pytorch and Pytorch Geometric (PyG) - Deep learning frameworks where many of the tasks needed to develop deep learning models for graphs have been done. Many popular GNN layers (such as GCN and GraphSage) have been implemented in PyG. (Documentation: pytorch: <a href="https://pytorch.org/docs/stable/index.html">https://pytorch.org/docs/stable/index.html</a> ; PyG: <a href="https://pytorch-geometric.readthedocs.io/en/latest/index.html">https://pytorch-geometric.readthedocs.io/en/latest/index.html</a>)</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Matplotlib</span> - A standard visualization library for python. We will use it in our data exploration.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Pandas and Numpy</span> - Standard data munging and numerical packages in python. Pandas is useful in data exploration, while numpy is used often in calculations and data transformations in our data pipelines.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<span class="charunderline">NetworkX</span> - A basic graph processing system, which we will use for data exploration. (Documentation: <a href="https://networkx.org/documentation/stable/index.html">https://networkx.org/documentation/stable/index.html</a>)</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<span class="charunderline">OGB</span> - Library of the Open Graph Benchmark project. Allows us to access and evaluate datasets, including the Amazon products dataset, used in our example. (Documentation: <a href="https://ogb.stanford.edu/docs/home/">https://ogb.stanford.edu/docs/home/</a>)</p>
+
+  <p class="body">Most of these can be installed with the simple pip install command. Examples showing the installation of these packages can be found in our repository [link].</p>
+
+  <h3 class="head1" id="sigil_toc_id_50">4.3.1&nbsp;Pre-processing</h3>
+
+  <p class="body">The Amazon product co-purchasing dataset can be accessed via the Open Graph Benchmark (OGB). The <i class="charitalics">PygNodePropPredDataset</i> function from the ogb library downloads this dataset into a folder of your choosing. The zip file containing the dataset and associated files is 1.38GB.</p>
+
+  <p class="pcalibre1"><code class="codea">dataset&nbsp;=&nbsp;PygNodePropPredDataset('ogbn-products')</code></p>
+
+  <p class="body">Once downloaded and decompressed, we find that the file contains the following directories:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;mapping - files that contain metadata about the dataset: human-understandable labels/categories for the label indices, and Amazon product numbers for the node indices</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;processed - files that allow downloaded data to be preprocessed into a PyG format</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;raw - various formats of the graph data, including edge lists, and node features and labels.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;split - convention used to split the data into train/validation/test sets</p>
+
+  <p class="body">To get the training/validation/test splits for the data, we can use the get_idx_split() method.</p>
+
+  <p class="pcalibre1"><code class="codea">split_idx&nbsp;=&nbsp;dataset.get_idx_split()</code></p>
+
+  <p class="body">Another feature of OGB datasets is that they come with an evaluator. An evaluator is basically a curated performance metric tailored for that specific dataset. This can be used when training models, and comparing models. It can be called with the <i class="charitalics">Evaluator</i> function.</p>
+
+  <p class="pcalibre1"><code class="codea">evaluator&nbsp;=&nbsp;Evaluator(name='ogbn-products')</code></p>
+
+  <p class="body"><b class="charbold">Light Data Exploration</b></p>
+
+  <p class="body">Once downloaded, we can perform EDA to get a feel of the data. In figure 4.8, we examine the distribution of categories in the dataset.</p>
+
+  <p class="body">To see the distribution of categories in the graph, we pull the label data from the graph, and we use the category metadata in the downloaded <i class="charitalics">dataset</i> folder.</p>
+
+  <p class="codealistingcaption">Listing 4.1 Light Data Exploration</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">#&nbsp;Putting&nbsp;the&nbsp;category&nbsp;metadata&nbsp;into&nbsp;a&nbsp;dataframe</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">df&nbsp;=&nbsp;pd.read_csv('/content/dataset/ogbn_products/mapping/labelidx2productcategory.csv.gz')&nbsp;</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">#&nbsp;putting&nbsp;the&nbsp;node&nbsp;labels&nbsp;into&nbsp;a&nbsp;list,&nbsp;then&nbsp;converting&nbsp;into&nbsp;a&nbsp;Counter&nbsp;dictionary</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">y&nbsp;=&nbsp;data.y.tolist()&nbsp;</code> <code class="codeacxspmiddle">y&nbsp;=&nbsp;list(flatten(y))</code> <code class="codeacxspmiddle">count_y&nbsp;=&nbsp;collections.Counter(y)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">#&nbsp;Matching&nbsp;the&nbsp;counts&nbsp;above&nbsp;with&nbsp;the&nbsp;category&nbsp;metadata</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">index_product_dict&nbsp;=&nbsp;dict(zip(df['label&nbsp;idx'],&nbsp;df['product&nbsp;category']))</code> <code class="codeacxspmiddle">products_hist&nbsp;=&nbsp;dict((index_product_dict[key],&nbsp;value)&nbsp;for&nbsp;(key,&nbsp;value)&nbsp;in&nbsp;dict(count_y).items())</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">#Placing&nbsp;this&nbsp;matched&nbsp;data&nbsp;into&nbsp;a&nbsp;dataframe;&nbsp;sort&nbsp;the&nbsp;counts;&nbsp;plot</code> <code class="codeacxspmiddle">category_df&nbsp;=&nbsp;pd.DataFrame(products_hist.items(),&nbsp;columns=['Category',&nbsp;'Count'])</code> <code class="codeacxspmiddle">category_df&nbsp;=&nbsp;category_df.set_index('Category')</code> <code class="codeacxspmiddle">category_df&nbsp;=&nbsp;category_df.sort_values('Count')</code> <code class="codeacxsplast">category_df.plot(kind='barh')</code></p>
+
+  <p class="body">In figure 4.11, we see that the categories with the highest counts of nodes are <i class="charitalics">Books</i> (668950 nodes), <i class="charitalics">CDs &amp; Vinyl</i> (172199 nodes), and <i class="charitalics">Toys &amp; Games</i> (158771 nodes). The lowest are <i class="charitalics">Furniture and Decor</i> (9 nodes), <i class="charitalics">Digital Music</i> (6 nodes), and an unknown category with one node (Category <i class="charitalics">#508510</i>). We also observe that many categories have very low proportions in the dataset. The mean count of nodes per label/category is 52,107; the median count is 3,653.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_119" src="../Images/04image019.png" /></p>
+
+    <p class="figureacaption">Figure 4.11 Distribution of node labels generated using Listing 4.1.</p>
+  </div>
+
+  <h3 class="head1" id="sigil_toc_id_51">4.3.2&nbsp;Defining the model</h3>
+
+  <p class="body">In this section, we want to first understand how the message passing theory in section 4.2 is implemented in Pytorch Geometric. With an understanding of the GCN and GraphSAGE layers, we explain how the GNN architecture is coded. This explanation builds on the previous sections, but also what was done in chapter 3 to implement embeddings.</p>
+
+  <p class="body">Implementation of GCN Message Passing in Pytorch Geometric</p>
+
+  <p class="body">Recall in section 4.2, we defined message passing for GCN as:</p>
+
+  <p class="equation"></p>
+
+  <p class="equation"><img alt="h(k)u-inline" src="../Images/equation_4_9.png" /></p>
+
+  <p class="equationcaption">(4.9)</p>
+
+  <p class="body">Where</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<i class="charitalics">h</i> is the updated node embedding</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;sigma, , is a non-linearity (i.e., activation function) applied to every element</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;W, is a trained weight matrix</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;|<i class="charitalics">N</i>| denotes the count of the elements in the set of graph nodes</p>
+
+  <p class="body">The summed factor, <span class="calibre45"><img alt="w(k)Sum..._inline" class="calibre46" src="../Images/04image020-inline.gif" /></span>, is a special normalization called symmetric normalization.</p>
+
+  <p class="body">Also, recall that GCN does not use an UPDATE operation; it instead uses an AGGREGATION function on a graph with self-loops.</p>
+
+  <p class="body">So, to implement GCN, the following operations must occur:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Graph nodes must be adjusted to contain self loops</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Matrix multiplication of the trained weight matrix and the node embeddings</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Normalization operations: Summing the terms of the symmetric normalization</p>
+
+  <p class="body">Below, the formula in equation 4.10 and figure 4.12 has been adjusted to make these operations more clear:</p>
+
+  <p class="equation"><img alt="" class="pcalibre2" src="../Images/equation_4_10.png" /></p>
+
+  <p class="equationcaption">(4.10)</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_120" src="../Images/04image022.png" /></p>
+
+    <p class="figureacaption">Figure 4.12 Mapping of key computational operations in the GCN embedding formula.</p>
+  </div>
+
+  <p class="body">In the pytorch geometric documentation and source code, one can find the source code that implements the GCN layer, and a simplified implementation of the GCN layer as an example. Below, we’ll point out how the source code implements the above key operations using the source code.</p>
+
+  <p class="body">Table 4.2 lists in what functions the PyG source code for the GCN layer performs the above key operations (at the time of writing, Revision f8ab880a):</p>
+
+  <p class="figureacaption">Table 4.2 Mapping of key computational operations in the GCN embedding formula.</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td class="calibre47" width="49%">
+        <p class="tablehead">Operation</p>
+      </td>
+
+      <td class="calibre48" width="50%">
+        <p class="tablehead">Function/Method</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Add self loops to nodes</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast"><code class="codechar">gcn_norm()</code>, annotated, below</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Multiply weights and embeddings <b class="charbolditalics"><i class="italics">W</i></b><sup class="charsuperscript">(k)</sup> × <b class="charbolditalics"><i class="italics">h</i></b><sub class="charsubscript">u</sub></p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast"><code class="codechar">GCNConv.__init__; GCNConv.forward</code></p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Symmetric Normalization</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast"><code class="codechar">gcn_norm()</code>, annotated, below</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="body">From the table, we list:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;A function, <i class="charitalics">gcn_norm</i>, which performs normalization and add self loops to the graph</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;A class, <i class="charitalics">GCNConv</i>, which instantiates the GNN layer and performs matrix operations</p>
+
+  <p class="body">In listings 4.2 and 4.3, we show the code in detail for the function and class and use annotation to highlight the key operations.</p>
+
+  <p class="codealistingcaption">Listing 4.2 The GCN Norm Function</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst"><b class="charbold">def</b>&nbsp;gcn_norm(edge_index,&nbsp;edge_weight=None,&nbsp;num_nodes=None,&nbsp;improved=False,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add_self_loops=True,&nbsp;dtype=None):&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">fill_value&nbsp;=&nbsp;2.&nbsp;<b class="charbold">if</b>&nbsp;improved&nbsp;<b class="charbold">else</b>&nbsp;1.&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;isinstance(edge_index,&nbsp;SparseTensor):&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adj_t&nbsp;=&nbsp;edge_index</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;not&nbsp;adj_t.has_value():</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adj_t&nbsp;=&nbsp;adj_t.fill_value(1.,&nbsp;dtype=dtype)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;add_self_loops:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adj_t&nbsp;=&nbsp;fill_diag(adj_t,&nbsp;fill_value)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deg&nbsp;=&nbsp;sparsesum(adj_t,&nbsp;dim=1)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deg_inv_sqrt&nbsp;=&nbsp;deg.pow_(-0.5)&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deg_inv_sqrt.masked_fill_(deg_inv_sqrt&nbsp;==&nbsp;float('inf'),&nbsp;0.)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adj_t&nbsp;=&nbsp;mul(adj_t,&nbsp;deg_inv_sqrt.view(-1,&nbsp;1))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adj_t&nbsp;=&nbsp;mul(adj_t,&nbsp;deg_inv_sqrt.view(1,&nbsp;-1))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">return</b>&nbsp;adj_t</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;<b class="charbold">else</b>:&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;num_nodes&nbsp;=&nbsp;maybe_num_nodes(edge_index,&nbsp;num_nodes)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;edge_weight&nbsp;is&nbsp;None:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_weight&nbsp;=&nbsp;torch.ones((edge_index.size(1),&nbsp;),&nbsp;dtype=dtype,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;device=edge_index.device)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;add_self_loops:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_index,&nbsp;tmp_edge_weight&nbsp;=&nbsp;add_remaining_self_loops(</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_index,&nbsp;edge_weight,&nbsp;fill_value,&nbsp;num_nodes)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">assert</b>&nbsp;tmp_edge_weight&nbsp;is&nbsp;not&nbsp;None</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_weight&nbsp;=&nbsp;tmp_edge_weight</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;row,&nbsp;col&nbsp;=&nbsp;edge_index[0],&nbsp;edge_index[1]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deg&nbsp;=&nbsp;scatter_add(edge_weight,&nbsp;col,&nbsp;dim=0,&nbsp;dim_size=num_nodes)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deg_inv_sqrt&nbsp;=&nbsp;deg.pow_(-0.5)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;deg_inv_sqrt.masked_fill_(deg_inv_sqrt&nbsp;==&nbsp;float('inf'),&nbsp;0)</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">return</b>&nbsp;edge_index,&nbsp;deg_inv_sqrt[row]&nbsp;*&nbsp;edge_weight&nbsp;*&nbsp;deg_inv_sqrt[col]</code></p>
+
+  <p class="codeaannotation">#A This function performs symmetric normalization of the input graph, and adds self loop to the input graph</p>
+
+  <p class="codeaannotation">#B The fill_value is a parameter used in the alternative self-loop operation&nbsp;</p>
+
+  <p class="codeaannotation">#C Following, if the graph input is a sparse tensor, the first block of code in the if-statement will apply. Otherwise, the second will apply.</p>
+
+  <p class="body">Arguments of <i class="charitalics">gcn_norm</i> are:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<i class="charitalics">edge_index</i>: the node representations in a Tensor or Sparse Tensor form</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<i class="charitalics">edge_weight</i>: an array of 1-dimensional edge weights is optional</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<i class="charitalics">num_nodes</i>: a dimension of the input graph</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<i class="charitalics">improved</i>: introduces an alternative method to add self-loops from the Graph U-Nets paper, referenced at the end of the chapter.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<i class="charitalics">Add_self_loops</i>: adding self loops is the default, but is optional</p>
+
+  <p class="body">In listing 4.3, we have excerpts of the <i class="charitalics">GCNConv</i> class, which calls on the <i class="charitalics">gcn_norm</i> function as well as the matrix operations.</p>
+
+  <p class="codealistingcaption">Listing 4.3 The GCN Class</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst"><b class="charbold">class</b>&nbsp;GCNConv(MessagePassing):&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">…</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;<b class="charbold">def</b>&nbsp;__init__(self,&nbsp;in_channels:&nbsp;int,&nbsp;out_channels:&nbsp;int,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;improved:&nbsp;bool&nbsp;=&nbsp;False,&nbsp;cached:&nbsp;bool&nbsp;=&nbsp;False,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;add_self_loops:&nbsp;bool&nbsp;=&nbsp;True,&nbsp;normalize:&nbsp;bool&nbsp;=&nbsp;True,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;bias:&nbsp;bool&nbsp;=&nbsp;True,&nbsp;**kwargs):&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">…</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.lin&nbsp;=&nbsp;Linear(in_channels,&nbsp;out_channels,&nbsp;bias=False,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;weight_initializer='glorot')</code> <code class="codeacxspmiddle">…</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">def</b>&nbsp;forward(self,&nbsp;x:&nbsp;Tensor,&nbsp;edge_index:&nbsp;Adj,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_weight:&nbsp;OptTensor&nbsp;=&nbsp;None)&nbsp;-&gt;&nbsp;Tensor:</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">if&nbsp;self.normalize:&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;isinstance(edge_index,&nbsp;Tensor):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;cache&nbsp;=&nbsp;self._cached_edge_index</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;cache&nbsp;is&nbsp;None:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_index,&nbsp;edge_weight&nbsp;=&nbsp;gcn_norm(&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_index,&nbsp;edge_weight,&nbsp;x.size(self.node_dim),</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.improved,&nbsp;self.add_self_loops)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;self.cached:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self._cached_edge_index&nbsp;=&nbsp;(edge_index,&nbsp;edge_weight)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_index,&nbsp;edge_weight&nbsp;=&nbsp;cache[0],&nbsp;cache[1]</code> <code class="codeacxspmiddle">…</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;self.lin(x)&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;=&nbsp;self.propagate(edge_index,&nbsp;x=x,&nbsp;edge_weight=edge_weight,&nbsp;size=None)&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;self.bias&nbsp;is&nbsp;not&nbsp;None:&nbsp;#D</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;+=&nbsp;self.bias</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">return</b>&nbsp;out</code> <code class="codeacxsplast">…</code></p>
+
+  <p class="codeaannotation">#A The forward propagation function performs symmetric normalization given one of two options: that the input graph is a Tensor or a SparseTensor. I have included the portion of the source code for a Tensor input.</p>
+
+  <p class="codeaannotation">#B Linear transformation of the node feature matrix</p>
+
+  <p class="codeaannotation">#C Message propagation</p>
+
+  <p class="codeaannotation">#D There is an optional additive bias to the output</p>
+
+  <p class="body">Implementation of GraphSage Message Passing in Pytorch Geometric</p>
+
+  <p class="body">Again, recall in section 4.2, we defined message passing for GraphSage as:</p>
+
+  <p class="equation">GraphSage Updated Node Embeddings = <i class="charitalics">h</i>(k) = <i class="charitalics">σ</i>(<i class="charitalics">W</i>(<i class="charitalics">k</i>) · <b class="charbolditalics"><i class="italics">f</i></b> (<i class="charitalics">h</i>(<i class="italics"><sub class="charsubscript">k−1</sub></i>), {<i class="charitalics">h</i>(<i class="italics"><sub class="charsubscript">k−1</sub></i>), ∀<i class="charitalics">u</i> ∈ <i class="charitalics">S</i>}))</p>
+
+  <p class="equationcaption">(4.11)</p>
+
+  <p class="body">Where <b class="charbolditalics"><i class="italics">f</i></b> is the aggregation function (sum, average, or other), and ∀<i class="charitalics">u</i> ∈ <i class="charitalics">S</i> denotes that the neighborhood is picked from a random sample, <i class="charitalics">S</i>.</p>
+
+  <p class="body">If we choose the mean as the aggregation function, this becomes:</p>
+
+  <p class="equation"><i class="charitalics">h</i>(k) v ← σ(W MEAN({<i class="charitalics">h</i>(<i class="italics"><sub class="charsubscript">k−1</sub></i>),v } ∪ {<i class="charitalics">h</i>(<i class="italics"><sub class="charsubscript">k−1</sub></i>),u , ∀u ∈ <i class="charitalics">N</i>(v)}</p>
+
+  <p class="equationcaption">(4.12)</p>
+
+  <p class="body">To implement this, we can further reduce this to:</p>
+
+  <p class="equation"><img alt="" class="pcalibre2" src="../Images/04image023.png" /></p>
+
+  <p class="equationcaption">(4.13)</p>
+
+  <p class="body">Where <b class="charbold">x</b><sub class="charsubscript">i</sub><b class="charbold">’</b> denotes the generated central node embeddings, and <b class="charbold">x</b><sub class="charsubscript">i</sub> and <b class="charbold">x</b><sub class="charsubscript">j</sub> are the input features of the central and neighboring nodes, respectively.</p>
+
+  <p class="body">With a mean (average) aggregator, these operations are a bit more straightforward compared with those for GCN. From the GraphSage paper, we have the general embedding updating process, which the paper introduces as Algorithm 1, reproduced here in figure 4.13.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_121" src="../Images/04image024.png" /></p>
+
+    <p class="figureacaption">Figure 4.13 Algorithm 1, the GraphSAGE embedding generation algorithm from the GraphSAGE paper.</p>
+  </div>
+
+  <p class="body">The gist of algorithm 1 is:</p>
+
+  <p class="body">For every layer/iteration:</p>
+
+  <p class="body">For every node:</p>
+
+  <p class="listnumberedcxspfirst">1.&nbsp;&nbsp;Aggregate the embeddings of the neighbors (sum, mean, or other)</p>
+
+  <p class="listnumberedcxsplast">2.&nbsp;&nbsp;Concatenate neighbor embeddings with that of the central node</p>
+
+  <p class="listnumberedcxsplast">3.&nbsp;&nbsp;Matrix multiply that concatenation with the Weights matrix</p>
+
+  <p class="listnumberedcxsplast">4.&nbsp;&nbsp;Multiply that result with an activation function</p>
+
+  <p class="listnumberedcxsplast">5.&nbsp;&nbsp;Apply a normalization</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_122" src="../Images/04image025.png" /></p>
+
+    <p class="figureacaption">Figure 4.14 Mapping of key computational operations in the GraphSage embedding formula.</p>
+  </div>
+
+  <p class="body">In table format, this looks like this:</p>
+
+  <p class="figureacaption">Table 4.3 Mapping of key computational operations in the GCN embedding formula.</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td class="calibre47" width="49%">
+        <p class="tablecaption">Operation</p>
+      </td>
+
+      <td class="calibre48" width="50%">
+        <p class="tablecaption">Function/Method</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Aggregate the embeddings of the neighbors (sum, mean, or other)</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast">SageConv.message_and_aggregate</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Concatenate neighbor embeddings with that of the central node</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast">SageConv.forward</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Matrix multiply that concatenation with the Weights matrix</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast">SageConv.message_and_aggregate</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Apply an activation function</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast">If the <i class="charitalics">project</i> parameter set to <i class="charitalics">True</i>, done in SageConv.forward</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td class="calibre49" width="49%">
+        <p class="tablebodycxspfirst">Apply a normalization</p>
+      </td>
+
+      <td class="calibre50" width="50%">
+        <p class="tablebodycxsplast">SageConv.forward</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="body">For GraphSage, PyG also has source code to implement this layer in the <i class="charitalics">SageConv</i> class, excerpts of which are shown in listing 4.4.</p>
+
+  <p class="body">At the time of writing (Revision f8ab880a.), the PyG source code for the GraphSage layer performs the actions show in figure X like this:</p>
+
+  <p class="codealistingcaption">Listing 4.4 The GraphSAGE Class</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst"><b class="charbold">class</b>&nbsp;SAGEConv(MessagePassing):</code> <code class="codeacxspmiddle">…</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;<b class="charbold">def</b>&nbsp;forward(self,&nbsp;x:&nbsp;Union[Tensor,&nbsp;OptPairTensor],&nbsp;edge_index:&nbsp;Adj,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;size:&nbsp;Size&nbsp;=&nbsp;None)&nbsp;-&gt;&nbsp;Tensor:</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;isinstance(x,&nbsp;Tensor):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x:&nbsp;OptPairTensor&nbsp;=&nbsp;(x,&nbsp;x)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;self.project&nbsp;and&nbsp;hasattr(self,&nbsp;'lin'):&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;(self.lin(x[0]).relu(),&nbsp;x[1])</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;=&nbsp;self.propagate(edge_index,&nbsp;x=x,&nbsp;size=size)&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;=&nbsp;self.lin_l(out)&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x_r&nbsp;=&nbsp;x[1]&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;self.root_weight&nbsp;and&nbsp;x_r&nbsp;is&nbsp;not&nbsp;None:&nbsp;#D</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;+=&nbsp;self.lin_r(x_r)&nbsp;#D</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">if</b>&nbsp;self.normalize:&nbsp;#E</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;=&nbsp;F.normalize(out,&nbsp;p=2.,&nbsp;dim=-1)&nbsp;#E</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">return</b>&nbsp;out</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;def&nbsp;message(self,&nbsp;x_j:&nbsp;Tensor)&nbsp;-&gt;&nbsp;Tensor:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;x_j</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;<b class="charbold">def</b>&nbsp;message_and_aggregate(self,&nbsp;adj_t:&nbsp;SparseTensor,</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x:&nbsp;OptPairTensor)&nbsp;-&gt;&nbsp;Tensor:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;adj_t&nbsp;=&nbsp;adj_t.set_value(None,&nbsp;layout=None)&nbsp;#F</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b class="charbold">return</b>&nbsp;matmul(adj_t,&nbsp;x[0],&nbsp;reduce=self.aggr)&nbsp;#F&nbsp;</code> <code class="codeacxsplast">…</code></p>
+
+  <p class="codeaannotation">#A If the ‘project’ parameter is set to ‘True’, this applies a linear transformation with an activation function (Relu in this case) to the neighbor nodes.</p>
+
+  <p class="codeaannotation">#B Propagate messages and applies a linear transformation.</p>
+
+  <p class="codeaannotation">#C Assigns the root node to a variable.</p>
+
+  <p class="codeaannotation">#D If the ‘root_weight’ parameter is set to ‘True’ and a root node exists, this will add (concatenate) the transformed root node features to the output.</p>
+
+  <p class="codeaannotation">#E If the ’normalize’ parameter is set to ‘True’, L2 normalization will be applied to the output features.</p>
+
+  <p class="codeaannotation">#F Matrix multiplication with an aggregation. Setting the ‘aggr’ parameter will establish the aggregation scheme (e.g., ‘mean’, ‘max’, ‘lstm’; default is ‘add’). ‘adj_t’ is the sparse matrix representation of the input; using such a representation speeds up calculations.</p>
+
+  <p class="body"><b class="charbold">Architecture Construction</b></p>
+
+  <p class="body">With the GCN and GraphSAGE layers implemented, we can construct architectures which stack these with other neural network layers and functions. This architecture is very similar to the one in the previous chapter and consists of a GNN layer:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;A <span class="charunderline">Message Passing layer</span>: where information gets passed between vertices</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;An <span class="charunderline">Activation layer</span>: where a non-linear function is applied to the previous output</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;A <span class="charunderline">Dropout layer</span>: switching off some of the output units.</p>
+
+  <p class="body">After one or more of such GNN layers, we apply:</p>
+
+  <p class="listbullet">·&nbsp;&nbsp;&nbsp;An Activation layer</p>
+
+  <p class="body">You can see this in figure 4.14:</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_124" src="../Images/04image026.png" /></p>
+
+    <p class="figureacaption">Figure 4.14 In the architecture of a GCN or GraphSage, each GNN layer (a) consists of a message parsing layer, an activation layer, and a dropout layer. An activation layer (b) gets added after each GNN layer.</p>
+  </div>
+
+  <p class="body">In pytorch, a way to create neural network architectures is by creating a class which inherits from the <i class="charitalics">torch.nn.Module</i> class. Listing 4.6 shows the our class, consisting of:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;An <i class="charitalics">__init__</i> method, which defines and initializes parameter weights for our layers.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;A <i class="charitalics">forward</i> method, which governs how data passes forward through our architecture.</p>
+
+  <p class="body">For this architecture, the number of message passing layers used in the forward propagation function corresponds to parameter k, the number of GNN layers (explained in concept 4), also known as the number of iterations. It can be seen in listing 4.5 that k=3. This means that for our graph, the aggregation will only reach as far as 3 hops away from the central nodes. If we wanted to extend or reduce this reach, we could add or take away layers from the <i class="charitalics">forward</i> method.</p>
+
+  <p class="codealistingcaption">Listing 4.5 GraphSAGE full Architecture (using the GraphSage layer)</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">class&nbsp;GraphSAGE(torch.nn.Module):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;__init__(self,&nbsp;input_dim,&nbsp;hidden_dim,&nbsp;output_dim,&nbsp;dropout=0.25):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super().__init__()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.dropout&nbsp;=&nbsp;dropout</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.conv1&nbsp;=&nbsp;SAGEConv(input_dim,&nbsp;hidden_dim)&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.conv2&nbsp;=&nbsp;SAGEConv(hidden_dim,&nbsp;hidden_dim)&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.conv3&nbsp;=&nbsp;SAGEConv(hidden_dim,&nbsp;output_dim)&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;forward(self,&nbsp;data):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;self.conv1(data.x,&nbsp;data.adj_t)&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;F.Relu(x)&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;F.dropout(x,&nbsp;p=self.dropout)&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;self.conv2(x,&nbsp;data.adj_t)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;F.Relu(x)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;F.dropout(x,&nbsp;p=self.dropout)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;self.conv3(x,&nbsp;data.adj_t)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;F.Relu(x)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;F.dropout(x,&nbsp;p=self.dropout)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;torch.log_softmax(x,&nbsp;dim=-1)&nbsp;#C</code></p>
+
+  <p class="codeaannotation">#A In the __init__ method, we define the message passing layers given the predefined GNN layers in listing 4.4. Other predefined GNN layers can be used or custom layers can be created and used. For these layers, the parameters are are the input and output dimensions of the data. Though the 3 layers use the same GNN class, the input/output layers are distinct.</p>
+
+  <p class="codeaannotation">#B In the forward method, we have 3 iterations of data passing through a GNN layer, an activation and a dropout layer.</p>
+
+  <p class="codeaannotation">#C Rather than return an embedding, x, we use a softmax activation to produce a multinomial output used for classification.</p>
+
+  <p class="body">In addition, there are a few hyper-parameters related to the input and output sizes of the message passing, layer norm, linear layers, and the dropout. Figure 4.15 illustrates this architecture.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_126" src="../Images/04image027.png" /></p>
+
+    <p class="figureacaption">Figure 4.15 The model architecture of listing 4.5.</p>
+  </div>
+
+  <h3 class="head1" id="sigil_toc_id_52">4.3.3&nbsp;Defining the Training Procedure</h3>
+
+  <p class="body">For the model training, we build routines for training and testing. It is common practice to implement testing and training via functions and classes. Below, we have functions for testing and training.</p>
+
+  <p class="body">For the <i class="charitalics">train</i> function, we specify the model object, the data object, node indexes for the training split, and the optimizer of choice. We call the <i class="charitalics">train</i> method on the model, then use the <i class="charitalics">zero_grad</i> method on the optimizer to zero the parameter gradients. We then do a forward pass of our data through the model, and use the resulting output to calculate the loss. Finally, we perform backpropagation with the <i class="charitalics">backward</i> method, and update the model weights with the <i class="charitalics">step</i> method.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">def&nbsp;train(model,&nbsp;data,&nbsp;train_idx,&nbsp;optimizer):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;model.train()</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;optimizer.zero_grad()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;=&nbsp;model(data)[train_idx]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;=&nbsp;F.nll_loss(out,&nbsp;data.y.squeeze(1)[train_idx])</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;loss.backward()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;optimizer.step()</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;loss.item()</code></p>
+
+  <p class="body">For the <i class="charitalics">test</i> function, shown in listing 4.6, we can take advantage of OGB’s built in evaluator to assess the model performance. We use its <i class="charitalics">eval</i> method to return the performance metric (for the ogbn-products dataset, the performance metric is accuracy).</p>
+
+  <p class="body">From the ogb docs, the input format is:</p>
+
+  <p class="pcalibre1"><code class="codea">#&nbsp;input_dict&nbsp;=&nbsp;{"y_true":&nbsp;y_true,&nbsp;"y_pred":&nbsp;y_pred}</code></p>
+
+  <p class="body">where <i class="charitalics">y_true</i> is the ground truth, and <i class="charitalics">y_pred</i> are the model predictions.</p>
+
+  <p class="body">Within the <i class="charitalics">test</i> function, we:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Run data through the model and get output.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;We then transform the output to get the classification predictions.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;With these predictions and the true labels, we use the evaluator to produce accuracy values for the train, validation, and test sets.</p>
+
+  <p class="codealistingcaption">Listing 4.6 Test Routine for Model Training</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">def&nbsp;test(model,&nbsp;data,&nbsp;split_idx,&nbsp;evaluator):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;model.eval()</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;=&nbsp;model(data)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;y_pred&nbsp;=&nbsp;out.argmax(dim=-1,&nbsp;keepdim=True)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;train_acc&nbsp;=&nbsp;evaluator.eval({</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'y_true':&nbsp;data.y[split_idx['train']],</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'y_pred':&nbsp;y_pred[split_idx['train']],</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;})['acc']</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;valid_acc&nbsp;=&nbsp;evaluator.eval({</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'y_true':&nbsp;data.y[split_idx['valid']],</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'y_pred':&nbsp;y_pred[split_idx['valid']],</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;})['acc']</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;test_acc&nbsp;=&nbsp;evaluator.eval({</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'y_true':&nbsp;data.y[split_idx['test']],</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'y_pred':&nbsp;y_pred[split_idx['test']],</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;})['acc']</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;train_acc,&nbsp;valid_acc,&nbsp;test_acc</code></p>
+
+  <h3 class="head1" id="sigil_toc_id_53">4.3.4&nbsp;Training</h3>
+
+  <p class="body">In the training routine, we call the train and test functions at each epoch to update the model parameters, and obtain the loss and the train/validation/test accuracies.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">for&nbsp;epoch&nbsp;in&nbsp;range(1,&nbsp;1&nbsp;+&nbsp;epochs):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;loss&nbsp;=&nbsp;train(model,&nbsp;data,&nbsp;train_idx,&nbsp;optimizer)</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;&nbsp;train_acc,&nbsp;valid_acc,&nbsp;test_acc&nbsp;=&nbsp;test(model,&nbsp;data,&nbsp;split_idx,&nbsp;evaluator)</code></p>
+
+  <h3 class="head1" id="sigil_toc_id_54">4.3.5&nbsp;Saving the Model</h3>
+
+  <p class="body">As in chapter 3, saving the model is a call to the <i class="charitalics">save</i> method of torch.</p>
+
+  <p class="pcalibre1"><code class="codea">torch.save(model,&nbsp;'/PATH_TO_MODEL_DIRECTORY/model.pt')</code></p>
+
+  <h3 class="head1" id="sigil_toc_id_55">4.3.6&nbsp;Performing Inference</h3>
+
+  <p class="body">Outside of the training process, getting predictions with a model depends on making sure your data and model are on the same device (i.e., CPU, GPU, or TPU if it becomes available for PyG in the future).</p>
+
+  <p class="body">In the below example, if I have a set of data on the CPU I first move it to the model’s device by using the <i class="charitalics">to</i> method and specifying the device. In the second line, the data is run through the model, with the output copied then placed back on the CPU.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">data.to(device)</code> <code class="codeacxsplast">prediction&nbsp;=&nbsp;model(data).clone().cpu()</code></p>
+
+  <p class="body">It’s a common practice to set the device at the start of your session.</p>
+
+  <p class="pcalibre1"><code class="codea">device&nbsp;=&nbsp;'cuda'&nbsp;if&nbsp;torch.cuda.is_available()&nbsp;else&nbsp;'cpu'</code></p>
+
+  <h2 class="head" id="sigil_toc_id_56">4.4&nbsp;Benchmarks to gauge performance</h2>
+
+  <p class="body">When training models and experimenting, having performance baselines and an idea of state of the art performance is a good way to understand how our models stack up against other solutions. Often, we can establish baselines for GNNs by using non-GNN solutions. For example, the product classification problem of this chapter can be first tackled by using a tree-based machine learning model. Another way to establish a baseline is to use pre-defined layers and the simplest architectures.</p>
+
+  <p class="body">On the other side of the performance landscape are the state of the art solutions that push the limits of performance.</p>
+
+  <p class="body">The GNN sector is relatively new, but there is a growing set of resources that allow one to benchmark performance against other GNN solutions for a limited set of domains and prediction tasks.</p>
+
+  <p class="body">At the time of writing, two resources with such benchmarks are the Open Graph Benchmark site (<a href="https://ogb.stanford.edu/">https://ogb.stanford.edu/</a>) and in the literature of research or conference papers. OBG features leaderboards for selected problem areas and datasets in those areas. If your problem involves node prediction, edge prediction, graph prediction, and involves a domain or dataset similar to the ones featured in the site (which include product networks, biological networks, molecular graphs, social networks, and knowledge graphs), examining the leaderboards for a particular task/dataset may be a good place to start.</p>
+
+  <p class="body">Figure 4.16 shows a leaderboard from the Open Graph Database. In addition to test and validation performance, the GNN technique/layer is specified, as well as hardware details. Often links to papers and code are also available.</p>
+
+  <p class="body">There are also a breadth of academic papers from journals, pre-prints, and conferences that can shed light on problem sets and domains that are not included in OGB’s set.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" id="Picture_127" src="../Images/04image028.png" /></p>
+
+    <p class="figureacaption">Figure 4.16 Some performance values for node classification of the ogbn-products dataset, from the Open Graph Benchmark website. Each row consists of a solution architecture, its authors, performance values, and other information.</p>
+  </div>
+
+  <h2 class="head" id="sigil_toc_id_57">4.5&nbsp;Summary</h2>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Graph Convolutional Networks and GraphSage are GNNs that use convolution, done by spatial and spectral methods, respectively.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;These GNNs can be used in supervised and semi-supervised learning problems; in this chapter, we applied them to the semi-supervised problem of predicting product categories.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;The Amazon Co-Purchasing Database, <i class="charitalics">ogbn-products</i>, consists of a set of products (nodes) linked by being purchased in the same transaction. Each product node has a set of features, including its product-category. This dataset is a popular benchmark for graph classification problems. We can also study how it was constructed to get insights on graph creation methodology.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Convolution applied to graphs mirrors concepts used in deep learning. Two ways (among many) to approach convolution for graphs is via the ‘sliding window’ perspective, or a signal processing perspective. For the special qualities of graphs these methods must be adjusted.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Convolutional GNNs fall roughly into two categories: spatial-based and spectral based. Spatial methods mainly consider the geometrical structure of a graph, while spectral methods are based on the eigenvalues of a graph's features.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;GCN, by Kipf, was the first GNN to take advantage of convolution. Its introduction has spawned a class of GCN-based architectures. It is distinguished by self-loop aggregation and symmetric normalization.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;GraphSage was a successful attempt to improve on Kipf’s GCN by introducing neighborhood sampling, and has in turn inspired architectures.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;A typical set of steps to train a node-prediction model is:</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Preprocess - Prep the data</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Define model - Define the architecture</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Define training - Set of the training loop and learning criteria</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Train - Execute the training process</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Model Saving - Save the model</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;Inference - Use the saved model to make predictions</p>
+
+  <h2 class="head" id="sigil_toc_id_58">4.6&nbsp;References</h2>
+
+  <h4 class="head2 sigil_not_in_toc">Amazon Product Dataset</h4>
+
+  <p class="body">McAuley, Julian, Rahul Pandey, and Jure Leskovec. "Inferring networks of substitutable and complementary products." <i class="charitalics">Proceedings of the 21th ACM SIGKDD international conference on knowledge discovery and data mining</i>. 2015.</p>
+
+  <h4 class="head2 sigil_not_in_toc">GCN</h4>
+
+  <p class="body">Kipf, Thomas N., and Max Welling. "Semi-supervised classification with graph convolutional networks." <i class="charitalics">arXiv preprint arXiv:1609.02907</i> (2016).</p>
+
+  <h4 class="head2 sigil_not_in_toc">GraphSage</h4>
+
+  <p class="body">Hamilton, William L., Rex Ying, and Jure Leskovec. "Inductive representation learning on large graphs." In <i class="charitalics">Proceedings of the 31st International Conference on Neural Information Processing Systems</i>, pp. 1025-1035. 2017.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Deep Dive Into Convolutional Methods</h4>
+
+  <p class="body">Hamilton, William L. "Graph representation learning." Synthesis Lectures on Artificial Intelligence and Machine Learning 14.3 (2020): 51-89.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Other Illustrative Convolutional GNNs</h4>
+
+  <p class="body">Niepert, Mathias, Mohamed Ahmed, and Konstantin Kutzkov. "Learning convolutional neural networks for graphs." <i class="charitalics">International conference on machine learning</i>. PMLR, 2016.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Graph Signal Processing</h4>
+
+  <p class="body">Shuman, David I., et al. "The emerging field of signal processing on graphs: Extending high-dimensional data analysis to networks and other irregular domains." <i class="charitalics">IEEE signal processing magazine</i> 30.3 (2013): 83-98.</p>
+</body>
+</html>

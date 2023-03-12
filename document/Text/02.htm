@@ -1,0 +1,885 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Unknown</title>
+  <link href="../Styles/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/page_styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="calibre">
+  <h1 class="tochead">2&nbsp;System Design and Data Pipelining</h1>
+
+  <p class="colisthead">This chapter covers</p>
+
+  <p class="colistbulletcxspfirst">·&nbsp;&nbsp;&nbsp;&nbsp;Architecting a graph schema and data pipeline to requirements</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;&nbsp;Working with various raw data sources and transforming them for training</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;&nbsp;Taking an example dataset from raw data through preprocessing</p>
+
+  <p class="colistbulletcxsplast">·&nbsp;&nbsp;&nbsp;&nbsp;Creating datasets and data loaders with Pytorch Geometric</p>
+
+  <p class="body">In general, the principles behind designing machine learning systems and building data pipelines are extensively covered elsewhere. However, developing ML systems designed for graph data requires additional considerations. This chapter will explain some of these special considerations.</p>
+
+  <p class="body">Section 2.2, on system design, discusses choosing a data model and schema. Section 2.3 walks through an example data pipeline from raw data to preprocessing.</p>
+
+  <p class="body">We use our social graph dataset to illustrate these ideas. In section 2.1, we give our dataset a backstory and present the raw data from which it was created.</p>
+
+  <p class="body">Code from this chapter can be found in notebook form at the <a class="pcalibre8" href="https://github.com/keitabroadwater/gnns_in_action/tree/master/chapter_3">github repository</a> and in <a class="pcalibre8" href="https://colab.research.google.com/drive/1OLX0VOfQZeHwlzw8mf4B5z_Rr46TwRyk?usp=sharing">Colab</a>. Data from this chapter can be accessed in the same locations.</p>
+
+  <h2 class="head" id="sigil_toc_id_21">2.1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Social Graph Example</h2>
+
+  <p class="body">We return to the dataset introduced earlier, the professional social network. We’ve already discovered some information about this dataset, summarized in table 2.1. But where did this data come from?</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_01.png" /><br class="pcalibre4" /></p>
+
+    <p class="figureacaption">Figure 2.1. Visualization of social network used in our example.</p>
+  </div>
+
+  <p class="tablecaption">Table 2.1. Some characteristics of the social dataset.</p>
+
+  <table cellpadding="0" cellspacing="0" class="msonormaltable1" width="100%">
+    <tr class="calibre10">
+      <td char="252" class="calibre11">
+        <p class="tablehead">Attribute</p>
+      </td>
+
+      <td char="252" class="calibre12">
+        <p class="tablehead">Value</p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="252" class="calibre13">
+        <p class="tablebodycxspfirst">Number of Nodes</p>
+      </td>
+
+      <td char="252" class="calibre14">
+        <p class="tablebodycxsplast">1933</p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="252" class="calibre13">
+        <p class="tablebodycxspfirst">Number of Edges</p>
+      </td>
+
+      <td char="252" class="calibre14">
+        <p class="tablebodycxsplast">12239</p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="252" class="calibre13">
+        <p class="tablebodycxspfirst">Type of Graph</p>
+      </td>
+
+      <td char="252" class="calibre14">
+        <p class="tablebodycxsplast">Undirected, Disconnected</p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="252" class="calibre13">
+        <p class="tablebodycxspfirst">Diameter of Largest Component</p>
+      </td>
+
+      <td char="252" class="calibre14">
+        <p class="tablebodycxsplast">10</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="body">As a hypothetical, let’s say our social network data originates from a Whole Staffing, a recruiting firm. When Whole Staffing engages job candidates they maintain a database of their profiles, history of engagement with the firm, and any such candidates make referrals.</p>
+
+  <p class="body">Whenever an existing job candidate refers someone to the firm, this referral is logged. The firm assumes that there is a professional relationship between the referrer and referee. Often many people may refer to the same person. Also, sometimes referrals are already in the database. In either case, a log of the event is still retained, and the firm still assumes a professional relationship.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_01a.png" /><br class="pcalibre4" /></p>
+
+  <p class="body">Whole Staffing has a few questions about their collection of job candidates. Two examples are:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Some profiles have missing data. Is it possible to fill in missing data without bothering the candidate?</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;History has shown that candidates that worked well in the past, do well on future teams. Thus, when companies are hiring teams of workers, Whole Staffing would like to refer groups of candidates who know each other. Is it possible to figure unstated relationships?</p>
+
+  <p class="body">As a member of Whole Staffing’s data science team, you have been tasked with mining the candidate data in hopes to answer and report on these and other questions. Amongst other analytical and machine learning methods, you think there may be an opportunity to represent the data as a network and use a GNN to answer these questions.</p>
+
+  <p class="body"><b class="charbold">In this chapter, we’ll assume our objective is to create a simple data workflow that will take our data from its raw format, perform exploratory analysis, and preprocess it for GNN training.</b></p>
+
+  <p class="body">To accomplish this, we first have to make some decisions about what graph data model and what systems best fit our problem.</p>
+
+  <h2 class="head" id="sigil_toc_id_22">2.2&nbsp;&nbsp;GNN System Planning</h2>
+
+  <p class="body">Let’s touch on topics for planning your GNN system. There are many good resources and books written on these topics in general, so the focus here will be on the aspects of graph systems that set them apart and require a bit more consideration. For general resources, references are included at the chapter’s end.</p>
+
+  <p class="body">We’ll follow the diagram and talk about top-level project planning, schema creation, and tool selection.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_02.png" /></p>
+
+    <p class="figureacaption">Figure 2.2. Overview of Graph System Planning. These elements are interdependent.</p>
+  </div>
+
+  <h3 class="head1" id="sigil_toc_id_23">2.2.1&nbsp;&nbsp; Project Objectives and Scope</h3>
+
+  <p class="body">Since this is covered well elsewhere (see references), I’ll only touch on this briefly.</p>
+
+  <p class="body"><span class="charunderline">Project Objectives</span>. The directions and decisions taken in a project should be influenced the most by the core objectives of the project or application. Having a well-defined objective up front will save a lot of headaches down the line.</p>
+
+  <p class="body"><span class="charunderline">Project Requirements and Scope</span>. Pertinent requirements that have a direct impact on your graph schema and toolset are:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Data Size and velocity</span>: what is the size of the data, in terms of item counts and size in bytes? How fast is new information added to the data? Is data expected to be ingested from a real time stream, or from a data lake that is updated daily?</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Inference Speed</span>: How fast is the application and the underlying machine learning models expected to serve predictions? Some applications may require sub-second responses, while for others, there is no constraint on time.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Data Privacy</span>. What are the policies and regulations regarding personally identifiable information (PII), and how would this involve data transformation and pre-processing?</p>
+
+  <p class="body">In our social graph example, we will set the objective of filling in missing candidate information. For Whole Staffing, the deliverable for this objective will be an application that can periodically (say, bi-weekly) scan the candidate data for missing items. Missing items will be inferred and filled in.</p>
+
+  <p class="body">Some of the requirements for this application could be:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Data Size: Greater than 1933 candidate profiles. Less than 1MB</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Inference Speed: Application will run bi-weekly, and needs to be completed in less than 2 hours.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Data Privacy: No data that directly identifies a candidate can be used.</p>
+
+  <h3 class="head1" id="sigil_toc_id_24">2.2.2&nbsp;&nbsp; Designing Graph Data Models and Schema</h3>
+
+  <p class="body">In machine learning problems involving tabular data, images or text, our data is organized in an expected way, with implicit and explicit rules. For example, when dealing with tabular data, rows are treated as observations, and columns as features. We can join tables of such data by using indexes and keys. This framework is flexible and relatively unambiguous. We may quibble about which observations and features to include, but we know where to place them.</p>
+
+  <p class="body">When we want to express our data with graphs, in all but the simplest scenarios, we have several options for what framework to use. With graphs, it’s not always intuitive where we place the entities of interest. It’s the non-intuitiveness and ambiguity that drives the need for defining explicit data models for our graph data.</p>
+
+  <p class="body">By actively choosing and documenting our graph data model up front, we can avoid technical debt and more easily test the integrity of our data. We can also experiment more systematically with different data structures.</p>
+
+  <p class="body">Technical debt can occur when we have to change and evolve our data, but haven’t planned for backward- or forward-compatibility in our data models. It can also happen when our data modeling choices aren’t a good fit for our database and software choices, which may call for expensive (in time or money) workarounds or replacements.</p>
+
+  <p class="body">Having well defined rules and constraints on our data models give us explicit ways to test the quality of our data. For example, if we know that our nodes can at most have two degrees, we can design simple functions to process to test every node against this criteria.</p>
+
+  <p class="body">Also, when the structure and rules of our graphs are designed explicitly, it increases the ease with which we can parameterize these rules and experiment with them in our GNN pipeline.</p>
+
+  <p class="body">In this section, I’ll talk about the landscape of graph data model design, and give some guidelines on how to design your own data models. Then we’ll use these guidelines in thinking about our social graph example. This section is drawn from several references, listed at the chapter’s end.</p>
+
+  <p class="head2">Data Models and Schemas</p>
+
+  <p class="body">In chapter 2, we were introduced to graph data models, which are ways to represent real world data as a graph. Such models can be simple, consisting of one type of node and one type of edge. Or they can be complex, involving many types of nodes and edges, metadata, and ontologies.</p>
+
+  <p class="body">Data models are good at providing conceptual descriptions of graphs that are quick and easy to grasp by others. For people who understand what a property graph or an RDF graph is, telling them that a graph is a bi-graph implemented on a property graph can reveal much about the design of your data.</p>
+
+  <p class="body">In general, a <b class="charbold">schema</b> is a blueprint that defines how data is organized in a data storage system. In a sense, a graph schema is a concrete implementation of a graph data model, explaining in detail how the data in a specific use case is to be represented in a real system. Schemas can consist of diagrams and written documentation. Schemas can be implemented in a graph database using a query language, or in a processing system using a programming language.</p>
+
+  <p class="body">A schema should answer the following questions:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;What are the elements (nodes, edges, properties, etc) used, and what real world entities and relationships do they represent?</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Does the graph include multiple types of nodes and edges?</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;What are the constraints around what can be represented as a node?</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;What are the constraints around relationships? Do certain nodes have restrictions around adjacency and incidence? Are there count restrictions for certain relationships?</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;How are descriptors and metadata handled? What are the constraints on this data?</p>
+
+  <h4 class="head2 sigil_not_in_toc">Some Guidelines</h4>
+
+  <p class="body"><b>Conceptual and System Schemas</b></p>
+
+  <p class="body">Depending on the complexity of your data and the systems in use, one may use multiple, but consistent schemas. A <b class="charbold">conceptual schema</b> lays out the elements, rules and constraints of the graph, but is not tied to any system. A <b class="charbold">system schema</b> would reflect the conceptual schema’s rules, but for a specific system, such as a database. A system schema could also omit unneeded elements from the conceptual schema</p>
+
+  <p class="body">Depending on the complexity of the graph model and the use cases, one or several schemas could be called for. In the case of more than one schema, compatibility between the schema’s via a mapping should be included.</p>
+
+  <p class="body"><b>Diagramming and Documenting a Schema</b></p>
+
+  <p class="body">For network models with few elements, rules and constraints, a simple diagram with notes in prose is probably sufficient to convey enough information to fellow developers and to be able to implement this in query language or code.</p>
+
+  <p class="body">For more complex network designs, entity-relationship diagrams (ER diagrams, or ERDs) and associated grammar are useful in illustrating network schemas in a visual and human readable way.</p>
+
+  <div class="calibre15">
+    <p class="sidebarhead">Inset: Entity-Relation (E-R) Diagrams</p>
+  </div>
+
+  <p class="sidebarbody">&nbsp;</p>
+
+  <p class="sidebarfigures"><img alt="" class="pcalibre2" src="../Images/02_SB01.png" /><br class="pcalibre4" /></p>
+
+  <p class="sidebarcaptions">&nbsp;</p>
+
+  <p class="sidebarbody">E-R diagrams have the elements to illustrate a graph’s elements (nodes, edges, and attributes) and the rules and constraints governing a graph. Figure 2.x a shows some connectors notation that can be used to illustrate edges and relationship constraints.</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1">Figure 2.x b shows an example of a schema diagram that conveys 3 node types (teacher, language, and town), and two edge types (‘to teach’, and ‘to be born in’). The diagram conveys implicit and explicit constraints.</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1">Some explicit constraints are that one teacher can teach many languages and that one language can be taught by many teachers. Another explicit constraint is that a person can be born in one town, but one town can be the birthplace of many. An implicit constraint is that, for this graph model, there can be no relationship between a language and a town.</p>
+
+  <div class="calibre16">
+    <p class="sidebarend">&nbsp;</p>
+  </div>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_03.png" /><br class="pcalibre4" /></p>
+
+    <p class="figureacaption">Figure 2.3 - (top) relationship nomenclature for E-R diagrams. (bottom) example of conceptual schema using E-R diagram.</p>
+  </div>
+
+  <p class="body"><b>Using References and Published Schemas</b></p>
+
+  <p class="body">To not start from scratch in developing a graph data model and schema for your problem, there are several sources of published models, and schemas. They include industry standard data models, published datasets, published semantic models (including knowledge graphs), and academic papers. A set of example sources is provided in table XX</p>
+
+  <p class="body">Public graph datasets exist in several places. Published datasets have accessible data, with summary statistics. Often however, they lack explicit schemas, conceptual or otherwise. To derive the dataset’s entities, relations, rules and constraints, querying the data becomes necessary.</p>
+
+  <p class="body">For semantic models based on property, RDF and other data models, there are some general ones, and others that are targeted to particular industries and verticals. Such references seldom use graph-centric terms (like <i class="charitalics">node</i>, <i class="charitalics">vertex</i>, and <i class="charitalics">edge</i>), but will use terms related to semantics and ontologies (e.g., <i class="charitalics">entity</i>, <i class="charitalics">relationship</i>, <i class="charitalics">links</i>). Unlike the graph datasets, the semantic models offer data frameworks, not the data itself.</p>
+
+  <p class="body">Reference papers and published schemas can provide ideas and templates that can help in developing your schema. There are a few use cases targeted toward industry verticals that both represent a situation using graphs, and use graph algorithms, including GNNs, to solve a relevant problem. Transaction fraud in financial institutions, molecular fingerprinting in chemical engineering, page rank in social networks are a few examples. Perusing such existing work can provide a boost to development efforts. On the other hand, often such published work is done for academic, not industry goals. A network that is developed to prove an academic point or make empirical observations, may not have qualities amenable to an enterprise system that must be maintained and be used on dirty and dynamic data.</p>
+
+  <p class="tablecaption">Table 2.2. A list of graph datasets and semantic models.</p>
+
+  <table cellpadding="0" cellspacing="0" class="msonormaltable1" width="100%">
+    <tr class="calibre10">
+      <td char="126" class="calibre17">
+        <p class="tablehead">Source</p>
+      </td>
+
+      <td char="126" class="calibre18">
+        <p class="tablehead">Type</p>
+      </td>
+
+      <td char="126" class="calibre18">
+        <p class="tablehead">Industry</p>
+      </td>
+
+      <td char="126" class="calibre18">
+        <p class="tablehead">URL</p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">Open Graph Benchmark</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Graph Datasets and Benchmarks</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Various</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="https://ogb.stanford.edu/">https://ogb.stanford.edu/</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">GraphChallenge Datasets</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Graph Datasets</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Various</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="https://graphchallenge.mit.edu/data-sets">https://graphchallenge.mit.edu/data-sets</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">Network Repository</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Graph Datasets</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Various</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="http://networkrepository.com/">http://networkrepository.com/</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">SNAP Datasets</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Graph Datasets</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Various</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="http://snap.stanford.edu/data/">http://snap.stanford.edu/data/</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">Schema.org</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Semantic Data Model</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Various</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="https://schema.org/">https://schema.org/</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">Wikidata</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Semantic Data Model</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Various</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="https://www.wikidata.org/">https://www.wikidata.org/</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">Financial Industry Business Ontology</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Semantic Data Model</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Finance</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="https://github.com/edmcouncil/fibo">https://github.com/edmcouncil/fibo</a></p>
+      </td>
+    </tr>
+
+    <tr class="calibre10">
+      <td char="126" class="calibre19">
+        <p class="tablebodycxspfirst">Bioportal</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">List of Medical Semantic Models</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxspmiddle1">Medical</p>
+      </td>
+
+      <td char="126" class="calibre20">
+        <p class="tablebodycxsplast"><a href="https://bioportal.bioontology.org/ontologies/">https://bioportal.bioontology.org/ontologies/</a></p>
+      </td>
+    </tr>
+  </table>
+
+  <h4 class="head2 sigil_not_in_toc">Social Graph Example</h4>
+
+  <p class="body">To design a conceptual and system schemas for our example dataset, we should think about:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;The entities and relationships in our data</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Possible rules and constraints</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Operational constraints, such as the databases and libraries at our disposal</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;The output we want from our application</p>
+
+  <p class="body">Our databases consist of candidates and their profile data (e.g., industry, job type, company, etc), recruiters. Properties can also be treated as entities; for instance, ‘medical industry’ could be treated as a node. Relations could be: ‘candidate knows candidate’, ‘candidate recommended candidate’, or ‘recruiter recruited candidate’.</p>
+
+  <p class="body">Given these choices a few options for the conceptual schema are shown in figure 2.XX</p>
+
+  <p class="body">The first example consists of one node type (<i class="charitalics">candidate</i>) connected by one undirected edge type (<i class="charitalics">knows</i>). Node attributes are the candidate’s <i class="charitalics">industry</i> and their <i class="charitalics">job type</i>. There are no restrictions on the relationships, as any candidate can know 0 to <i class="charitalics">n</i>-1 other candidates, where <i class="charitalics">n</i> is the number of candidates.</p>
+
+  <p class="body">The second conceptual schema consists of two node types (<i class="charitalics">candidate</i> and <i class="charitalics">recruiter</i>), linked by one undirected edge type (<i class="charitalics">knows</i>). Edges between candidates have no restrictions. Edges between candidates and recruiters have a constraint: a candidate can only link to one recruiter, while a recruiter can link to many candidates.</p>
+
+  <p class="body">The third schema has multiple node and relationship types. Node types are <i class="charitalics">candidate</i>, <i class="charitalics">recruiter</i>, and <i class="charitalics">industry</i>. Relation types include <i class="charitalics">candidate knows candidate</i>, <i class="charitalics">recruiter recruits candidate</i>, <i class="charitalics">candidate is a member of industry</i>. Note, we have made <i class="charitalics">industry</i> a separate entity, rather than an attribute of <i class="charitalics">candidate</i>.</p>
+
+  <p class="body">Constraints include:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<i class="charitalics">Candidates</i> can only have one <i class="charitalics">recruiter</i> and one <i class="charitalics">industry</i>,</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<i class="charitalics">Recruiters</i> don’t link to <i class="charitalics">industries</i></p>
+
+  <p class="body">Depending on the queries and the objectives of the machine learning model, we could pick one schema or experiment with all three in the course of developing our application.</p>
+
+  <p class="body">We decide to use the first schema, which will serve as a simple structure for our exploration, and a baseline structure for our experimentation.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_04.png" /></p>
+
+    <p class="figureacaption">Figure 2.4 - Three conceptual schemas for the social graph. a. Schema with one node type and one edge type. b. Two node types and one edge type. c. three node types and 3 edge types.</p>
+  </div>
+
+  <p class="body">To summarize:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Data Model</span>. The data model we will use is the simple undirected graph, which consists of one node type (<i class="charitalics">candidate</i>) and one edge type (<i class="charitalics">knows</i>).</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<span class="charunderline">Conceptual Schema</span>. Our conceptual schema is visualized in figure 3.4a. No relational constraints exist.</p>
+
+  <h2 class="head" id="sigil_toc_id_25">2.3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; A Data Pipeline Example</h2>
+
+  <p class="body">With the schema decided, let’s walk through a simple example of a data pipeline from raw data.Figure 3.5 summarizes our workflow. In this section, we’ll assume our objective is to create a simple data workflow that will take our data from a raw state, perform light exploratory analysis, and end with a preprocessed dataset in our GNN library, Pytorch Geometric.</p>
+
+  <p class="body">In later chapters, we will return to this pipeline, and use its preprocessed data to create graph embeddings and to train GNN models.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_05.png" /></p>
+
+    <p class="figureacaption">Figure 2.5. Graph Data Workflow. Starts as raw data, which is transformed via ETL into a graph data model that can be stored in a graph database, or used in a graph processing system. From the graph processing system (and some graph databases), exploratory data analysis and visualization can be done. Finally for graph machine learning, data is preprocessed into a form which can be submitted for training.</p>
+  </div>
+
+  <h3 class="head1" id="sigil_toc_id_26">2.3.1&nbsp;&nbsp; Raw Data</h3>
+
+  <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_06.png" /></p>
+
+  <p class="body">Raw data refers to data in its most primitive state; such data is the starting point for our pipeline. This data could be in various databases, serialized in some way, or generated.</p>
+
+  <p class="body">In the development stage of an application, it is important to know how closely the raw data used will match the live data used in production. One way to do this is by sampling from data archives.</p>
+
+  <p class="body">As mentioned in section 2.1, there are at least two sources for our raw data, relational database tables that contain recommendation logs, and candidate profiles. To keep our example contained, we’ll assume a friendly data engineer has queried the log data, and transformed it into a JSON format, where keys are a recommending candidate, and the values are the recommended candidates. From our profile data, we use two fields: <i class="charitalics">industry</i> and <i class="charitalics">job type</i>. For both data sources, our engineer has used a hash to protect personally identifiable information (PII). Thus, we can consider an alphanumeric hash the unique identifier of a candidate.</p>
+
+  <p class="body">This data can be found here: <a class="pcalibre8" href="https://github.com/keitabroadwater/gnns_in_action/tree/master/chapter_3">https://github.com/keitabroadwater/gnns_in_action/tree/master/chapter_3</a>.</p>
+
+  <p class="body">For this chapter, we’ll use JSON data, which assumes a recommendation implies a relationship.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_06a.png" /></p>
+
+    <p class="figureacaption">Figure 2.6. View of Raw Data: JSON File. This file is in key/value format (blue and orange, respectively). The keys are the members, and the values are their known relationships.</p>
+  </div>
+
+  <div class="calibre15">
+    <p class="sidebarhead">Inset: Raw Data Sources</p>
+  </div>
+
+  <p class="sidebarbody">I want to briefly outline where to get graph data.</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1">From Non-Graph Data. In the above sections, I have assumed that the data lies in non-graph sources, and must be transformed into a graph format using ETL and preprocessing. Having a schema can help guide such a transformation and keep it</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1"><span class="charunderline">Existing Graph Data Sets</span>. The number of freely available graph datasets is growing. Two GNN libraries we use in this book, DGL and Pytorch Geometric, come with a number of benchmark datasets installed. Many such datasets are from the influential academic papers. However, such datasets are small scale, which limits reproducibility of results, and whose performance don’t necessarily scale for large datasets.</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1">A source of data which seeks to mitigate the issues of earlier benchmark datasets in this space is Stanford’s Open Graph Benchmark (OGB). This initiative provides access to a variety of real world datasets, of varying scales. OGB also publishes performance benchmarks by learning task.</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1">Table 2.2 lists a few repositories of graph datasets.</p>
+
+  <p class="sidebarbody1">&nbsp;</p>
+
+  <p class="sidebarbody1"><span class="charunderline">From Generation</span>. Many graph processing frameworks and graph databases allow the generation of random graphs using a number of algorithms. Though random, depending on the generating algorithm, the resulting graph will have characteristics that are predictable.</p>
+
+  <div class="calibre16">
+    <p class="sidebarend">&nbsp;</p>
+  </div>
+
+  <h4 class="head2 sigil_not_in_toc">Data Encoding and Serialization</h4>
+
+  <p class="body">A consideration in the workflow is the choice of what data format is used in exporting and importing your data from one graph system to another. While in memory or a database, graph data is stored using that system’s conventions. For transferring this data into another system, or sending it over the internet, encoding or serialization is used.</p>
+
+  <p class="body">Before choosing an encoding format, one must have decided upon:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Data Model - Simple model, property graph, or other?</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Schema - which entities in your data are nodes, edges, properties, etc.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Data Structure - These include the data structures discussed in section 2.2.1, including edge lists and adjacency matrices</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Receiving systems - how does the receiving system (in our case GNN libraries and graph processing systems) accept data. What encodings and data structures are preferred. Is imported data automatically recognized, or is custom programming required to read in data.</p>
+
+  <p class="body">Here are a few encoding choices you will encounter.</p>
+
+  <p class="body"><span class="charunderline">Language and system agnostic encodings formats</span>: These are recommended when building a workflow as they allow the most flexibility in working amongst various systems and languages. However, how the data is arranged in these encodings may differ from system to system. So, an edge list in a csv file, with a set of headers, may not be accepted or interpreted in the same way between system 1 and system 2.</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;JSON - Has advantages when reading from APIs, or feeding into javascript applications. Cytoscape.js, a graph visualization library, accepts data in JSON format.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;CSV - Accepted by many processing systems and databases. However, the required arrangement and labeling of the data differs from system to system.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;XML - GEXF (Graph Exchange XML Format) of course is an XML format.</p>
+
+  <p class="body"><span class="charunderline">Language Specific:</span> Python, Java, and other languages have built-in encoding formats.</p>
+
+  <p class="listbullet">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Pickle - Python’s format. Some systems accept Pickle encoded files. Despite this, unless your data pipeline or workflow is governed extensively by python, pickles should be used lightly. The same applies for other language-specific encodings.</p>
+
+  <p class="body"><span class="charunderline">System Driven</span>: Specific software, systems, and libraries have their own encoding formats. Though these may be limited in usability between systems, and advantage is that the schema in such formats is consistent. Software and systems that have their own encoding format include SNAP, NetworkX, and Gephi.</p>
+
+  <p class="body"><span class="charunderline">Big Data</span>: Aside from the language-agnostic formats used above, there are other encoding formats used for larger sizes of data.</p>
+
+  <p class="listbullet">·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Avro - This encoding is used extensively in Hadoop workflows</p>
+
+  <p class="body"><span class="charunderline">Matrix based</span>. Since graphs can be expressed as matrix, there are a few formats that are based on this data structure. For sparse graphs, the following formats provide substantial memory savings and computational advantages (for lookups and matrix/vector multiplication):</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;sparse column matrix (.csc filetype)</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;sparse row matrix (.csr filetype)</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Matrix market format (.mtx filetype)</p>
+
+  <p class="body">With these preliminaries out of the way, we’ll present code that will fulfill the workflow.</p>
+
+  <h3 class="head1" id="sigil_toc_id_27">2.3.2&nbsp;&nbsp; ETL</h3>
+
+  <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_06b.png" /></p>
+
+  <p class="body">With the schema chosen, and data sources established, the <i class="charitalics">extract/transform/load</i> step consists of taking raw data from its sources and through a series of steps, producing data that fits the schema and is ready for preprocessing or training.</p>
+
+  <p class="body">For our data, this consists of programming a set of actions that begin with pulling the data from the various databases, and joining them as needed.</p>
+
+  <p class="body">What we need is data that ends up in a specific format that we can input into a preprocessing step. This could be a JSON format, or an edge list. For either of these examples (JSON and/or edge list), our schema is fulfilled; we have nodes (the individual persons), edges (the relationships between these people), with weights assumed to be 1 at this stage.</p>
+
+  <p class="body">For our social graph example, we want to transform our raw data into a graph data structure, encoded in csv. This file can then be loaded into our graph processing system, NetworkX, and our GNN system, Pytorch Geometric. To summarize the next steps:</p>
+
+  <p class="listlettercxspfirst">a.&nbsp;&nbsp;&nbsp;&nbsp; Convert raw data file to edge list and adjacency matrix. Save as a csv file.</p>
+
+  <p class="listlettercxspmiddle">b.&nbsp;&nbsp;&nbsp;&nbsp; Load into networkx for EDA &amp; Visualization</p>
+
+  <p class="listlettercxsplast">c.&nbsp;&nbsp;&nbsp;&nbsp; Load into Pytorch Geometric and preprocess.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Raw data to Adjacency Matrix and Edge List</h4>
+
+  <p class="body">Starting with our csv and json files, let’s convert the data into two key data models we’ve learned: and edge list and an adjacency list.</p>
+
+  <p class="body">First using the <i class="charitalics">json</i> module, we place the data in the json file into a python dictionary:</p>
+
+  <p class="codealistingcaption">Listing 2.1. Import JSON module. Import data from json file.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">#&nbsp;Opening&nbsp;JSON&nbsp;file&nbsp;</code> <code class="codeacxspmiddle">candidate_link_file&nbsp;=&nbsp;open(‘relationships_hashed.json',)&nbsp;</code> <code class="codeacxspmiddle">#&nbsp;returns&nbsp;JSON&nbsp;object&nbsp;as&nbsp;a&nbsp;dictionary&nbsp;</code> <code class="codeacxspmiddle">data&nbsp;=&nbsp;json.load(candidate_link_file)&nbsp;</code> <code class="codeacxspmiddle">#&nbsp;Closing&nbsp;file&nbsp;</code> <code class="codeacxsplast">candidate_link_file.close()&nbsp;</code></p>
+
+  <p class="body">The python dictionary has the same structure as the json, with member hashes as keys, and their relationships as values.</p>
+
+  <p class="body">Next, we create an adjacency list from this dictionary. This list will be stored as a text file. Each line of the file will contain the member hash, followed by hashes of that member’s relationships.</p>
+
+  <p class="codealistingcaption">Listing 2.2. Function to create adjacency list from relationship dictionary.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">def&nbsp;create_adjacency_list(data_dict,&nbsp;suffix=''):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;'''</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;This&nbsp;function&nbsp;is&nbsp;meant&nbsp;to&nbsp;illustrate&nbsp;the&nbsp;transformation&nbsp;of&nbsp;raw</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;data&nbsp;into&nbsp;an&nbsp;adjacency&nbsp;list.&nbsp;It&nbsp;was&nbsp;created&nbsp;for&nbsp;the&nbsp;social&nbsp;graph</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;use&nbsp;case.</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;INPUT:&nbsp;a.&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;candidate&nbsp;referrals&nbsp;where&nbsp;they&nbsp;keys</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;members&nbsp;who&nbsp;have&nbsp;referred&nbsp;other&nbsp;candidates,&nbsp;and</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;values&nbsp;are&nbsp;lists&nbsp;of&nbsp;the&nbsp;people&nbsp;who&nbsp;where&nbsp;referred.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.&nbsp;a&nbsp;suffix&nbsp;to&nbsp;append&nbsp;to&nbsp;the&nbsp;file&nbsp;name</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;OUTPUT:&nbsp;i.&nbsp;An&nbsp;encoded&nbsp;adjacency&nbsp;list&nbsp;in&nbsp;a&nbsp;txt&nbsp;file.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.&nbsp;A&nbsp;list&nbsp;of&nbsp;the&nbsp;node&nbsp;IDs&nbsp;found.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;'''</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;list_of_nodes&nbsp;=&nbsp;[]</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;for&nbsp;source_node&nbsp;in&nbsp;list(data_dict.keys()):&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;source_node&nbsp;not&nbsp;in&nbsp;list_of_nodes:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_nodes.append(source_node)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;y&nbsp;in&nbsp;data_dict[source_node]:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;y&nbsp;not&nbsp;in&nbsp;list_of_nodes:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_nodes.append(y)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;y&nbsp;not&nbsp;in&nbsp;data_dict.keys():</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_dict[y]=[source_node]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;source_node&nbsp;not&nbsp;in&nbsp;data_dict[y]:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_dict[y].append(source_node)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:&nbsp;continue&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;g=&nbsp;open("adjacency_list_{}.txt".format(suffix),"w+")&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;for&nbsp;source_node&nbsp;in&nbsp;list(data_dict.keys()):&nbsp;#D</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;dt&nbsp;=&nbsp;'&nbsp;'.join(data_dict[source_node])&nbsp;#D1</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("{}&nbsp;{}".format(source_node,&nbsp;dt))&nbsp;#D2</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;g.write("{}&nbsp;{}&nbsp;\n".format(source_node,&nbsp;dt))&nbsp;#D3</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;g.close</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;return&nbsp;list_of_nodes</code></p>
+
+  <p class="codeaannotation">#A to #B Because this is an undirected graph, there must be a symmetry in the values. Every value in a key must contain that key in its own entry. So, for entry F, if G is a value, then for entry G, F must be a value. These lines check for that and fix the dictionary if these conditions don’t exist.</p>
+
+  <p class="codeaannotation">#C Create text file that will store the adjacency list.</p>
+
+  <p class="codeaannotation">#D For every key in the dictionary,</p>
+
+  <p class="codeaannotation">#D1 Create a string from the list of dictionary values. This value is a string of member IDs separated by empty spaces.</p>
+
+  <p class="codeaannotation">#D2 Optional print .</p>
+
+  <p class="codeaannotation">#D3 Write a line to the text file. This line will contain the member hash, then a string of relationship hashes.</p>
+
+  <p class="body">Next, we create an edge list. As with the adjacency list, we transform the data to account for node pair symmetry.</p>
+
+  <p class="codealistingcaption">Listing 2.3. Function to create edge list from relationship dictionary.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">def&nbsp;create_edge_list(data_dict,&nbsp;suffix=''):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;'''</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;This&nbsp;function&nbsp;is&nbsp;meant&nbsp;to&nbsp;illustrate&nbsp;the&nbsp;transformation&nbsp;of&nbsp;raw</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;data&nbsp;into&nbsp;an&nbsp;edge&nbsp;list.&nbsp;It&nbsp;was&nbsp;created&nbsp;for&nbsp;the&nbsp;social&nbsp;graph</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;use&nbsp;case.</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;INPUT:&nbsp;a.&nbsp;a&nbsp;dictionary&nbsp;of&nbsp;candidate&nbsp;referrals&nbsp;where&nbsp;they&nbsp;keys</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;are&nbsp;members&nbsp;who&nbsp;have&nbsp;referred&nbsp;other&nbsp;candiates,&nbsp;and</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;the&nbsp;values&nbsp;are&nbsp;lists&nbsp;of&nbsp;the&nbsp;people&nbsp;who&nbsp;where&nbsp;referred.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;b.&nbsp;a&nbsp;suffix&nbsp;to&nbsp;append&nbsp;to&nbsp;the&nbsp;file&nbsp;name</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;OUTPUT:&nbsp;i.&nbsp;An&nbsp;edge&nbsp;adjacency&nbsp;list&nbsp;in&nbsp;a&nbsp;txt&nbsp;file.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ii.&nbsp;Lists&nbsp;of&nbsp;the&nbsp;node&nbsp;IDs&nbsp;found&nbsp;and&nbsp;the&nbsp;edges&nbsp;generated.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;'''</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;edge_list_file&nbsp;=&nbsp;open("edge_list_{}.txt".format(suffix),"w+")</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;list_of_edges&nbsp;=&nbsp;[]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;list_of_nodes_all&nbsp;=&nbsp;[]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;for&nbsp;source_node&nbsp;in&nbsp;list(data_dict.keys()):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;source_node&nbsp;not&nbsp;in&nbsp;list_of_nodes_all:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_nodes_all.append(source_node)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_connects&nbsp;=&nbsp;data_dict[source_node]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;for&nbsp;destination_node&nbsp;in&nbsp;list_of_connects:&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;destination_node&nbsp;not&nbsp;in&nbsp;list_of_nodes_all:</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_nodes_all.append(destination_node)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;{source_node,&nbsp;destination_node}&nbsp;not&nbsp;in&nbsp;list_of_edges:&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;print("{}&nbsp;{}".format(source_node,&nbsp;destination_node))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_list_file.write("{}&nbsp;{}&nbsp;\n".format(source_node,&nbsp;destination_node))&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_edges.append({source_node,&nbsp;destination_node})</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;else:&nbsp;continue</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;edge_list_file.close</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;return&nbsp;list_of_edges,&nbsp;list_of_nodes_all</code></p>
+
+  <p class="codeaannotation">#A Each member dictionary value is a list of relationships. For every key, we iterate through every value.</p>
+
+  <p class="codeaannotation">#B Because this graph is undirected, we don’t want to create duplicate edges. For example, since {F,G} is the same as {G,F}, we only need one of these. This line checks if a node pair exists already. We use a set object since the node order doesn’t matter.</p>
+
+  <p class="codeaannotation">#C We write the line to the text file. This line will consist of the node pair.</p>
+
+  <p class="body">In the next section and going forward, we will use the adjacency list to load our graph into NetworkX. One thing to note about the differences between loading a graph using the adjacency list versus the edge list, is that as pointed out in chapter 2, edge lists can’t account for single, unlinked nodes. It turns out that quite a few of the candidates at Whole Staffing have not recommended anyone, and don’t have edges associated with them. These nodes are invisible to an edge list representation of the data.</p>
+
+  <h3 class="head1" id="sigil_toc_id_28">2.3.3&nbsp;&nbsp; Data Exploration and Visualization</h3>
+
+  <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_06c.png" /></p>
+
+  <p class="body">Next, we want to load our network data into a graph processing framework. We choose NetworkX, but as explained in chapter 2, there are several choices depending on your task and preferences. We choose NetworkX because we have a small graph, and want to do some light EDA and visualization.</p>
+
+  <p class="body">With either our edge list or an adjacency list we just created, we can create a Networkx graph object by calling the <span><code class="codechar">read_edgelist</code></span> or <span><code class="codechar">read_adjlist</code></span> methods.</p>
+
+  <p class="body">Next, we can load in the attributes <i class="charitalics">industry</i> and <i class="charitalics">job type</i>. In this example these attributes are loaded in as a dictionary, where the node IDs serve as keys.</p>
+
+  <p class="body">With our graph loaded, we can explore our data, and inspect it to ensure it aligns with our assumptions. First, the count of nodes and edges should match our member count, and the number of edges created in our edge list, respectively.</p>
+
+  <p class="codealistingcaption">Listing 2.4. Function to create edge list from relationship dictionary.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">social_graph&nbsp;=&nbsp;nx.read_adjlist('adjacency_list_candidates.txt')</code> <code class="codeacxspmiddle">nx.set_node_attributes(social_graph,&nbsp;attribute_dict)</code> <code class="codeacxspmiddle">print(social_graph.number_of_nodes(),&nbsp;social_graph.number_of_edges())</code> <code class="codeacxsplast">&gt;&gt;&nbsp;1933&nbsp;12239</code></p>
+
+  <p class="body">We want to check how many connected components our graph has.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">len(list((c&nbsp;for&nbsp;c&nbsp;in&nbsp;nx.connected_components(social_graph))))</code> <code class="codeacxsplast">&gt;&gt;&gt;&nbsp;219</code></p>
+
+  <p class="body">The <span><code class="codechar">connected_components</code></span> method generates the connected components of a graph. There are hundreds of components, but when we inspect this data, we find that there is one large component of 1698 nodes, and the rest are composed of less than 4 nodes. Most of the disconnected components are singleton nodes (the candidates that never referred anyone).</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_06d.png" /></p>
+
+    <p class="figureacaption">Figure 2.6. The full graph, with its large connected component in the middle, surrounded by many smaller components. For our example, we will use only the nodes in the large connected component.</p>
+  </div>
+
+  <p class="body">We are interested in this large connected component, and will work with that going forward. The <span><code class="codechar">subgraph</code></span> method can help us to isolate this large component, as seen in Listing 5.</p>
+
+  <p class="body">Lastly, we want NetworkX to give us statistics about our set of nodes. We also want to visualize our graph. For this, we’ll use a recipe found in the NetworkX documentation.</p>
+
+  <p class="codealistingcaption">Listing 2.5. Function visualize the social graph and show degree statistics.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">##&nbsp;Modified&nbsp;from&nbsp;NetworkX&nbsp;documentation.</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">fig&nbsp;=&nbsp;plt.figure("Degree&nbsp;of&nbsp;a&nbsp;random&nbsp;graph",&nbsp;figsize=(8,&nbsp;8))</code> <code class="codeacxspmiddle">#&nbsp;Create&nbsp;a&nbsp;gridspec&nbsp;for&nbsp;adding&nbsp;subplots&nbsp;of&nbsp;different&nbsp;sizes</code> <code class="codeacxspmiddle">axgrid&nbsp;=&nbsp;fig.add_gridspec(5,&nbsp;4)</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">ax0&nbsp;=&nbsp;fig.add_subplot(axgrid[0:3,&nbsp;:])</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">#&nbsp;‘Gcc’&nbsp;stands&nbsp;for&nbsp;‘graph&nbsp;connected&nbsp;component’</code> <code class="codeacxspmiddle">Gcc&nbsp;=&nbsp;social_graph.subgraph(sorted(nx.connected_components(social_graph),&nbsp;key=len,&nbsp;reverse=True)[0])&nbsp;&nbsp;#A</code> <code class="codeacxspmiddle">pos&nbsp;=&nbsp;nx.spring_layout(Gcc,&nbsp;seed=10396953)&nbsp;&nbsp;#B</code> <code class="codeacxspmiddle">nx.draw_networkx_nodes(Gcc,&nbsp;pos,&nbsp;ax=ax0,&nbsp;node_size=20)&nbsp;#C</code> <code class="codeacxspmiddle">nx.draw_networkx_edges(Gcc,&nbsp;pos,&nbsp;ax=ax0,&nbsp;alpha=0.4)&nbsp;#D</code> <code class="codeacxspmiddle">ax0.set_title("Connected&nbsp;component&nbsp;of&nbsp;Social&nbsp;Graph")</code> <code class="codeacxspmiddle">ax0.set_axis_off()</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">degree_sequence&nbsp;=&nbsp;sorted([d&nbsp;for&nbsp;n,&nbsp;d&nbsp;in&nbsp;social_graph.degree()],&nbsp;reverse=True)&nbsp;#E</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">ax1&nbsp;=&nbsp;fig.add_subplot(axgrid[3:,&nbsp;:2])</code> <code class="codeacxspmiddle">ax1.plot(degree_sequence,&nbsp;"b-",&nbsp;marker="o")&nbsp;#F</code> <code class="codeacxspmiddle">ax1.set_title("Degree&nbsp;Rank&nbsp;Plot")</code> <code class="codeacxspmiddle">ax1.set_ylabel("Degree")</code> <code class="codeacxspmiddle">ax1.set_xlabel("Rank")</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">ax2&nbsp;=&nbsp;fig.add_subplot(axgrid[3:,&nbsp;2:])</code> <code class="codeacxspmiddle">ax2.bar(*np.unique(degree_sequence,&nbsp;return_counts=True))&nbsp;#G</code> <code class="codeacxspmiddle">ax2.set_title("Degree&nbsp;histogram")</code> <code class="codeacxspmiddle">ax2.set_xlabel("Degree")</code> <code class="codeacxspmiddle">ax2.set_ylabel("#&nbsp;of&nbsp;Nodes")</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">fig.tight_layout()</code> <code class="codeacxsplast">plt.show()</code></p>
+
+  <p class="codeaannotation">#A This command creates a distinct graph object from the largest connected component of a given graph. In our example there is only one connected component, so the way this command is programmed is a bit of overkill.</p>
+
+  <p class="codeaannotation">#B Determines how exactly the nodes and edges will be positioned in the visualization. NetworkX includes a few algorithms to choose from. Spring Layout follows an algorithm that models edges as springs, and nodes as masses that repel one another.</p>
+
+  <p class="codeaannotation">#C Draws the nodes according to the layout given in the previous line. The <i class="charitalics">draw_network_nodes</i> method has a few input parameters, including the <i class="charitalics">node_side</i> parameter, which adjusts the size of the nodes in the visualization.</p>
+
+  <p class="codeaannotation">#D Draws the edges according to the layout given above. Like the <i class="charitalics">draw_network_nodes</i> method, this method has multiple ways to specify the appearance of the nodes. The <i class="charitalics">alpha</i> parameter specifies the transparency of the edges.</p>
+
+  <p class="codeaannotation">#E Graph objects in NetworkX have various methods and attributes. In this line, we use the <i class="charitalics">degree</i> method to generate an iterable of nodes with their respective degrees. This is nested in a sorted comprehension whose output is a list of degrees sorted highest to lowest.</p>
+
+  <p class="codeaannotation">#F We plot the list generated in #E</p>
+
+  <p class="codeaannotation">#G We plot a histogram of the number of degrees of the nodes of the graph. Numpy’s unique method (with the return_counts parameter) generates two lists: the nodes’ degrees, and their respective counts.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_07.png" /></p>
+
+    <p class="figureacaption">Figure 2.7. Visualization and statistics of the social graph and its large connected component. (Top) Network visualization using NetworkX default settings. (bottom left) a rank plot of node degree of the entire graph. We see that about 3/4ths of nodes have less than 20 adjacent nodes. (bottom right) A histogram of degree.</p>
+  </div>
+
+  <p class="body">Lastly, we can visualize an adjacency matrix of our graph.</p>
+
+  <p class="pcalibre1"><code class="codea">plt.imshow(nx.to_numpy_matrix(social_graph),&nbsp;aspect='equal',cmap='Blues')</code></p>
+
+  <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_08.png" /></p>
+
+  <p class="body">As with the numerical adjacency matrix, for our undirected graph, this visual adjacency matrix has symmetry down the diagonal.</p>
+
+  <h3 class="head1" id="sigil_toc_id_29">2.3.4&nbsp;&nbsp; Preprocessing: Pytorch Geometric</h3>
+
+  <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_09.png" /></p>
+
+  <p class="body"><span class="charunderline">Preprocessing</span>. For this book, preprocessing consists of adding properties, labels, or other metadata for use in downstream training or inference. For graph data, often we use graph algorithms to calculate the properties of nodes, edges, or sub-graphs.</p>
+
+  <p class="body">An example for nodes is betweenness centrality. If our schema allows, we can calculate and attach such properties to the node entities of our data. To perform this, we’d take the output of the ETL step, say an edge list, and import this into a graph processing framework to calculate betweenness centrality for each node. One this quantity is obtained, we can store it using a dictionary with the node ID as keys.</p>
+
+  <div class="calibre15">
+    <p class="sidebarhead">Inset: Betweenness Centrality</p>
+  </div>
+
+  <p class="sidebarbody">Betweenness Centrality is a measure of the tendency of a node to lie in the shortest paths from source to destination nodes. Given a graph with n nodes. You could determine the shortest path between every unique pair of nodes in this graph. We could take this set of shortest paths and look for the presence of a particular node. If the node appears in all or most of these paths, it has a high betweenness centrality, and would be considered to be highly influential. Conversely, if the node appears few times (or only once) in the set of shortest paths, it would have a low betweenness centrality, and a low influence.</p>
+
+  <div class="calibre16">
+    <p class="sidebarend">&nbsp;</p>
+  </div>
+
+  <p class="body"><span class="charunderline">Loading into GNN Environment</span>. The last step we want to cover is inputting our preprocessed data into our GNN framework of choice. Both Pytorch Geometric and DGL have mechanisms to import custom data into their frameworks. Such methods allow for:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Import from a graph library. For example, both PG and DGL support importing Networkx graph objects.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Import of custom data in graph data structure. Edge list and adjacency lists can be directly imported.</p>
+
+  <p class="body">Pytorch Geometric has a <i class="charitalics">Data</i> class which holds graph data, while DGL has a <i class="charitalics">DGLGraph</i> class.</p>
+
+  <p class="body">After ETL and exploratory analysis, we are ready to load our graph into our GNN framework. For most of this book, we will use Pytorch Geometric (PyG) as our framework. For this section, we will focus on three modules within Pytorch Geometric:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<b class="charbold">Data</b> Module (torch_geometric.data): allows inspection, manipulation, and creation of data objects that are used by the pytorch geometric environment.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<b class="charbold">Utils</b> Module(torch_geometric.utils): Many useful methods. Helpful in this section are methods that allow the quick import and export of graph data.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<b class="charbold">Datasets</b> Module(torch_geometric.datasets): Preloaded datasets, including benchmark datasets, and datasets from influential papers in the field.</p>
+
+  <p class="body">Let’s begin with the <b class="charbold">Datasets</b> module. This module contains datasets that have already been preprocessed, and can readily be used by PyG’s algorithms. When starting with PyG, having these datasets on hand allows experimentation with the algorithms without worrying about creating a data pipeline. As important, by studying the codebase underlying these datasets, we can glean clues on how to create our own custom datasets, as with our social graph.</p>
+
+  <p class="body">That said, let’s continue our exercise with our social graph. At the end of the last section, we had converted raw data into standard formats, and loaded our graph into a graph processing framework. Now, we want to load our data into the PyG environment, from where we can apply the respective algorithms.</p>
+
+  <p class="body">Preprocessing in PyG has a few objectives:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Creating data objects with multiple attributes from the level of nodes and edges, to the subgraph and graph level</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Combining different data sources into one object or set of related objects</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Convert data into objects that can be processed using GPUs</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Allow splitting of training/testing/validation data</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Enable batching of data for training</p>
+
+  <p class="body">These objectives are fulfilled by a hierarchy of classes within the <b class="charbold">Data</b> module:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<b class="charbold">Data Class</b>: Creates graph objects. These objects can have optional built-in and custom-made attributes.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<b class="charbold">Dataset and InMemoryDataset Classes</b>: Basically creates a repeatable data preprocessing pipeline. You can start from raw data files, and add custom filters and transformations to achieve your preprocessed <i class="charitalics">data</i> objects. <i class="charitalics">Dataset</i> objects are larger than memory, while <i class="charitalics">InMemoryDataset</i> objects fit in memory.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<b class="charbold">Dataloader Class</b>: Batches data objects for model training.</p>
+
+  <div class="figure">
+    <p class="figurea"><img alt="" class="pcalibre2" src="../Images/02_10.png" /><br class="pcalibre4" /></p>
+
+    <p class="figureacaption">Figure 2.8. Steps to preprocess data in Pytorch Geometric. From raw files, there are essentially two paths to prep data for ingestion by a PyG algorithm. The first path, shown above, directly creates an iterator of data instances, which is used by the dataloader. The second path mimics the first, but performs this process within the dataloader class.</p>
+  </div>
+
+  <p class="body">As shown above, there are two paths to preprocess data that can be loaded into a training algorithm, one uses dataset class and the other goes without it. The advantages of using the dataset class is that it allows one to save not only the generated datasets, but preserve filtering and transformation details. Dataset objects have the flexibility to be modified to output variations of a dataset. On the other hand, if your custom dataset is simple or generated on the fly, and you have no use for saving the data or process long term, bypassing dataset objects may serve you well.</p>
+
+  <p class="body">So, in summary, when to use these different data-related classes:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;<b class="charbold">Datasets Objects</b> - Pre-processed datasets for benchmarking or testing an algorithm or architecture. (not to be confused with Dataset (no ‘s’ at the end) objects)</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;<b class="charbold">Data Objects into Iterator</b> - Graph objects that are generated on the fly or for whom there is no need to save.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;<b class="charbold">Dataset Object</b> - For graph objects that should be preserved, including the data pipeline, filtering and transformations, input raw data files and output processed data files. (not to be confused with Datasets (with ‘s’ at the end) objects)</p>
+
+  <p class="body">With those basics, let’s preprocess our social graph data. We’ll cover the following cases:</p>
+
+  <p class="listlettercxspfirst">a.&nbsp;&nbsp;&nbsp;&nbsp; Convert into <i class="charitalics">data</i> instance using NetworkX</p>
+
+  <p class="listlettercxspmiddle">b.&nbsp;&nbsp;&nbsp;&nbsp; Convert into data instance using input files</p>
+
+  <p class="listlettercxspmiddle">c.&nbsp;&nbsp;&nbsp;&nbsp; Convert to <i class="charitalics">dataset</i> instance</p>
+
+  <p class="listlettercxsplast">d.&nbsp;&nbsp;&nbsp;&nbsp; Convert <i class="charitalics">data</i> objects for use in <i class="charitalics">dataloader</i> without the <i class="charitalics">dataset</i> class</p>
+
+  <p class="body">First, we’ll import the needed modules from PyG:</p>
+
+  <p class="codealistingcaption">Listing 2.6. Required imports for this section, covering data object creation.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">import&nbsp;torch</code> <code class="codeacxspmiddle">from&nbsp;torch_geometric.data&nbsp;import&nbsp;Data</code> <code class="codeacxspmiddle">from&nbsp;torch_geometric.data&nbsp;import&nbsp;InMemoryDataset</code> <code class="codeacxsplast">from&nbsp;torch_geometric&nbsp;import&nbsp;utils</code></p>
+
+  <p class="body"><b>Case A: Create PyG <i class="charitalics">data</i> object using <i class="charitalics">NetworkX</i> object</b></p>
+
+  <p class="body">In the last sections, we have explored a graph expressed as a NetworkX <i class="charitalics">graph</i> object. PyG’s <i class="charitalics">util</i> module has a method that can directly create a PyG <i class="charitalics">data</i> object from a NetworkX <i class="charitalics">graph</i> object:</p>
+
+  <p class="pcalibre1"><code class="codea">data&nbsp;=&nbsp;utils.from_networkx(social_graph)</code></p>
+
+  <p class="body">The from_networkx method preserves nodes, edges and their attributes, but should be checked to ensure the translation from one module to another went smoothly.</p>
+
+  <p class="body"><b>Case B: Create PyG <i class="charitalics">data</i> object using <i class="charitalics">raw files</i></b></p>
+
+  <p class="body">To have more control over the import of data into PyG, we can begin with raw files, or files from any step in the ETL process. In our social graph case, we can begin with the edge list file created earlier.</p>
+
+  <p class="codealistingcaption">Listing 2.7. Import the social graph into PyG starting with an edge file.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">social_graph&nbsp;=&nbsp;nx.read_edgelist('edge_list2.txt')&nbsp;&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">list_of_nodes&nbsp;=&nbsp;list(set(list(social_graph)))&nbsp;#B</code> <code class="codeacxspmiddle">indices_of_nodes&nbsp;=&nbsp;[list_of_nodes.index(x)&nbsp;for&nbsp;x&nbsp;in&nbsp;list_of_nodes]&nbsp;&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">node_to_index&nbsp;=&nbsp;dict(zip(list_of_nodes,&nbsp;indices_of_nodes))&nbsp;&nbsp;#D</code> <code class="codeacxspmiddle">index_to_node&nbsp;=&nbsp;dict(zip(indices_of_nodes,&nbsp;list_of_nodes))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">list_edges&nbsp;=&nbsp;nx.convert.to_edgelist(social_graph)&nbsp;&nbsp;#E</code> <code class="codeacxspmiddle">list_edges&nbsp;=&nbsp;list(list_edges)</code> <code class="codeacxspmiddle">named_edge_list_0&nbsp;=&nbsp;[x[0]&nbsp;for&nbsp;x&nbsp;in&nbsp;list_edges]&nbsp;#F</code> <code class="codeacxspmiddle">named_edge_list_1&nbsp;=&nbsp;[x[1]&nbsp;for&nbsp;x&nbsp;in&nbsp;list_edges]</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">indexed_edge_list_0&nbsp;=&nbsp;[node_to_index[x]&nbsp;for&nbsp;x&nbsp;in&nbsp;named_edge_list_0]&nbsp;&nbsp;#G</code> <code class="codeacxspmiddle">indexed_edge_list_1&nbsp;=&nbsp;[node_to_index[x]&nbsp;for&nbsp;x&nbsp;in&nbsp;named_edge_list_1]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">x&nbsp;=&nbsp;torch.FloatTensor([[1]&nbsp;for&nbsp;x&nbsp;in&nbsp;range(len(list_of_nodes))])#&nbsp;&nbsp;[[]&nbsp;for&nbsp;x&nbsp;in&nbsp;xrange(n)]&nbsp;&nbsp;#H</code> <code class="codeacxspmiddle">y&nbsp;=&nbsp;torch.FloatTensor([1]*974&nbsp;+&nbsp;[0]*973)&nbsp;#I</code> <code class="codeacxspmiddle">y&nbsp;=&nbsp;y.long()&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">edge_index&nbsp;=&nbsp;torch.tensor([indexed_edge_list_0,&nbsp;indexed_edge_list_1])&nbsp;&nbsp;#J</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">train_mask&nbsp;=&nbsp;torch.zeros(len(list_of_nodes),&nbsp;dtype=torch.uint8)&nbsp;#K</code> <code class="codeacxspmiddle">train_mask[:int(0.8&nbsp;*&nbsp;len(list_of_nodes))]&nbsp;=&nbsp;1&nbsp;#train&nbsp;only&nbsp;on&nbsp;the&nbsp;80%&nbsp;nodes</code> <code class="codeacxspmiddle">test_mask&nbsp;=&nbsp;torch.zeros(len(list_of_nodes),&nbsp;dtype=torch.uint8)&nbsp;#test&nbsp;on&nbsp;20&nbsp;%&nbsp;nodes&nbsp;</code> <code class="codeacxspmiddle">test_mask[-&nbsp;int(0.2&nbsp;*&nbsp;len(list_of_nodes)):]&nbsp;=&nbsp;1</code> <code class="codeacxspmiddle">train_mask&nbsp;=&nbsp;train_mask.bool()</code> <code class="codeacxspmiddle">test_mask&nbsp;=&nbsp;test_mask.bool()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxsplast">data&nbsp;=&nbsp;Data(x=x,&nbsp;y=y,&nbsp;edge_index=edge_index,&nbsp;train_mask=train_mask,&nbsp;test_mask=test_mask)&nbsp;&nbsp;#L</code></p>
+
+  <p class="codeaannotation">#A Load our edgelist text file into a NetworkX graph object.</p>
+
+  <p class="codeaannotation">#B Create a list of nodes from our NetworkX graph.</p>
+
+  <p class="codeaannotation">#C Creates a list of the indices of our nodes.</p>
+
+  <p class="codeaannotation">#D These two lines are dictionaries that convert a node name to its index, and vice versa.</p>
+
+  <p class="codeaannotation">#E Creates a NetworkX edgelist object</p>
+
+  <p class="codeaannotation">#F These two lines take the edge list object and create two lists: one of source nodes for the edges, and a list of the respective destination nodes.</p>
+
+  <p class="codeaannotation">#G Creating indexed versions of the source and destination node lists from #F</p>
+
+  <p class="codeaannotation">#H <i class="charitalics">x</i> is our feature/attribute set for our nodes, as a pytorch tensor object. In this simple example I have given all nodes the same single feature: 1.</p>
+
+  <p class="codeaannotation">#I <i class="charitalics">y</i> is our set of labels, as a pytorch tensor object. Two labels in our dataset: 0, and 1.</p>
+
+  <p class="codeaannotation">#J Edge index we have been transforming is finally represented here as a pytorch tensor.</p>
+
+  <p class="codeaannotation">#K In these lines we create the mechanisms to set train, test, validation sets for the <i class="charitalics">dataset</i> object. This will be important in later chapters.</p>
+
+  <p class="codeaannotation">#L We combine our transformations of the previous lines into the <i class="charitalics">data</i> object.</p>
+
+  <p class="body">We have created a <i class="charitalics">data</i> object from an edgelist file. Such an object can be inspected with PyG commands, though the set of commands is limited compared to a graph processing library.</p>
+
+  <p class="body">Such a <i class="charitalics">data</i> object can also be further prepared so that it can be accessed by a dataloader, which we will cover below.</p>
+
+  <p class="body"><b>Case C: Create PyG <i class="charitalics">dataset</i> object using custom class and input files</b></p>
+
+  <p class="body">If the listing above is suitable for my purposes, and I plan to use it repeatedly to call up graph data, a preferable option would be to create a permanent class that would include methods for the needed data pipeline. This is what the <i class="charitalics">dataset</i> class does. And to use it will not take much more effort, since we have done the work above.</p>
+
+  <p class="body">Slightly modifying the script in listing 7, we can directly use it to create a <i class="charitalics">dataset</i> object. In this example, we name our <i class="charitalics">dataset</i> “MyOwnDataset”, and have it inherit from <i class="charitalics">InMemoryDataset</i>, since our social graph is small enough to sit in memory. As discussed above, for larger graphs, data can be accessed from disc by having the <i class="charitalics">dataset</i> object inherit from <i class="charitalics">Dataset</i> instead of <i class="charitalics">InMemoryDataset</i>.</p>
+
+  <p class="codealistingcaption">Listing 2.8. Class to create a dataset object.</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">class&nbsp;MyOwnDataset(InMemoryDataset):</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;__init__(self,&nbsp;root,&nbsp;transform=None,&nbsp;pre_transform=None):&nbsp;&nbsp;#A</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;super(MyOwnDataset,&nbsp;self).__init__(root,&nbsp;transform,&nbsp;pre_transform)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;self.data,&nbsp;self.slices&nbsp;=&nbsp;torch.load(self.processed_paths[0])</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;@property</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;raw_file_names(self):&nbsp;#B</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;[]</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;@property</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;processed_file_names(self):&nbsp;#C</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return&nbsp;['../test.dataset']</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;download(self):&nbsp;#D</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;Download&nbsp;to&nbsp;`self.raw_dir`.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;pass</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;def&nbsp;process(self):&nbsp;#E</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;#&nbsp;Read&nbsp;data&nbsp;into&nbsp;`Data`&nbsp;list.</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_list&nbsp;=&nbsp;[]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eg&nbsp;=&nbsp;nx.read_edgelist('edge_list2.txt')&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_of_nodes&nbsp;=&nbsp;list(set(list(eg)))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indices_of_nodes&nbsp;=&nbsp;[list_of_nodes.index(x)&nbsp;for&nbsp;x&nbsp;in&nbsp;list_of_nodes]</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;node_to_index&nbsp;=&nbsp;dict(zip(list_of_nodes,&nbsp;indices_of_nodes))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;index_to_node&nbsp;=&nbsp;dict(zip(indices_of_nodes,&nbsp;list_of_nodes))</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_edges&nbsp;=&nbsp;nx.convert.to_edgelist(eg)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;list_edges&nbsp;=&nbsp;list(list_edges)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;named_edge_list_0&nbsp;=&nbsp;[x[0]&nbsp;for&nbsp;x&nbsp;in&nbsp;list_edges]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;named_edge_list_1&nbsp;=&nbsp;[x[1]&nbsp;for&nbsp;x&nbsp;in&nbsp;list_edges]</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indexed_edge_list_0&nbsp;=&nbsp;[node_to_index[x]&nbsp;for&nbsp;x&nbsp;in&nbsp;named_edge_list_0]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;indexed_edge_list_1&nbsp;=&nbsp;[node_to_index[x]&nbsp;for&nbsp;x&nbsp;in&nbsp;named_edge_list_1]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;x&nbsp;=&nbsp;torch.FloatTensor([[1]&nbsp;for&nbsp;x&nbsp;in&nbsp;range(len(list_of_nodes))])#&nbsp;&nbsp;[[]&nbsp;for&nbsp;x&nbsp;in&nbsp;xrange(n)]</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;=&nbsp;torch.FloatTensor([1]*974&nbsp;+&nbsp;[0]*973)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;y&nbsp;=&nbsp;y.long()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;edge_index&nbsp;=&nbsp;torch.tensor([indexed_edge_list_0,&nbsp;indexed_edge_list_1])</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;train_mask&nbsp;=&nbsp;torch.zeros(len(list_of_nodes),&nbsp;dtype=torch.uint8)</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;train_mask[:int(0.8&nbsp;*&nbsp;len(list_of_nodes))]&nbsp;=&nbsp;1&nbsp;#train&nbsp;only&nbsp;on&nbsp;the&nbsp;80%&nbsp;nodes</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_mask&nbsp;=&nbsp;torch.zeros(len(list_of_nodes),&nbsp;dtype=torch.uint8)&nbsp;#test&nbsp;on&nbsp;20&nbsp;%&nbsp;nodes&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_mask[-&nbsp;int(0.2&nbsp;*&nbsp;len(list_of_nodes)):]&nbsp;=&nbsp;1</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;train_mask&nbsp;=&nbsp;train_mask.bool()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;test_mask&nbsp;=&nbsp;test_mask.bool()</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_example&nbsp;=&nbsp;Data(x=x,&nbsp;y=y,&nbsp;edge_index=edge_index,&nbsp;train_mask=train_mask,&nbsp;test_mask=test_mask)&nbsp;#F</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data_list.append(data_example)&nbsp;#G</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</code> <code class="codeacxspmiddle">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;data,&nbsp;slices&nbsp;=&nbsp;self.collate(data_list)&nbsp;&nbsp;#H</code> <code class="codeacxsplast">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;torch.save((data,&nbsp;slices),&nbsp;self.processed_paths[0])&nbsp;&nbsp;#I</code></p>
+
+  <p class="codeaannotation">#A Initialize the dataset class. This class inherits from the <i class="charitalics">InMemoryDataset</i> class. This init method creates <i class="charitalics">data</i> and <i class="charitalics">slices</i> objects, to be updated in the <i class="charitalics">process</i> method.</p>
+
+  <p class="codeaannotation">#B An optional method that specifies the location of the raw files required for processing. For our more rudimentary example, we don’t make use of this, but I have included it for completeness. In later chapters we’ll make use of this as our dataset become a bit more complex.</p>
+
+  <p class="codeaannotation">#C This method saves our generated dataset to disk.</p>
+
+  <p class="codeaannotation">#D This method allows raw data to be downloaded to a local disk.</p>
+
+  <p class="codeaannotation">#E The <i class="charitalics">process</i> method contains the preprocessing steps to create our data object, and then makes additional steps to partition our data for loading.</p>
+
+  <p class="codeaannotation">#F through #H In this first simple use of a dataset class, we use a small dataset. In practice, we’ll process much larger data sets, and wouldn’t do this all at once. We’d create examples of our data, then append them to a list. Since for our purposes (training on this data) pulling from a list object would be slow, we take this iterable and use <i class="charitalics">collate</i> to combine the data examples into one <i class="charitalics">data</i> object. The <i class="charitalics">collate</i> method also creates a dictionary named <i class="charitalics">slices</i> that is used to pull single samples from this <i class="charitalics">data</i> object.</p>
+
+  <p class="codeaannotation">#I Save our pre-processed data to disk.</p>
+
+  <p class="body"><b>Case D: Create PyG <i class="charitalics">data</i> objects for use in <i class="charitalics">dataloader</i> without use of a <i class="charitalics">dataset</i> object</b></p>
+
+  <p class="body">Lastly, we explain how to bypass <i class="charitalics">dataset</i> object creation and have the <i class="charitalics">dataloader</i> work directly with your <i class="charitalics">data</i> object. In the PyG documentation there is a section that outlines how to do this:</p>
+
+  <p class="body">Just as in regular PyTorch, you do not have to use datasets, e.g., when you want to create synthetic data on the fly without saving them explicitly to disk. In this case, simply pass a regular python list holding <a class="pcalibre8" href="https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.Data"><span><code class="codechar">torch_geometric.data.Data</code></span></a> objects and pass them to <a class="pcalibre8" href="https://pytorch-geometric.readthedocs.io/en/latest/modules/data.html#torch_geometric.data.DataLoader"><span><code class="codechar">torch_geometric.data.DataLoader</code></span></a>:</p>
+
+  <p class="pcalibre1"><code class="codeacxspfirst">from&nbsp;torch_geometric.data&nbsp;import&nbsp;Data,&nbsp;DataLoader</code> <code class="codeacxspmiddle">&nbsp;</code> <code class="codeacxspmiddle">data_list&nbsp;=&nbsp;[Data(...),&nbsp;...,&nbsp;Data(...)]</code> <code class="codeacxsplast">loader&nbsp;=&nbsp;DataLoader(data_list,&nbsp;batch_size=32)</code></p>
+
+  <h2 class="head" id="sigil_toc_id_30">2.4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Summary</h2>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp;&nbsp;Planning for a graph learning project involves more steps than in traditional machine learning projects.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;One important additional step is creating the data model and schema for our data.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;There are many reference schemas and datasets which span industry verticals, use cases, and GNN task.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;There are many encoding and serialization options for keeping data in memory or in raw files.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;The data pipeline up to model training consists of taking raw data, transforming it, performing EDA, and preprocessing.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;Adjacency lists, edge lists and other graph data structures can be generated from raw data.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp;&nbsp;Pytorch Geometric, and GNN libraries in general have several ways to pre-process and load training data.</p>
+
+  <h2 class="head" id="sigil_toc_id_31">2.5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; References</h2>
+
+  <h4 class="head2 sigil_not_in_toc">Graph Data Models and Schemas</h4>
+
+  <p class="body">Panos Alexopoulos, Semantic Modeling for Data, O'Reilly Media, 2020. Chapters 1-5.</p>
+
+  <p class="body"><a class="pcalibre8" href="https://www.amazon.com/Dave-Bechberger/e/B08LCPKZ16/ref=dp_byline_cont_book_1">Dave Bechberger</a>, <a class="pcalibre8" href="https://www.amazon.com/Josh-Perryman/e/B08LHC6MWT/ref=dp_byline_cont_book_2">Josh Perryman</a>, Graph Databases in Action, Manning Publications, 2020. Chapter 2.</p>
+
+  <p class="body"><a class="pcalibre8" href="https://www.amazon.com/Denise-Gosnell/e/B087DSH8SB?ref=sr_ntt_srch_lnk_1&amp;qid=1620533050&amp;sr=1-1">Denise Gosnell</a> and Matthias Broecheler, The Practitioners Guide to Graph Data, O'Reilly Media, 2020. Chapter .</p>
+
+  <p class="body">Alessandro Nego, Graph Powered Machine Learning, Manning Publications, 2021. Chapter 2.</p>
+
+  <h4 class="head2 sigil_not_in_toc">Entity-Relationship Methods for Schema Creation</h4>
+
+  <p class="body">Richard Barker, Case*Method: Entity Relationship Modelling, Addison-Wesley, 1990.</p>
+
+  <p class="body">Jaroslav Pokorný. 2016. Conceptual and Database Modelling of Graph Databases. In Proceedings of the 20th International Database Engineering &amp; Applications Symposium (IDEAS '16). Association for Computing Machinery, New York, NY, USA, 370–377.</p>
+
+  <p class="body">Pokorný, Jaroslav &amp; Kovačič, Jiří. (2017). Integrity constraints in graph databases. Procedia Computer Science. 109. 975-981. 10.1016/j.procs.2017.05.456.</p>
+</body>
+</html>

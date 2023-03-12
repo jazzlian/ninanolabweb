@@ -1,0 +1,1437 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Unknown</title>
+  <link href="../Styles/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/page_styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="calibre">
+  <h1 class="tochead">Appendix A.&nbsp;&nbsp;Discovering Graphs</h1>
+
+  <p class="colisthead">This appendix covers</p>
+
+  <p class="colistbulletcxspfirst">·&nbsp;&nbsp; The elements of graph and network theory relevant to GNNs</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp; Understanding common graph representations, data models, and data structures</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp; Introducing the graph ecosystem, including databases, graph processing systems, and libraries</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp; Understanding graph algorithms and their relevance to graph neural networks</p>
+
+  <p class="colistbulletcxsplast">·&nbsp;&nbsp; Guidelines on reading graph academic literature</p>
+
+  <p class="body">In this chapter, we delve into the theory and implementations of graphs that are most pertinent to using the GNNs covered in the rest of the book. For theory, we establish basic definitions, concepts and nomenclature. We then survey how the theory is realized in real systems. This foundation is not only necessary to follow the advanced materials in subsequent chapters, but in building the insights that make architecting custom systems and troubleshooting errors easier.</p>
+
+  <p class="body">In addition, in a highly evolving field, being able to absorb new academic and technical literature is a critical asset in getting up to speed quickly on the state of the art. This chapter also aims to provide the basic background to be able to pick up the essence of relevant published papers. Advanced readers who are familiar with graphs can skip to chapter 4 on embeddings, or chapter 5, on graph convolutional networks.</p>
+
+  <p class="body">Throughout this chapter and the next, we’ll use a running example of a social networking dataset. This is a dataset of over 1,900 professionals and their industry relationships. The figure below visualizes this graph (generated using Gephi). As we progress in chapter 2 and 3, we’ll learn how to describe this network and its elements using the language of graphs, explore this data using tools in the graph ecosystem, visualize this graph in different ways, and even learn how to generate it from raw data.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre5" id="uOcWIOttvcdJTup6izywZd9" src="../Images/Aimage001.png" /></p>
+
+  <p class="figureacaption">Figure A.1. A stylized visualization of the example social network, consisting of industry professionals and their relationships. The nodes (dots) are the professionals, and the edges (lines) denote a relationship between people. In this visualization, created using Graphistry, in the left image, we see an edge diverge out of the frame in the bottom right. The right image is the entire graph, showing the cut off edges and nodes. This graph will be used to illustrate concepts in chapters 2 and 3.</p>
+
+  <h2 class="head" id="sigil_toc_id_59">A.1&nbsp;&nbsp; Graph Fundamentals</h2>
+
+  <p class="body">A graph is a data type which consists of two main elements: <b class="charbold">edges</b> and <b class="charbold">nodes</b>. Edges represent relationships or links and are usually illustrated as lines or arrows. Nodes are endpoints of edges and are usually visualized as points.</p>
+
+  <p class="body">Graphs can be classified as <b class="charbold">directed</b>, meaning that the edges have a distinct direction between a node and an edge; such an edge is visualized as an arrow. In such an arrangement, the node of origin is called the <b class="charbold">source</b> node, and the second node is deemed the <b class="charbold">destination</b> node. Or graphs can be <b class="charbold">undirected</b>, where the edge has no direction<b class="charbold">;</b> such an edge is depicted as a line, without an arrow. Edges can also be self-loops; for such an edge the same node is both the source and destination node. Self-loops can be directed or undirected. You can see some of these basic elements in figure A.2.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre5" id="uawNxsZRTd28ri8KrWnavr6" src="../Images/Aimage002.png" /></p>
+
+  <p class="figureacaption">Figure A.2. Two basic graphs, undirected (left) and directed (right). Circles denote nodes (or vertices) and lines/arrows denote edges.</p>
+
+  <p class="body">In our social graph from figure 1, people are represented by nodes, and their relationships are represented by edges. In our subsequent examples, I have chosen to portray our social network as undirected, but we could have represented it as directed. For instance, when two people have a professional relationship, such an association can be seen as symmetric (he knows her; she knows him); this relationship would be undirected. However, we could imagine a reason to make our representation directed. For instance a relationship could be hierarchical: if a person has a higher status or manages another person, such a relationship could be modeled as a directed edge which starts at a higher status individual and ends at the person of lower status. Another instance could be who reached out to whom in a social network. In networks such as Facebook, and LinkedIn, for connections to be made, someone has to initialize them. A directed edge could flow from the person who requests an online connection to the ‘friended’ person.</p>
+
+  <p class="body">Let’s start with some definitions, and then see how the concepts work.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Key Terms</h4>
+
+  <p class="body">Graph - A data type consisting of nodes and edges.</p>
+
+  <p class="body">Node - Also called a vertex or point, a node is an endpoint in a graph. They are connected by edges.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre5" id="utwqFAJPnM3ppOeNveWTw2A" src="../Images/Aimage003.jpg" /></p>
+
+  <p class="figureacaption">Figure A.3 Illustrations of graph concepts.</p>
+
+  <p class="body">Edge - Also called a link or relationship, an edge connects nodes. They can be directed or undirected.</p>
+
+  <p class="body">Directed Edge - A directed edge, usually represented by an arrow, denotes a one-way relationship or flow from one node to another.</p>
+
+  <p class="body">Undirected Edge - An undirected edge has no direction. In such an edge a relationship or flow can go in either direction.</p>
+
+  <p class="body">Adjacent - The property that two nodes are directly connected via an edge. Such nodes are said to be joined.</p>
+
+  <p class="body">Incidence - The property that a node and an edge are directly connected</p>
+
+  <p class="body">Self Loop - An edge that connects a node to itself. Such edges can be directed or undirected.</p>
+
+  <p class="body">Parallel Edges - Multiple edges that connect the same two nodes.</p>
+
+  <p class="body">Weights - One important attribute of an edge is a weight, a numerical value assigned an edge. Such an attribute can describe the intensity of the connection, or some other real world value, such as length (if a graph modeled cities on a road map).</p>
+
+  <p class="body">These concepts give us the tools to create the simplest graphs. With a simple graph created from these concepts, we could derive network properties explained below.</p>
+
+  <p class="body">Though real world graphs have more complex structures, for different purposes it is often helpful to use simple graphs to represent them. For example, though our social graph data contains node features (covered in section A.1.2), to create the visualization in figure A.1, I used only node and edge information.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Inset: Two types of models</h4>
+
+  <p class="body">In this book, we’ll use the word <span>model</span> in two ways, which should be clear given the context. Both uses can be expressed as nouns or verbs.</p>
+
+  <p class="body">1. Machine Learning Model. Data scientists and machine learning engineers are familiar with the concept of a statistical or machine learning model, which is of course used to discuss GNNs and other models. I’ll frequently use <span>machine learning model,</span> <span>statistical model</span>, or <span>GNN model</span> to refer to this usage of <span>model</span>.</p>
+
+  <p class="body">2. Graph Data Model. In the field of networks and graphs, we use <span>model</span> to describe the way an abstract or concrete concept can be expressed using a graph structure. This follows the dictionary definition: “a usually miniature representation of something.” In this book and in this chapter especially, we talk about how graphs of different types can be used to model or represent real world systems or concepts: road maps, social networks, molecules, etc. For this usage, I’ll frequently, but not always, use <span>graph model,</span> <span>graph data model</span>, or <span>data model</span>.</p>
+
+  <h3 class="head1" id="sigil_toc_id_60">A.1.1&nbsp;&nbsp; Graph Properties</h3>
+
+  <p class="body">Below, we discuss some of the more important properties of graphs. Many of the software and databases in the graph ecosystem (described in section A.3) should have the capability to compute some or all of these properties.</p>
+
+  <p class="body"><b class="charbold">Size/Order</b>. We are often interested in the overall number of nodes and edges in a graph. Formal names for these properties are <b class="charbold">size</b> (the number of edges), and <b class="charbold">order</b> (the number of nodes.</p>
+
+  <p class="body">In our social graph, the number of nodes is 1933, and the number of edges is 12239.</p>
+
+  <p class="body"><b class="charbold">Degree Distribution</b>. A degree distribution is simply the distribution of the degrees of all the nodes in a graph. This is often expressed as a histogram.</p>
+
+  <p class="body">The <b class="charbold">degree</b> of a node is the count of its adjacent nodes in an undirected graph. For directed graphs, there are two types of degrees a node can have: an <b class="charbold">in-degree</b> for edges directed to the node, and an <b class="charbold">out-degree</b>, for edges directed outward from the node. Self loops often are given a count of 2 when calculating degree. If edges are given weights, a <b class="charbold">weighted degree</b> can also account for these weights.</p>
+
+  <p class="figurea"><img alt="" class="calibre2" id="uO2UFTHxHX4K5PNkswmUPO8" src="../Images/Aimage004.png" /></p>
+
+  <p class="figureacaption">Figure A.4 A histogram showing the degree distribution of our social graph</p>
+
+  <p class="body">Related to the concept of a degree is that of a node’s neighborhood. For a given node, it’s adjacent nodes are also called its <b class="charbold">neighbors</b>. The set of all its neighbors is called its <b class="charbold">neighborhood</b>. The number of vertices in a node’s neighborhood is equal to that node’s degree.</p>
+
+  <p class="body">For our social graph, the figure below expresses the degree distribution as a histogram.</p>
+
+  <p class="body"><b class="charbold">Connectedness</b>. A graph is a set of nodes and edges. In general, however, there is no condition that says for an undirected graph every node can be reached by any other node within the same network. It can happen that within the same graph, sets of nodes are utterly separated from one another; no edge links them.</p>
+
+  <p class="body">An undirected graph where any node can reach any other node is called a <b class="charbold">connected graph</b>. It may seem obvious that all graphs must be connected, but this is often not the case. Graphs that have discontinuities (where a node or set of nodes are unlinked to the rest of the graph) are <b class="charbold">disconnected graphs</b>. Another way to think about this is that in a connected graph, there is a path or walk whereby every node can reach every other node in the graph. For a disconnected graph, each disconnected piece is called a <b class="charbold">component</b>. For a directed graph, where it is not always possible to reach any node from any other node, a <b class="charbold">strongly connected</b> graph is one where this is the case.</p>
+
+  <p class="body">As an example, the human population of Earth can be considered a disconnected social graph, if we consider individual humans as nodes, and our communication channels as edges. While most of the population can be said to be connected by modern communication channels, there are hermits who chose to live ‘off the grid’, and isolated hunter-gatherer tribes that reject contact with the rest of the world. In other use cases, it is often the case that there are discontinuities in the network and its data.</p>
+
+  <p class="body">Examining our social graph, we see it is disconnected with a large component that contains most of the nodes. Figures A.5 and A.6 show the entire graph, and the large connected component.</p>
+
+  <p class="body">If we focus on the large connected component, we find that the size is smaller than the entire graph. The number of nodes is 1698 and the number of edges is 12222.</p>
+
+  <p class="figurea"><img alt="" class="calibre9" id="image9.png" src="../Images/Aimage005.png" /></p>
+
+  <p class="figureacaption">Figure A.5. Our entire social graph, which is disconnected. We observe a large connected component at the center, surrounded by disconnected nodes and small components consisting of 2-3 nodes. NetworkX was used to generate this figure.</p>
+
+  <p class="figurea"><img alt="" class="calibre9" id="image19.png" src="../Images/Aimage006.png" /></p>
+
+  <p class="figureacaption">Figure A.6. The connected component of the social graph. NetworkX was used to generate this figure. Compare this to figure 1, which is the same graph visualized using Graphistry. Differences in the parameters used in the algorithms as well as visual features account for the distinctiveness of the two figures.</p>
+
+  <p class="body"><b class="charbold">Graph Traversals</b>. In a graph, we can imagine traveling from a given node <span>a</span> to a second node <span>b</span>. Such a trip may require passing only one edge, or it could be a trip where we pass several edges and nodes. Such a trip is called a <b class="charbold">traversal</b>, or a <b class="charbold">walk</b>, among other names.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre5" id="uRbtQipi62QSRuayNsE8YrG" src="../Images/Aimage007.jpg" /></p>
+
+  <p class="figureacaption">Figure A.7 Different types of walks.</p>
+
+  <p class="body">A walk can be <b class="charbold">open</b> or <b class="charbold">closed</b>. Open walks have an ending node that is different from the starting node. A closed walk starts and ends with the same node.</p>
+
+  <p class="body">A <b class="charbold">path</b> is a walk where no node is encountered more than once. A <b class="charbold">cycle</b> is a closed path (with the exception of the starting node, which is also the ending node, no node is encountered twice).</p>
+
+  <p class="body">A <b class="charbold">trail</b> is a walk where no edge is encountered more than once. A <b class="charbold">circuit</b> is a closed trail.</p>
+
+  <p class="body">Imagine that for a given pair of nodes, we could find walks and paths between them. Of the paths we could navigate, there will be a shortest one (or maybe more than one path will tie for shortest). The length of this path is called the <b class="charbold">distance</b> or <b class="charbold">shortest path length</b>.</p>
+
+  <p class="body">If we zoom out and examine the entire graph and its node pairs, could list out all of the shortest path lengths. One of these distances will be the longest (or more than one may tie for longest). The largest distance is the <b class="charbold">diameter</b> of the graph. The diameter is often used to characterize and compare graphs.</p>
+
+  <p class="body">If we take our list of distances and average them, we’ll generate the <b class="charbold">average path length</b> of the graph. Average path length is another important descriptive measure for networks. Both average path length and diameter give an indication of the density of the network; higher values for these metrics imply more connections, which in turn allow a greater variety of paths, both longer and shorter.</p>
+
+  <p class="body">For our social graph, the diameter of our largest component is 10. Diameter is undefined for the entire graph, which is unconnected.</p>
+
+  <p class="body"><b class="charbold">Subgraphs.</b> Consider a graph of nodes and edges. A subgraph is a subset of these nodes and edges. Subgraphs are of importance when these ‘neighborhoods’ in the graph have properties that are distinct from other locations in the graph. Subgraphs occur in connected and disconnected graphs. A component of a disconnected graph is a subgraph.</p>
+
+  <p class="body"><b class="charbold">Clustering Coefficient</b>. A node may have a high degree, but how well connected is its neighborhood? We can imagine an apartment building where everyone knows the landlord, but no one knows their neighbors (what a sad place!). The landlord would have a clustering coefficient of zero. At the other extreme, we could have an apartment where the landlord knows all the tenants, and every tenant knows every other tenant. Then, the landlord would have a clustering coefficient of 1 (such a situation, where all the nodes in a network are connected to every other node is called a <b class="charbold">complete</b> graph). Of course, there will be intermediate cases where only some of the tenants know one another, these situations will have coefficients between 0 and 1.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Inset: The dimension of a graph</h4>
+
+  <p class="body">In machine learning and engineering in general, dimension is used in several ways. This term can be confusing as a result.</p>
+
+  <p class="body">Even within the topic of graphs, the term is used in a few ways in articles and academic literature. However, the term is often not explicitly defined or clarified. Thus, below, we attempt to deconstruct the meaning of this term.</p>
+
+  <p class="listnumberedcxspfirst">1.&nbsp;&nbsp; Size/Shape of Datasets: In this case, the term dimension refers to the number of features in a dataset. Low dimensional datasets are implied to be small enough to visualize (i.e., 2 or 3 features), or small enough to be computationally viable.</p>
+
+  <p class="listnumberedcxsplast">2.&nbsp;&nbsp; Mathematical Definitions: In math, the dimension of a graph has more strict definitions. In linear algebra, graphs can be represented in vector spaces, and the dimension is an attribute of these vector spaces [ref].</p>
+
+  <p class="listnumberedcxsplast">3.&nbsp;&nbsp; Geometric definition: There is also a geometric definition of a graph’s dimension. This definition relates a graph’s dimension to the least number of Euclidean dimensions that will allow a graph’s edges to be of unit size 1 [ref].</p>
+
+  <h3 class="head1" id="sigil_toc_id_61">A.1.2&nbsp;&nbsp; Characteristics of Nodes and Vertices</h3>
+
+  <p class="body">In the most basic type of graph, we have a collection of nodes and edges, without parallel edges or self loops. For this basic graph, we have a geometric structure only.</p>
+
+  <p class="body">While even this basic graph structure is useful, for real world problems and use cases, often more complexity is desired to properly model a situation. To this we can:</p>
+
+  <p class="listnumberedcxspfirst">1.&nbsp;&nbsp; Reduce the geometric restrictions we established above. Explicitly, these restrictions are:</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;Each edge is incident to two nodes, one on each end of the edge</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;Between two nodes, only one edge can exist</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;No self loops</p>
+
+  <p class="listbody">With these restrictions relaxed, we are able to more accurately model more situations at the cost of more analytic complexity.</p>
+
+  <p class="listnumberedcxsplast">2.&nbsp;&nbsp; Add properties to our graph elements (nodes, edges, the graph itself). A property is descriptive data tied to a specific element. Depending on the context, terms like <span>labels</span>, <span>attributes</span>, <span>decorators</span> are used in place of <span>property</span>.</p>
+
+  <p class="body">In this section and the next, we’ll discuss the characteristics and variants of nodes, edges and entire graphs.</p>
+
+  <h3 class="head1" id="sigil_toc_id_62">A.1.3&nbsp;&nbsp; Node Properties</h3>
+
+  <p class="body"><span>Names, IDs and Unique Identifiers</span>. A name or an ID is a unique identifier. Many graph systems will either assign an identifier such as an index to a node, or allow the user to specify an ID. In our social graph, each node has an unique alphanumeric ID.</p>
+
+  <p class="body"><span>Labels</span>. Within a graph, nodes may fall within certain classes or groups. For example, a graph modeling a social network may group people by their country of residence (‘USA’, ‘PRC’, ‘Nigeria’), or their level of activity within the network (‘frequent user’, ‘occasional user’). In this way, in contrast to unique identifiers explained above, we’d expect several nodes to share the same label.</p>
+
+  <p class="body"><span>Properties/Attributes/Features</span>. Properties that aren’t IDs or labels are usually called properties, attributes or features. While such properties don’t have to be unique to a node, they don’t describe a node class, either. Properties can be structure-based, or based on non-structural qualities.</p>
+
+  <p class="body"><span>Structural vs Non-Structural Properties</span></p>
+
+  <p class="body"><span>Structural/Topological Properties</span>. Intrinsic characteristics of a node are related to the node's topological properties and the geometrical structure of the graph in proximity to the node. Two examples are:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; a node’s degree, which we learned above was the number of incident edges it has.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; A node’s <b class="charbold">centrality</b>, which is a measure that indicates how important a node is relative to the nodes in its neighborhood.</p>
+
+  <p class="body">By employing graph analytical methods (described in Section 2.4) characteristics of nodes, relative to their local environment, can be gleaned. These can be incorporated into certain GNN problems as features. Node embeddings such as those generated by transductive methods (chapter 3) are another example of a property based on the graph’s local structure.</p>
+
+  <p class="body"><span>Non-Structural Properties</span>. These are often based upon real-world attributes. Taking the example of our social graph, we have two categorical properties: a person’s job category (e.g., scientist, marketer, administrator), and the type of company they work for (e.g., Medical, Transportation, Consulting). The examples above are categorical attributes. It is possible to have numerical attributes, such as <span>years of experience</span>, or <span>average number of direct reports</span> in all current and past roles.</p>
+
+  <h3 class="head1" id="sigil_toc_id_63">A.1.4&nbsp;&nbsp; Edge Properties</h3>
+
+  <p class="body">Properties for edges mirror those for edges. The most often used and important edge property is that of the edge weight, described earlier.</p>
+
+  <h3 class="head1" id="sigil_toc_id_64">A.1.5&nbsp;&nbsp; Edge Variations</h3>
+
+  <p class="body">Unlike nodes, there are a few geometric variants of edges that can be used to make a graph model more descriptive.</p>
+
+  <p class="body"><span>Parallel Edges</span>. Meaning more than one edge between two nodes u and v.</p>
+
+  <p class="body"><span>Directionality</span>. Edges can have no direction or one direction. Since nodes u and v can have parallel edges connecting them, it is possible to have two edges with opposite directionality, or multiple edges with some combination of directions or undirectionality.</p>
+
+  <p class="figurea"><img alt="" class="calibre2" id="image8.png" src="../Images/Aimage008.png" /></p>
+
+  <p class="figureacaption">Figure A.8. From top to bottom, between two nodes, an example of an undirected edge, a directed edge from left to right, a directed edge from right to left, and two directed edges traversing both directions (bi-directionality).</p>
+
+  <p class="body">There is also a concept of <b class="charbold">bi-directionality</b>, the case where between two nodes, both directions are represented in the respective edges. In practice, this term is used in a few ways:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; To describe non-directed edges, or simple edges.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; To describe two edges that have opposite directions (shown above)</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; To describe an edge that has a direction at each end. This usage exists in the literature is seldom encountered in practical systems at this writing.</p>
+
+  <p class="body"><span>Self Loops</span>. Discussed above, a self-loop, or loop, is the case where both ends of an edge connect to the same node. Where would one encounter a self-loop in the real world? For our social graph, let’s keep all the nodes, and consider a case where an edge would be an email sent from one professional to another. Sometimes people send emails to themselves (for reminders). For such a scenario, an email to oneself could be modeled as a self-loop.</p>
+
+  <h3 class="head1" id="sigil_toc_id_65">A.1.6&nbsp;&nbsp; Categories of Graphs</h3>
+
+  <p class="body">Different categories of graphs depend on the node and edge characteristics described above.</p>
+
+  <p class="body"><span>Simple Graph</span>. The formal definition of a <b class="charbold">simple graph</b> is a graph whose edges can’t be parallel edges or self-loops. Simple graphs can be connected or disconnected. Also a simple graph can be directed.</p>
+
+  <p class="body"><span>Weighted Graph</span>. A graph that uses weights is called a <b class="charbold">weighted graph</b>. Our social graph has no weights; another way to express having no weights is to set all weights to 1 or 0.</p>
+
+  <p class="body"><span>Multigraphs.</span> A <b class="charbold">multigraph</b> is a graph that is permitted to have multiple edges between any two nodes, and multiple self-loops for any one node. A simple graph could be a special case of a multigraph, if we are working within a problem where we could add more edges and self loops to it.</p>
+
+  <p class="body"><span>Di-graphs</span>. A <b class="charbold">di-graph</b> is another term for a directed graph.</p>
+
+  <p class="body"><span>K-partite graphs</span>. In many graphs, we may have a situation where we have two or more groups of nodes, where edges are only allowed between groups and not between nodes of the same group.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre5" id="image13.png" src="../Images/Aimage009.png" /></p>
+
+  <p class="figureacaption">Figure A.9. A tri-partite graph. It has 3 partitions, or groups, of nodes: V1, V2, and V3. Within these partitions, edges between nodes are forbidden, but edges are permitted between the partitions.</p>
+
+  <p class="body">“Partite” refers to the partitions of node groups, and ‘k’ refers to the number of those partitions.</p>
+
+  <p class="body">In a <b class="charbold">mono-partite</b> graph, there is only one group of nodes and one group of edges. A mono-partite social graph could consist of only “Texan” nodes connected with “work colleague” edges.</p>
+
+  <p class="body">For example, in a social graph, nodes can belong to “New Yorkers” or “Texans” groups, and relationships can belong to “friend” or “work colleague” groups.</p>
+
+  <p class="body">A <b class="charbold">bi-partite</b> graph has two node partitions within a graph. Nodes of one group can only connect to nodes of a second type, and not with nodes within their own group. In our social graph example, nodes can belong to “New Yorkers” or “Texans” groups, and relationships can belong to “friend” or “work colleague” groups. In this graph, no New Yorkers would be adjacent to other New Yorkers, and the same for Texans.</p>
+
+  <p class="body">For partitions above three, the requirement that adjacent nodes cannot be the same type still holds. In practice, <span>k</span> can be a large number.</p>
+
+  <p class="body"><span>Trees</span>. The <b class="charbold">tree</b>, a well studied data structure in machine learning, is a special case of a graph. It is a connected graph without cycles. Another way to describe a graph without cycles is <b class="charbold">acyclic</b>. In the data science and deep learning worlds, a well known example is the directed acyclic graph (DAG), used in designing and governing data workflows.</p>
+
+  <p class="body"><span>Hypergraphs</span>. Up to now, our graphs have consisted of edges that connect to two nodes, or one node (a self-loop). For a <b class="charbold">hypergraph</b>, an edge can be incident to more than two nodes. These data structures have a range of applications, including ones that involve the use of GNNs.</p>
+
+  <p class="body"><span>Heterogeneous Graphs.</span> A <b class="charbold">heterogeneous</b> graph has multiple node and edge types, while a <b class="charbold">multi-relational</b> graph has multiple edge types.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre5" id="utuIiuwwVkbx27j9x6blph8" src="../Images/Aimage010.png" /></p>
+
+  <p class="figureacaption">Figure A.10. Two hypergraphs. On the left, we have an undirected graph whose edges are represented by colored areas, marked e, and whose vertices are dots, marked v. On the right, we have a directed graph, whose edges are dots, marked a, and whose vertices are numbered circles.</p>
+
+  <h2 class="head" id="sigil_toc_id_66">A.2&nbsp;&nbsp; Graph Representations</h2>
+
+  <p class="body">Now that we have a conceptual idea of what graphs are, we move on to how to express them using the languages of math and code. First, we focus on data structures most relevant to building graph algorithms and storing graph data. We will see that some of these structures, particularly the adjacency matrix, play a prominent role in the GNN algorithms we study in the bulk of this book.</p>
+
+  <p class="body">Next, we’ll examine a few graph data models. These are important in designing and managing how databases and other other data systems deal with network data.</p>
+
+  <p class="body">Lastly, we’ll briefly take a look at how graph data is exposed to analysts and engineers via APIs and query languages.</p>
+
+  <h3 class="head1" id="sigil_toc_id_67">A.2.1&nbsp;&nbsp; Basic Graph Data Structures</h3>
+
+  <p class="body">There are a few important ways to represent graphs that can be ported to a computational environment:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Adjacency matrix - a node-to-node matrix</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Incidence matrix - an edge-to-node matrix</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Edge Lists - a list of edges by their nodes</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Adjacency Lists - Lists of each node’s adjacent nodes</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Degree matrix - node-to-node matrix of with degree values</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Laplacian matrix - The degree matrix minus the Adjacency Matrix (<b class="charbold">D</b>-<b class="charbold">A</b>). Useful in spectral theory</p>
+
+  <p class="body">These are by no means the only ways to represent a graph, but from a survey of the literature, software, storage formats and libraries, these seem to be the most prevalant.</p>
+
+  <p class="body">In practice, a graph may not be permanently stored as one of these structures, but to execute a needed operation, a graph or sub-graph may be transformed from one representation to another.</p>
+
+  <p class="body">What representation is used depends on many factors that should be weighed in planning. These include:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; <span>Size of Graph</span>. How many vertices and edges does the graph contain, and how much are these expected to scale.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; <span>Density of Graph</span>. Is the graph sparse or dense. We’ll touch on these terms below.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Complexity of the Graph’s Structure. Is the graph closer to a simple graph, or one that uses one or more of the variations discussed above?</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; <span>Algorithms to be used</span>. For a given algorithm, a given data structure may perform relatively weakly or strongly compared to others. Below, for each structure, we’ll touch on two simple algorithms to compare.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; <span>Costs to do CRUD operations</span>. How and how frequently will you modify your graph (including <b class="charbold">c</b>reating, <b class="charbold">r</b>eading, <b class="charbold">u</b>pdating, or <b class="charbold">d</b>eleting, nodes, edges, and their attributes) over the course of your operations.</p>
+
+  <p class="body">In many data projects, transformation from one data structure to another is common to accommodate particular operations. So, it is normal to employ two or more of the above data structures in a project. In this case, understanding the compute effort to execute the transformation is key. For the most popular structures, graph libraries allow methods that allow seamless transformations, but given the considerations listed above, executing these transformations could take unexpected time or cost.</p>
+
+  <p class="body">For the discussion below, we’ll talk about how these data structures are used to store topological information about graphs. The only attributes we’ll consider are node IDs and edge weights. We’ll touch on more properties in section A.2.3.</p>
+
+  <p class="body">To illustrate these concepts, let’s use the below weighted graph, consisting of 5 nodes. Circles indicate nodes with their IDs; rectangles are the edge weights.</p>
+
+  <p class="figurea"><img alt="" class="calibre2" src="../Images/Aimage011.png" /></p>
+
+  <p class="figureacaption">Figure A.11. An example graph for section A.2.1.</p>
+
+  <p class="body">Before we jump in, note that the assessments below apply to these unmodified data structures used to represent simple graphs, as defined above. In practice, people tweak these data structures often to meet their specific requirements. As long as the assumptions and the implications of such tweaks are understood, this shouldn’t be a problem.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Adjacency Matrix</h4>
+
+  <p class="body">An <b class="charbold">adjacency matrix</b> represents a graph in a nxn matrix format. For a graph with <span>n</span> nodes, each row or column would describe one node. So, for our example with 5 nodes, we have 5 columns and 5 rows. These rows and columns are labeled for each node. Cells of the matrix denote adjacency.</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablehead">&nbsp;</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">0</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">1</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">2</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">3</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">4</b></p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">0</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">5</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">1</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">1</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">2</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">3</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">4</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">5</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="figureacaption">Figure A.12. An adjacency matrix for figure 2.11.</p>
+
+  <p class="body">Adjacency matrices can be used for simple directed and undirected graphs. They can also be used for graphs with self loops (where a self-loop would have a value of 1 for the cell that corresponds with a particular single node’s column and row).</p>
+
+  <p class="body">In an unweighted graph, each cell would either be 0 (no adjacency) or 1 (adjacency). For the diagonal cells, where a single node’s column intersects with its respective row, the value would be 0 for a simple graph. For a weighted graph, the values in the cells would be the edge weights. For unweighted parallel edges, the values of the cells would be the number of edges.</p>
+
+  <p class="body">For our example, a weighted, undirected graph, the corresponding adjacency matrix is shown above.</p>
+
+  <p class="body">Since our graph is undirected, the adjacency matrix is symmetric. For directed graphs symmetry is possible but not guaranteed.</p>
+
+  <p class="body">By inspecting this matrix, we can get a quick visual understanding of the characteristics of the matrix. We can see, for example, how many degrees node 1 has, and get a general idea of the distribution of the degrees. We also see that there are more empty spaces (cells with a 0 value) than edges. This ease of using the matrix to draw quick insights is one advantage of adjacency matrices.</p>
+
+  <p class="body">Adjacency matrices, and matrix representations in general, allow one to analyze graphs by using linear algebra. One relevant example is spectral graph theory (which underlies a few GNN algorithms).</p>
+
+  <p class="body">Adjacency matrices are straightforward to implement in python. The matrix in our example can be created using a list of lists, or a numpy array.</p>
+
+  <p class="pcalibre3"><code class="codeacxspfirst1">&gt;&gt;import&nbsp;;numpy&nbsp;;as&nbsp;;np</code> <code class="codeacxspfirst1">&gt;&gt;arr&nbsp;;=&nbsp;;np.array([[0,&nbsp;;0,&nbsp;;0,&nbsp;;3,&nbsp;;3],[0,&nbsp;;0,&nbsp;;0,&nbsp;;1,&nbsp;;1],[0,&nbsp;;0,&nbsp;;0,&nbsp;;3,&nbsp;;0],&nbsp;;</code> <code class="codeacxspfirst1">[3,&nbsp;;1,&nbsp;;3,&nbsp;;0,&nbsp;;0],[5,&nbsp;;1,&nbsp;;0,&nbsp;;0,&nbsp;;0]])</code></p>
+
+  <p class="body">With our adjacency matrix as a numpy array, let’s explore another property of our graph. From our visual inspection of our matrix, we noticed many more zeros than non-zero values. This makes it a sparse matrix. <b class="charbold">Sparse matrices,</b> that is matrices with a large proportion of zero values, can take up unnecessary storage or memory space, and increase calculation times. <b class="charbold">Dense matrices</b>, contrarily, contain a large proportion of non-zero matrices.</p>
+
+  <p class="body">What is the sparsity of our matrix?</p>
+
+  <p class="pcalibre3"><code class="codeacxspfirst1">&gt;&gt;sparsity&nbsp;;=&nbsp;;1.0&nbsp;;-&nbsp;;(&nbsp;;np.count_nonzero(arr)&nbsp;;/&nbsp;;arr.size&nbsp;;)</code> <code class="codeacxspfirst1">&gt;&gt;print(sparsity)</code> <code class="codeacxspfirst1">&gt;&gt;&nbsp;;0.6</code></p>
+
+  <p class="body">So, our matrix has a sparsity of 0.6, meaning 60% of the values in this matrix are zeros.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Inset: Sparsity Using Node Degree</h4>
+
+  <p class="body">Another way to think about sparsity is in terms of node degree. Let’s derive the sparsity value above from the perspective of node degree.</p>
+
+  <p class="body">For a simple, undirected graph of n nodes, each node can make at most n-1 connections, and thus have a maximum degree of n-1. The maximum number of edges can be calculated using combinatorics: since each edge represents a pair of nodes, for a set of n nodes, the maximum number of edges is “n choose 2” or (n 2), or N(N-1)/2. For our small matrix, this is 5(5-1)/2 = 10. Thus, defining density as E/N^2, then sparsity can be defined as 1- density. In our example, this leads to a quantity that agrees with what was calculated using the matrix alone, (1 - 10/25) = 0.6.</p>
+
+  <p class="body">Now, think of a graph that has not 5, but millions or billions of nodes. Such graphs exist in the real world, and quite often sparsity can orders of magnitudes less than 0.6. Real world networks can have sparsities in the ranges of 10e-5 and 10e-9 [reference]. For undirected simple graphs, the adjacency matrix is symmetric, so only half the storage is needed. Most of the memory or storage containing the adjacency matrix would be devoted to zero values. Thus, the high sparsity of this data structure leads to memory inefficiencies.</p>
+
+  <p class="body">In terms of complexity, for a simple graph, the space complexity would be <b class="charbold">O</b>(n<span>2</span>), for undirected simple graphs. For an undirected graph, due to the symmetry, the space complexity would be <b class="charbold">O</b>(n(n-1)/2).</p>
+
+  <p class="body">For time complexity, this of course depends on the task or the algorithm. Let’s look at two rudimentary tasks, that we’ll also address for adjacency list and edge lists:</p>
+
+  <p class="listnumberedcxspfirst">1.&nbsp;&nbsp; Checking the existence of an edge between a particular pair of nodes.</p>
+
+  <p class="listnumberedcxsplast">2.&nbsp;&nbsp; Finding the neighbors of a node.</p>
+
+  <p class="body">For the first task, we simply check the row and column corresponding to those nodes. This would take <b class="charbold">O</b>(1) time. For the second, we need to check every item in that node’s row; this would take <b class="charbold">O</b>(deg(n)) time, where deg(n) is the degree of the node.</p>
+
+  <p class="body">To summarize, advantages of adjacency matrices are that they can quickly check connections between nodes, and are easy to visually interpret. Downsides are that they are less space efficient for sparse matrices. The computational tradeoffs depend on your algorithm. They shine in cases where we have small and dense graphs.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Incidence Matrix</h4>
+
+  <p class="body">While the adjacency matrix has a row and column for every node, an <b class="charbold">incidence matrix</b> represents every edge as a column and every node as a row. Designating the edges in our example by alphabets from left to right, we have our example’s incidence matrix:</p>
+
+  <p class="figurea"><img alt="" class="calibre34" id="image10.png" src="../Images/Aimage013.png" /></p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablehead">&nbsp;</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">A</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">B</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">C</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">D</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead"><b class="charbold">E</b></p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">0</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">5</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">1</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">1</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">2</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">3</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst"><b class="charbold">4</b></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">5</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">1</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="figureacaption">Figure A.13. Our example graph and its incidence matrix.</p>
+
+  <p class="body">An incidence matrix can represent wider variations of graph types than an adjacency matrix. Multigraphs and hypergraphs are straightforward to express with this data structure.</p>
+
+  <p class="body">How does the incidence matrix perform with respect to space and time? To store the data of a simple graph, the incidence matrix has a space complexity of <b class="charbold">O</b>(|E| * |V|), where <span>|V|</span> is the number of nodes (<span>V</span> for vertices), and |E| is the number of edges. Thus, it is superior to the adjacency matrix for graphs with less edges than nodes, including sparse matrices.</p>
+
+  <p class="body">To get an idea of time complexity, we turn to our two simple tasks: checking for an edge, and finding a node’s neighbors. To check the existence of an edge, an incidence matrix has a time complexity of O(|E| * |V|), far slower than the adjacency matrix, which does this constant time. To find the neighbors of a node, an incidence matrix also takes O(|E| * |V|).</p>
+
+  <p class="body">Overall, incidence matrices have space advantages when used with sparse matrices. For time performance, they have slow performance on the simple tasks we covered. The overall advantage of using incidence matrices are for unambiguously representing complex graphs, such as multigraphs and hypergraphs.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Adjacency Lists</h4>
+
+  <p class="body">In an <b class="charbold">adjacency list</b>, the aim is to show for each node which vertices it is adjacent. So for <span>n</span> nodes, we have <span>n</span> lists of neighbors corresponding to each node. Depending on what data structures are used for the lists, properties may also be included in the summary.</p>
+
+  <p class="body">For our example, a very simple adjacency list can be shown thusly:</p>
+
+  <p class="body"><b class="charbold">Node 0 : Node 3, Node 4</b></p>
+
+  <p class="body"><b class="charbold">Node 1 : Node 3, Node 4</b></p>
+
+  <p class="body"><b class="charbold">Node 2 : Node 3</b></p>
+
+  <p class="body"><b class="charbold">Node 3 : Node 0, Node 1, Node 2</b></p>
+
+  <p class="body"><b class="charbold">Node 4 : Node 0, Node 1</b></p>
+
+  <p class="figurea"><img alt="" class="calibre34" id="uUflNBY3WqwZ6gX7T68zdL3" src="../Images/Aimage014.png" /></p>
+
+  <p class="figureacaption">Figure A.14. Our example graph and its adjacency list.</p>
+
+  <p class="body">Such an adjacency list can be accomplished in python using a dictionary with each node as the keys, and lists of the adjacent nodes as values:</p>
+
+  <p class="body"><b class="charbold">{ 0 : [ 3, 4],</b></p>
+
+  <p class="body"><b class="charbold">1 : [3, 4],</b></p>
+
+  <p class="body"><b class="charbold">2 : [3],</b></p>
+
+  <p class="body"><b class="charbold">3 : [0, 1, 2],</b></p>
+
+  <p class="body"><b class="charbold">4 : [0, 1] }</b></p>
+
+  <p class="body">We can improve on the dictionary values to allow for the inclusion of the weights of the neighbors:</p>
+
+  <p class="body"><b class="charbold">{ 0 : [ (3, 3), (4, 5)],</b></p>
+
+  <p class="body"><b class="charbold">1 : [(3, 1), (4, 1)],</b></p>
+
+  <p class="body"><b class="charbold">2 : [(3, 3)],</b></p>
+
+  <p class="body"><b class="charbold">3 : [(0, 3), (1, 1), (2, 3)],</b></p>
+
+  <p class="body"><b class="charbold">4 : [(0, 5) , (1, 1)] }</b></p>
+
+  <p class="body">For undirected graphs, the set of nodes doesn’t have to be ordered.</p>
+
+  <p class="body">Since the adjacency list doesn’t devote space to node pairs that are not neighbors, we see that adjacency lists lack the sparsity issues of adjacency matrices. So, to store this data structure, we have a space complexity of <b class="charbold">O</b>(n + v), where <span>n</span> is the number of nodes, and <span>v</span> is the number of edges.</p>
+
+  <p class="body">Going back to the two computational tasks, checking the existence of an edge (task 1) would take <b class="charbold">O</b>(deg(node)) time, where deg(node) is the degree of either node. For this, we simply check every item in that node’s list, where worst case we’d have to check them all. For task 2, finding a node’s neighbors would also take <b class="charbold">O</b>(deg(node)) time, since we have to inspect every item in that node’s list, whose length is the node’s degree.</p>
+
+  <p class="body">Let’s summarize the tradeoffs of an adjacency list. Advantages are that they are relatively efficient in terms of storage, since only edge relationships are stored. This means a sparse matrix would take up less space stored as an adjacency list than an adjacency matrix. Computationally, the tradeoffs depend on the algorithm you are running.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Edge Lists</h4>
+
+  <p class="body">Compared to the preceding two representations, <b class="charbold">edge lists</b> are relatively simple. They consist of a set of doubles (two nodes) or triples (two nodes and an edge weight). These identify a unique edge thusly:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Node, Node (, Edge Weight) For an undirected graph</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Source Node, Destination Node (, Edge Weight) For a directed graph</p>
+
+  <p class="body">Edge lists can represent single, unconnected nodes.</p>
+
+  <p class="body">For our example, the edge list would be:</p>
+
+  <p class="body"><b class="charbold">{ 0, 3, 3 }</b></p>
+
+  <p class="body"><b class="charbold">{ 0, 4, 5 }</b></p>
+
+  <p class="body"><b class="charbold">{ 1, 3, 1 }</b></p>
+
+  <p class="body"><b class="charbold">{ 1, 4, 1 }</b></p>
+
+  <p class="body"><b class="charbold">{ 2, 3, 3 }</b></p>
+
+  <p class="figurea"><img alt="" class="calibre34" id="uQ2TqlMnogpibXPmXUQtgm6" src="../Images/Aimage015.png" /></p>
+
+  <p class="figureacaption">Figure A.15. Our example graph and its edge list.</p>
+
+  <p class="body">In python, a way to create this would be to use a set of tuples:</p>
+
+  <p class="pcalibre3"><code class="codeacxspfirst1">&gt;&gt;&nbsp;;edge_list&nbsp;;=&nbsp;;{(&nbsp;;0,&nbsp;;3,&nbsp;;3&nbsp;;),&nbsp;;(&nbsp;;0,&nbsp;;4,&nbsp;;5&nbsp;;),&nbsp;;(&nbsp;;1,&nbsp;;3,&nbsp;;1&nbsp;;),&nbsp;;(&nbsp;;1,&nbsp;;4,&nbsp;;1&nbsp;;),&nbsp;;(&nbsp;;2,&nbsp;;3,&nbsp;;3&nbsp;;)&nbsp;;}</code></p>
+
+  <p class="body">On performance, for storage, the space complexity of an edge list is O(e), where <span>e</span> is the number of edges. Regarding our two tasks from above, to establish the existence of a particular edge will have a time complexity of <b class="charbold">O</b>(e), assuming an unordered edge list. To discover all the adjacencies of a node, <b class="charbold">O</b>(e) is the space complexity. In each case, we have to go through the edges in list one by one to check for the edge or the node’s neighbor. So, from a compute performance point of view, edge lists have a disadvantage compared to the other two data structures, especially for executing more complex algorithms.</p>
+
+  <p class="body">Another advantage of edge lists, from a space point of view, they are more compact than adjacency lists or adjacency matrices. Also, aside from space complexity, they are also simple to create and interpret: it can be a text file where each line only consists of two identifiers separated by a space! For many systems and databases, edge lists in csv or text files are a frequent option to serialize data.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Inset: The Laplacian Matrix</h4>
+
+  <p class="body">One data representation of a graph that is highly valuable in analyzing graphs is the Laplacian Matrix. This matrix is key to the development of graph spectral theory, which is in turn critical to the development of spectral based GNN methods.</p>
+
+  <p class="body">To produce the laplacian matrix, we subtract the adjacency matrix from the degree matrix (D - A). The degree matrix is a node-to-node matrix whose values are the degree of a particular node. In our example, the degree matrix is:</p>
+
+  <p class="figurea"><img alt="" class="calibre34" id="uViGAsc9irTiLN92TXDJyx9" src="../Images/Aimage016.png" /></p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablehead"></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">4</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">4</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">2</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="body">To Laplacian is thus:</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablehead"></p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablehead">4</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">-5</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">-1</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">2</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">0</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspfirst">4</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-5</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">-1</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxspmiddle">0</p>
+      </td>
+
+      <td char="16%" class="calibre6">
+        <p class="tablebodycxsplast">2</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="body">In practice, laplacian matrices are not used for storage or as a basis for graph operations as the other data structures covered in this section. Their advantages lie in spectral analysis. We discuss spectral graph analysis in later chapters.</p>
+
+  <h3 class="head1" id="sigil_toc_id_68">A.2.2&nbsp;&nbsp; Graph Data Models</h3>
+
+  <p class="body">We are steadily marching from theory to implementation. In the last section, we reviewed common data structures used to represent graphs and their tradeoffs. Graphs can be implemented in these structures from scratch in your preferred programming language, and are also implemented in popular graph processing libraries.</p>
+
+  <p class="body">With the listed data structures, we have a variety of ways to implement the structural information in graphs. But graphs and their elements often come with useful attributes and metadata.</p>
+
+  <p class="body">A <b class="charbold">data model</b> is an organized way to represent the structural information, attributes, and metadata of a graph. Very much related to this is the notion of a <b class="charbold">schema</b>, which we’ll define as a framework that explicitly defines the elements that make up a graph (i.e., nodes, edges, attributes, etc.; also there can be varieties of nodes, edges, etc), and explicitly defines how these elements work together.</p>
+
+  <p class="body">Data models and schemas are critical parts of the scaffolding used to design graph systems such as graph databases and graph processing systems, and are often built upon the data structures reviewed in the last section.</p>
+
+  <p class="body">We’ll review three such models and provide examples of real systems where they are used.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Minimalist Graph Data Model</h4>
+
+  <p class="body">The simplest data model uses only nodes, edges, and weights. It can be used on directed or undirected graphs. If weights are used, they can be retrieved using a lookup table.</p>
+
+  <p class="body">Pregel, Google’s graph processing framework, upon which other popular frameworks are based (including Facebook’s Giraph and Apache’s GraphX), is based upon such a directed graph. In it, both edges and nodes have an identifier and a single numerical value, which can be interpreted as a weight or attribute.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Property Graph Data Model</h4>
+
+  <p class="body">In Property Graphs (also called labeled property graphs, or LPGs), allowances are made to confer various metadata to nodes and edges. Such metadata include:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Identifiers, which distinguish individual nodes and edges</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Labels, which describe classes (or subsets) of nodes or edges.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Attributes or Properties, which describe individual nodes or edges.</p>
+
+  <p class="body">Nodes have an ID, and a set of key/value pairs that can be used to supply additional attributes (also called properties). Similarly, edges have an ID and a set of key/value pairs for attributes.</p>
+
+  <p class="body">One could think of the property graph as the minimalist graph extended by adding labels, and removing the restrictions on the types and number of attributes.</p>
+
+  <p class="body">Popular graph databases that use models based on the property graph include Neo4j, Azure’s Cosmos, and TigerGraph.</p>
+
+  <p class="figurea"><img alt="" class="calibre35" id="image15.png" src="../Images/Aimage017.png" /></p>
+
+  <p class="figureacaption">Figure A.16. Example of a property graph and its equivalent RDF graph.</p>
+
+  <h4 class="head3 sigil_not_in_toc">RDF Graph Data Model</h4>
+
+  <p class="body">RDF (Resource Description Framework; also called Triple Stores) models follow a Subject-Predicate-Object pattern, where Nodes are Subjects and Objects, and Edges are predicates. Nodes and edges have one main attribute, which can be a URI (unique resource identifier) or a literal. URIs, in essense, identify what the ‘type’ of node or edge being described. Examples of literals can be specific timestamps or dates. Predicates represent relationships, in our example above, the predicate is ‘manages’.</p>
+
+  <p class="body">Such triples (subject-predicate-object) represent what are called <b class="charbold">facts.</b> Usually facts are directed and flow in the direction from subject to object.</p>
+
+  <p class="body">Popular graph databases that use the RDF model include Amazon’s Neptune (Neptune also allows the use of LPGs), Virtuoso, and Stardog.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Non Graph Data Model</h4>
+
+  <p class="body">It should be noted that there are a variety of databases and systems that use neither RDF nor LPG, and store or express nodes, edges and attributes within other storage frameworks, such as document stores, key value stores, and even within a relational database framework.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Knowledge Graphs</h4>
+
+  <p class="body">There is no unifying definition of a knowledge graph, and this term is used widely in academic, commercial and practitioner circles. Most relevant to GNNs, we define a <b class="charbold">knowledge graph</b> as a representation of knowledge discretized into facts, as defined above. Another way to say this is to define a knowledge graph as a multigraph set onto a specific <span>subject-relationship-object</span> schema.</p>
+
+  <p class="body">Knowledge graphs may be represented with RDF schemas, but there are other data models and graph models that can accommodate knowledge graphs.</p>
+
+  <p class="body">An example of a knowledge graph would be:</p>
+
+  <p class="figurea"><img alt="" class="calibre4" id="image7.png" src="../Images/Aimage018.png" /></p>
+
+  <p class="figureacaption">Figure A.17. Example of a scifi-themed knowledge graph.</p>
+
+  <p class="body">GNN methods are used to embed the data in the nodes and edges, establish the quality of facts, and to discover new entities and relations.</p>
+
+  <h3 class="head1" id="sigil_toc_id_69">A.2.3&nbsp;&nbsp; Node and Edge Types</h3>
+
+  <p class="body">In graphs that have a schema, including knowledge graphs, edges and nodes can be assigned a <b class="charbold">type</b>. Types are part of a defined schema, and as such, govern how data elements interact with each other. They also often have a descriptive aspect.</p>
+
+  <p class="body">To distinguish <span>types</span> from <span>properties</span>, consider that while types help define the ‘rules’ of how data elements work together and how they are interpreted by the data system, properties are descriptive only.</p>
+
+  <p class="body">To illustrate types, we can use a road map analogy, where towns are nodes and passages between them are edges. Our edges may include highways, a foot paths, canals, or a bike paths. Each one is a type. Due to geography, towns can be surrounded by swamps, sit atop mountain peaks, or have other obstacles and impediments to one versus another passage. For towns separated by a desert, passage is only possible by a highway. For other towns, passages can be by multiple passage types. In building this analogy, we see that our town nodes also have types defined by their proximate geography: swamp town, desert town, island town, valley town.</p>
+
+  <h3 class="head1" id="sigil_toc_id_70">A.2.4&nbsp;&nbsp; How Graphs are Exposed</h3>
+
+  <p class="body">We’ve talked about data structures and data models to understand how graphs are implemented under the hood. In real life however, most of us won’t build graphs from scratch or from the bottom up. When constructing and analyzing graphs, there will be a layer of abstraction between us and the primitive data. In what ways, then, is a graph exposed to the data scientist or engineer? We look at two ways:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; APIs: Using graph libraries or data processing systems</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Query Languages: Querying graph databases via specialized query languages</p>
+
+  <p class="body">We briefly explain these, then discuss the graph ecosystem.</p>
+
+  <h4 class="head3 sigil_not_in_toc">APIs: Graph Objects in Graph Systems</h4>
+
+  <p class="body">When using a graph library or processing software, usually we want the graph we work with to have certain properties and we want to be able to execute operations on the graph. From this lens, it is helpful to think of graphs as software objects that can be operated on by software functions.</p>
+
+  <p class="body">In python, an effective way to implement the above is to have a <span>graph</span> class, with some operations implemented as methods of the graph class or as stand alone functions. Nodes and edges can be attributes of the graph class, or can have their own <span>node</span> and <span>edge</span> classes. Properties of graphs implemented in this way, can be attributes of the respective classes.</p>
+
+  <p class="body">An example of this is NetworkX, a python-based graph processing library. NetworkX implements a <span>graph</span> class. Nodes can be any hashable object, examples of node objects are integers, strings, files, even functions. Edges are tuple objects of their respective nodes. Both nodes and edges can have properties implemented as python dictionaries.</p>
+
+  <p class="body">Below are two short lists of typical methods and attributes of graph classes found in libraries and processing systems.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Basic Methods of Graph Objects</h4>
+
+  <p class="body">Graph_Creation - A constructor that creates a new graph object</p>
+
+  <p class="body">Add_Node, Add_Edge - Add nodes or edges, and their attributes and labels, if any</p>
+
+  <p class="body">Get_Node, Get_Edge - Retrieve stored nodes or edges, with specified attributes and labels</p>
+
+  <p class="body">Update_Node, Updage_Edge, Update_Graph - update properties and attributes of nodes, edges and graph objects</p>
+
+  <p class="body">Delete_Node, Delete_Edge - Deletes a specified node or edge</p>
+
+  <h4 class="head3 sigil_not_in_toc">Basic Attributes of Graph Objects</h4>
+
+  <p class="body">Number_of_Nodes, Number_of_Edges - A constructor that creates a new graph object</p>
+
+  <p class="body">Node_neighbors - retrieve the adjacent nodes or incident edges of a node</p>
+
+  <p class="body">Node_List, Edge_List - Add nodes or edges, and their attributes and labels, if any</p>
+
+  <p class="body">Connected_Graph - Retrieve stored nodes or edges, with specified attributes and labels</p>
+
+  <p class="body">Graph_State - Retrieve global attributes, labels and properties of the graph</p>
+
+  <p class="body">Directed_Graph - Deletes a specified node or edge</p>
+
+  <h4 class="head3 sigil_not_in_toc">Graph Query Languages</h4>
+
+  <p class="body">When working with a graph in a graph database, a query language is used. For most relational databases, some variant of SQL is used as the standard language. In the graph database space, there is no standard query language. Below are the languages that currently stand out:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; <span>Gremlin</span>: A language that can be written declaratively or imperatively; designed for database or processing system queries. Developed by the Apache Tinkerpop project and used in several databases (Titan, OrientDB) and processing systems (Giraph, Hadoop, Spark).</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; <span>Cypher</span>: A declarative language for property graph-based database queries. Developed by Neo4J, and used by Neo4J and several other databases.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; <span>SPARQL</span>: A declarative query language for RDF-based database queries. Used by Amazon Neptune, Allegrograph, and others.</p>
+
+  <h2 class="head" id="sigil_toc_id_71">A.3&nbsp;&nbsp; Graph Systems</h2>
+
+  <p class="body">We’ve covered the basic building blocks that allow us to implement graphs in a programming language. In practice, you will seldom create a graph from scratch, you’ll load data into memory or a database using a library or API. The field of graph libraries, databases, and commercial software is broad and growing rapidly. A good way to decide upon what to use is to start with your use case and requirements, then choose your development and deployment architecture from there. This section will briefly give an overview of this landscape to help you. The taxonomy we will develop below is by no means absolute, but should serve a useful guideline.</p>
+
+  <h3 class="head1" id="sigil_toc_id_72">A.3.1&nbsp;&nbsp; Graph Workflow</h3>
+
+  <p class="body">In chapter 1, we touched on the GNN workflow. In this section, we’ll delve more deeply into it.</p>
+
+  <p class="body">The workflow or pipeline leading to the development of a GNN mirrors directly that of a machine learning workflow. The key differences are in the details of the broad steps. Typically, we use a set of different tools at each step for graph-related tasks than we do for euclidean datasets.</p>
+
+  <p class="figurea"><img alt="" class="calibre3" id="image1.jpg" src="../Images/Aimage019.jpg" /></p>
+
+  <p class="figureacaption">Figure A.18. A graph data workflow.</p>
+
+  <p class="body">The workflow or pipeline leading to the development of a GNN mirrors directly that of a machine learning workflow. The key differences are in the details of the broad steps. Typically, we use a set of different tools at each step for graph-related tasks than we do for euclidean datasets.</p>
+
+  <p class="body">In this chapter, we will focus on data extraction, transformation, and exploration.</p>
+
+  <p class="body"><b class="charbold">ETL or Extract-Transform-Load</b> is the step that has to do with collecting or creating your raw data, making some optional transformations that are suitable for storage, and then moving that transformed data into a storage system.</p>
+
+  <p class="body">ETL with graph data may be as simple as importing an edge list into your graph database with built-in commands. Or it may entail programmatically combining data from multiple sources, then storing that combined data into an adjacency list, then transforming that into a property graph schema for storage in a graph database.</p>
+
+  <p class="body">Because of these and other complexities, schema design is important.</p>
+
+  <p class="body">ETL capabilities are typically built into graph databases and frameworks.</p>
+
+  <p class="body"><b class="charbold">EDA or Exploratory Data Analysis</b> involves using summary statistics, metrics, and visualizations to get a grasp of the relevant characteristics of a given dataset. Such insights inform the next steps of a machine learning project, including what tools to use downstream, and what models and DL architectures to apply. EDA also helps highlight potential problems that may occur downstream in the workflow. EDA was covered in more detail in the last section.</p>
+
+  <p class="body">It should be noted that at every data transformation step, some EDA could be included. So, even after preprocessing, EDA could be done.</p>
+
+  <p class="body"><b class="charbold">Preprocessing</b> is a step that involves further transformation of the data in order to apply a particular algorithm, including model training, to a dataset. The starting point here is not raw data, but data that has gone through the ETL step above, and has a home in a database or is serialized.</p>
+
+  <p class="body">Preprocessing can involve filtering data, creating features, segmenting the data, annotating data, and any number of methods.</p>
+
+  <p class="body"><b class="charbold">Algorithms including Model Training</b> are what the pre-processed data feeds into. Most of this book takes a detailed examination of various GNN algorithms.</p>
+
+  <p class="body"><b class="charbold">Model Deployment</b> involves the steps after a model has been successfully trained and optimized for performance. There are many aspects of deployment that are beyond the scope of this book. Issues addressed in later chapters include dealing with GNNs at scale, and ethics in GNNs.</p>
+
+  <h3 class="head1" id="sigil_toc_id_73">A.3.2&nbsp;&nbsp; Graph Ecosystem</h3>
+
+  <p class="body">Given the workflow above, what are specific tools and how are they segmented. At the time of writing, commercial and open source tools for graph analysis, ML modeling, visualization and storage are expanding relatively rapidly. There is quite a lot of overlap between tools and functions, and many hybrid tools that don’t neatly fit into any category, so that there is no clean delineation of segments. So, the approach for this chapter will be to highlight basic segments, and focus on the most popular tools.</p>
+
+  <p class="body">We’ll focus on the following segments:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Graph Frameworks or Graph Compute Engines</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Graph Databases</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Visualization Libraries</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; GNN Libraries</p>
+
+  <p class="body">Scope: When categorizing data tools, another way of partitioning is by the scope of data which is targeted. This can be a narrow view, whose focus is on one record or a small set of records. OLTP or Online Transactional Processing embodies this view. Financial transactions of a bank is an example. Let’s say that for a very small bank with a simple database, each row in a databases would represent an individual account. When individuals deposit funds, make purchases, or check their online accounts, in this simple database, these actions would only impact one record. An OLTP data query could be “how much money does Bob have right now?” or “How much money was withdrawn from Bob’s account over the last week?”</p>
+
+  <p class="body">For OLAP (Online Analytical Processing), the scope is on analyzing many records at once. These systems are optimized for queries that examine batches of data. For the example above, the data system would be fielding queries across many individual accounts, say for every account at Bob’s bank, instead of just Bob. Such queries may be: “For the entire bank, how many accounts withdrew money two weeks ago?” or “How much money was deposited today by every bank account holder?”</p>
+
+  <p class="body"><span>Graph Databases</span>. Graph databases are the graph analogues of traditional relational databases from a functional standpoint. Such databases were devised to handle OLTP-focused transactions. They allow CRUD (create, read, update, and delete) transactions. They also tend to follow ACID (atomicity, consistency, isolation, and durability) principles regarding the integrity of the data. Graph databases of this type differ from relational databases in that they store data using graph data models and schemas. At the time of writing, the most popular graph databases are Neo4j, Microsoft Cosmos DB, OrientDB, and ArangoDB. Except for Neo4J, these databases support multiple models including property graphs. Neo4j supports property graphs only. The most popular databases that support RDF models are Virtuoso and Amazon Neptune.</p>
+
+  <p class="body">In addition to property graph and RDF databases, other types of non-graph databases are used to store graph data. Document stores, relational databases, and key-value stores are examples. To utilize such non-graph databases with graph data models, one must carefully define how the existing schema maps to the graph elements and their attributes.</p>
+
+  <p class="body"><span>Graph Compute Engines (or Graph Frameworks)</span>. Graph Compute Engines are designed to make queries using batches of data. Such queries can output aggregate statistics, or output graph-specific items, such as cluster identification and find shortest paths. These data systems tend to follow the OLAP model. It is not unusual for such systems to work closely with a graph database, which serves the input data batches needed for the analytic queries. Examples of such systems are Spark’s GraphX, Giraph, Stanford’s SNAP.</p>
+
+  <p class="body"><span>Visualization Systems</span>. Graph visualization tools share characteristics with graph compute engines, as they are geared towards analytics vs transactional queries and computations. However, such tools are designed to create aesthetic and useful images of the networks under analysis. In the best visualization tools, these images are interactive and dynamic. Outputs of visualization systems can be optimized for presentation on the web, or in printed format with high definition. Examples of such tools are Gephi, Cytoscape, and Tulip.</p>
+
+  <p class="body"><span>Graph Representation and Neural Network Libraries</span>. The last segment of graph tools are the central subject of this book. I’m bucketing software tools that create graph embeddings with SW that allows the training of learning models based on graph data. At the time of writing, there are many solutions available. I will focus on the most visible ones in the main text, and list a larger amount of tools in the appendix. I’ll summarize this segment below, as the next chapter will be dedicated to this topic.</p>
+
+  <p class="body">Graph representation tools range from dedicated, stand-alone libraries (Pytorch BigGraph) to graph systems that have embedding as a feature (Neo4j as a database and SNAP as a compute framework).</p>
+
+  <p class="body">Graph Neural Network libraries come as standalone libraries, and as libraries that use Tensorflow or Pytorch as a backend. In this text, the focus will be on Pytorch Geometric. Other popular libraries include DGL (Deep Graph Library, a standalone library) and Spektral (which uses Kera and Tensorflow as a backend). The best libraries will not only implement a range of deep learning layers, but have benchmark datasets.</p>
+
+  <h2 class="head" id="sigil_toc_id_74">A.4&nbsp;&nbsp; Graph Algorithms</h2>
+
+  <p class="body">As the field of graphs has been around for a while, graph algorithms, algorithms that are based on a graph data structure, have proliferated in that time.</p>
+
+  <p class="body">Having an understanding of well-used graph algorithms can provide valuable context with which to think about the algorithms used in neural networks. Graph algorithms can also serve as sources of node, edge, or graph features for machine learning. Such features can be a point of comparison with the features generated by GNNs. Finally, as with machine learning in general, sometimes a statistical model is not the best solution. Having an understanding of the analytical landscape can help when deciding whether or not to use a GNN solution.</p>
+
+  <p class="body">In this section, we review two types of graph algorithms. We provide a general description, explaining why they are important. For an in-depth treatment on this topic, review the references at the end of the chapter, particularly Cormen, Deo, and Skiena.</p>
+
+  <p class="body">As stated in section A.2.1, the performance of graph algorithms heavily depends upon the choice of data structure.</p>
+
+  <p class="body"><span>Traversal and Search Algorithms</span>. In section A.1.1, we discussed the concept of a walk and a path. In these fundamental concepts, we get from one node in a graph to another by traversing a set of nodes and edges between them.</p>
+
+  <p class="body">For large graphs with many non-unique walks and paths between node pairs, how do we decide which path to take? And for graphs we haven’t explored and don’t have a ‘map’ of, what is the best way to create that map? Wrapped into these questions is the issue of what direction to take when traversing a graph at a particular node. For a node of degree 1, this answer is trivial; for a node with degree 100, the answer is less so.</p>
+
+  <p class="body">Traversal algorithms offer systematic ways to walk a graph. For such algorithms, we start at a node, and following a set of rules, we decide upon the next node to which to hop. Often, as we conduct the walk, we keep track of nodes and edges that have been encountered. For certain algorithms, if we outline the path taken, we can end up with a tree structure.</p>
+
+  <p class="body">Three well known strategies for traversal are:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Breadth first: A breadth-first traversal prefers to explore all of the immediate neighbors of a node before going further away. This is also known as breadth first search (BFS).</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Depth first: In depth-first search (DFS), rather than explore every immediate neighbor first, we follow each new node without regard to its relationship to the current node. This is done in such a way that every node is encountered at least once and every edge is encountered exactly once.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; There are versions of DFS and BFS for directed graphs</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Random: In random traversals, in contrast to BFS and DFS, where traversal is governed by a set of rules, traversal to the next node is done randomly. For a starting node of degree 4, in a random traversal with a uniform distribution, each neighboring node would have a 25% chance to be chosen. Such methods are used in algorithms like DeepWalk and Node2Vec (covered in chapter 3).</p>
+
+  <p class="body"><span>Shortest Path</span>. An enduring problem highly related to graphs is that of the shortest path. Interest in solving this problem has existed for a decades (a great survey paper of shortest path methods was published as far back as 1969), with several distinct algorithms existing. Modern applications of shortest path methods are used in navigation applications, like finding the fastest route to a destination.</p>
+
+  <p class="body">Variations of such algorithms include:</p>
+
+  <p class="listbullet">·&nbsp;&nbsp; Shortest path between:</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;Two nodes</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;Two nodes on a path that includes specified nodes</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;All nodes</p>
+
+  <p class="listbulletcxspmiddle1">·&nbsp;&nbsp;&nbsp;&nbsp;One node to all others</p>
+
+  <p class="listbullet1">·&nbsp;&nbsp; Ranked shortest paths (i.e., second shortes path, third shortest, etc)</p>
+
+  <p class="body">Such algorithms can also take into account weights in graphs. In these cases, shortest path algorithms are also called least cost algorithms.</p>
+
+  <p class="body">A highly lauded algorithm for least cost determination is Dijkstra’s (pronounced <a href="https://en.wikipedia.org/wiki/Help:Pronunciation_respelling_key">DYKE-strə</a>) Algorithm. Given a node, it finds the shortest path to every other node or to a specified node. As this algorithm progresses, it traverses the graph while keeping track of the distance and connecting nodes (to the start node) of each node it encounters. It prioritizes the nodes encountered by their shortest (or least cost) path to the start node. As it traverses, it prioritizes low cost paths.</p>
+
+  <h2 class="head" id="sigil_toc_id_75">A.5&nbsp;&nbsp; How to Read Graph Literature</h2>
+
+  <p class="body">GNNs are a rapidly proliferating topic. New methods and techniques have been proposed in a short span of time. Though this book focuses on practical and commercial applications of graphs, much of the state of the art in this field is disclosed in academic journals and conferences. Knowing how to effectively study publications from these sources is essential to keep up to speed with the field and to encounter valuable ideas that can be implemented in code.</p>
+
+  <p class="body">In this short section, we list some commonly used notations to describe graphs in technical publications.</p>
+
+  <p class="body">A few tips on reading academic literature as a practitioner, someone focused on using the methodology in the paper to add value to a project that has time constraints:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; To efficiently extract value from a paper, one must be selective on which sections of the publication to focus on. One should focus on clearly understanding the problem statement and understanding the solution that can be translated into code. This sounds obvious, but many papers include sections that for a practitioner are distracting at best. Mathematical proofs and long historical notes are examples.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; While a positive trend is that papers are starting to make reproducibility easier with included code and data, it may not be possible to reproduce a paper for one reason or another. That’s why it’s important to reach out to the authors if you think something is missing or doubtful.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Look closely at indicators of the application scope of the problem and solution. An exciting development may not be applicable to your problem, and it may not be immediately obvious.</p>
+
+  <p class="body">In the vast majority of papers, ideas are built around set theory and linear algebra, using concepts like sets, vectors, matrices and tensors to describe graphs and their elements. In describing algorithms, including deep learning algorithms, operations between these mathematical entities are also used.</p>
+
+  <h4 class="head3 sigil_not_in_toc">Common Graph Notations</h4>
+
+  <p class="body">In mathematical notation, a graph is described as a set of nodes and edges:</p>
+
+  <p class="figurea"><img alt="" src="../Images/Aimage020.png" /></p>
+
+  <p class="body">Where <span>V</span> and <span>E</span> are collections or sets of vertices (nodes) and edges, respectively. When we want to express the count of elements in these collections, we use |<span>V</span>| and |<span>E</span>|.</p>
+
+  <p class="body">For directed graphs, an accented G is sometimes, but not always used:.</p>
+
+  <p class="figurea"><img alt="" src="../Images/Aimage0001.png" /></p>
+
+  <p class="body">Individual nodes and edges are denoted by lower case letters, <span>v</span> and <span>e</span>, respectively.</p>
+
+  <p class="body">When referring to a pair of adjacent nodes, we use <span>u</span> and <span>v</span>. Thus, an edge can also be expressed as {<span>u</span>, <span>v</span>}, or <span>uv</span>.</p>
+
+  <p class="body">When dealing with weighted graphs, a weight for a particular edge is expressed as <span>w</span>(<span>e</span>). In terms of an edge’s nodes, we can include the weight as {<span>u</span>, <span>v, w</span>}.</p>
+
+  <p class="body">To express the features of a graph or its elements, we use the notation <span>x</span> or <b class="charbold">x</b> when the features are expressed as a vector or matrix, respectively.</p>
+
+  <p class="body">For graph representations, since many such representations are matrices, bold letters are used to express them: <b class="charbold">A</b> for the adjacency matrix, <b class="charbold">L</b> for the Laplacian matrix, and so on.</p>
+
+  <h2 class="head" id="sigil_toc_id_76">A.6&nbsp;&nbsp; Summary</h2>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Graphs are data structures that have a simple basis (nodes and edges), but have widely varying and complex implementations.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Graphs and their elements can be described and compared using a set of properties that are common across applications.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; For analytical and computational purposes, there are a few ways to represent a graph. The chosen representation has implications for storage, computational performance, and human interpretability.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; There is a basic workflow for graph analytics and graph learning that follows a few common tasks and stages.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; There is an ecosystem of graph tools, libraries, commercial software, and databases that is used in a graph workflow. These tools have tradeoffs that must be considered.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Understanding basic graph algorithms is important in analyzing graphs and in understanding how more complex algorithms, like the ones used to build GNNs work.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; In a rapidly advancing field, an important source of ideas and learning is from published research and other graph-related literature.</p>
+
+  <h2 class="head" id="sigil_toc_id_77">A.7&nbsp;&nbsp; References</h2>
+
+  <p class="listnumberedcxspfirst">1.&nbsp;&nbsp; Besta, M., et. al. Demystifying Graph Databases: Analysis and Taxonomy of Data Organization, System Designs, and Graph Queries. ArXiv, abs/1910.09017, 2019.</p>
+
+  <p class="listnumberedcxsplast">2.&nbsp;&nbsp; Cormen, T; et. al. Introduction to Algorithms, MIT Press, 3rd Edition, 2009.</p>
+
+  <p class="listnumberedcxsplast">3.&nbsp;&nbsp; Dreyfus, S.E., An Appraisal of Some Shortest Path Algorithms. Operations Research, 1969.</p>
+
+  <p class="listnumberedcxsplast">4.&nbsp;&nbsp; Deo, Narsingh, Graph Theory with Applications to Engineering and Computer Science. Dover Books on Mathematics, 2017.</p>
+
+  <p class="listnumberedcxsplast">5.&nbsp;&nbsp; Duong, et al, On Node Features for Graph Neural Networks.</p>
+
+  <p class="listnumberedcxsplast">6.&nbsp;&nbsp; Fensel, D, et. al. Knowledge Graphs, Methodology, Tools, and Selected Use Cases. Springer 2020.</p>
+
+  <p class="listnumberedcxsplast">7.&nbsp;&nbsp; <a href="https://en.wikipedia.org/wiki/Michael_T._Goodrich">Goodrich, M</a>.; <a href="https://en.wikipedia.org/wiki/Roberto_Tamassia">Tamassia, R</a>., Algorithm Design and Applications, Wiley, 2015.</p>
+
+  <p class="listnumberedcxsplast">8.&nbsp;&nbsp; Hamilton, W. Graph Representation Learning, Synthesis Lectures on Artificial Intelligence and Machine Learning, Morgan and Claypool, 2020.</p>
+
+  <p class="listnumberedcxsplast">9.&nbsp;&nbsp; Skiena, S., The Algorithm Design Manual. Springer-Verlag, 1997.</p>
+
+  <p class="listnumberedcxsplast">10. Nickel, M, A Review of Relational Machine Learning for Knowledge Graphs, arXiv:1503.00759v3, 2015.</p>
+
+  <p class="listnumberedcxsplast">11. Resource Description Framework (RDF): Concepts and Abstract Syntax, W3C Recommendation 10 February 2004, https://www.w3.org/TR/rdf-concepts/.</p>
+</body>
+</html>

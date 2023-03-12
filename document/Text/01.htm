@@ -1,0 +1,697 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN"
+  "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <title>Unknown</title>
+  <link href="../Styles/stylesheet.css" rel="stylesheet" type="text/css" />
+  <link href="../Styles/page_styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body class="calibre">
+  <h1 class="tochead">1&nbsp;&nbsp;Discovering Graph Neural Networks</h1>
+
+  <p class="colisthead">This chapter covers</p>
+
+  <p class="colistbulletcxspfirst">·&nbsp;&nbsp;&nbsp;&nbsp;Defining Graphs and Graph Neural Networks (GNNs)</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;&nbsp;Understanding why people are excited about GNNs</p>
+
+  <p class="colistbulletcxspmiddle">·&nbsp;&nbsp;&nbsp;&nbsp;Recognizing GNN Use Cases</p>
+
+  <p class="colistbulletcxsplast">·&nbsp;&nbsp;&nbsp;&nbsp;A big picture look at solving a problem with a GNN</p>
+
+  <p class="quote">“<i class="italics">Sire, there is no royal road to geometry.</i>”</p>
+
+  <p class="quote">Euclid</p>
+
+  <p class="body">For data practitioners, the fields of machine learning and data science initially excite us because of the potential to draw non-intuitive and useful insights from data. In particular, the insights from machine learning and deep learning promise to enhance our understanding of the world. For the working engineer, these tools promise to deliver business value in unprecedented ways.</p>
+
+  <p class="body">Experience detracts from this ideal. Real data is messy, dirty, biased. Statistical methods and learning systems have limitations. An essential part of the practitioner’s job involves understanding these limitations, and bridging the gap between the ideal and reality to obtain the best solution to a problem.</p>
+
+  <p class="body">For a certain class of data, graphs (also called <span>networks</span>, which we will use interchangeably in this book), the gap has proven difficult to bridge until recently. Graph data has characteristics that have presented problems for traditional machine learning and deep learning methods to penetrate. Yet, graphs are a data type that is rich with information. They are also ubiquitous: We can find network structures in nature (molecules), society (social networks), technology (the internet), and mundane settings (roadmaps). In order to use this rich and ubiquitous data type for machine learning, we need a specialized form of neural network dedicated to work on graph data: the graph neural network or GNN.</p>
+
+  <p class="body">Some basic definitions and an example will help us get a better idea of what GNNs are, what they can do, and where they can be helpful.</p>
+
+  <h2 class="head" id="sigil_toc_id_1">1.1&nbsp;&nbsp; What are Graphs &amp; Graph Neural Networks?</h2>
+
+  <p class="body">First, let’s define graphs and graph neural networks more precisely.</p>
+
+  <p class="body">Graphs are data structures whose elements are relationships (expressed as edges) between entities (expressed as nodes, also called vertices). In graphs, the links and relationships in our data are first class citizens, and are key to how we model the world, analyze data, and learn from it. This is in contrast to the grid-like data that is common in traditional learning and analytics problems, like the relational database table, pandas dataframe, or excel/google sheet. The relationships in such grid-like data are much more muted than in networks or graphs.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre2" id="uHGWhTfDtC6N4aTd9483DGC" src="../Images/01image001.png" /></p>
+
+  <p class="figureacaption">Figure 1.1 A graph. Circles are nodes, also called vertices, and lines are labels, also known as edges. The numbers denote node IDs.</p>
+
+  <p class="body">A <b class="charbold">graph neural network (GNN)</b> is an algorithm that allows you to represent and learn from graphs, including their constituent nodes, edges and features. Graph neural networks provide analogous advantages to conventional neural networks, except the learning happens on graph data. Applying traditional machine learning and deep learning methods to graph data structures has proven to be challenging. Graph data, when represented in grid-like formats and data structures, has qualities that prevent consistent application of machine learning methods that don’t take this into account (an example is called <span>permutation invariance</span>, defined as the ability of a machine learning method to be influenced by the ordering of the input graph representation). In addition, traditional methods have failed to account for the network structure in the learning process. GNNs can address both of these issues, which will be explored in more depth in this book.</p>
+
+  <p class="body">The concept of applying specialized neural network architectures to graphs was first introduced in the late nineties, gained traction in the early 2000s, and greatly accelerated after 2015 ([Wu] has a good list of these papers). Today, there are a few examples of enterprise systems that employ GNNs at scale. This is still a rapidly developing field, with many challenges remaining</p>
+
+  <p class="body">Before we introduce graphs and GNNs further, let’s cast a classic machine learning problem in a new light by using graphs. By doing so, we can get an idea of how such problems can be represented as networks, and see possible applications of GNNs.</p>
+
+  <p class="body">For a brief example of a dataset that has historically been cast in a grid manner, but is full of unexplored links and relationships, we can examine the Titanic dataset, whose observations span the passengers of the doomed ship, and label their survivorship. Most machine learning challenges and projects based on this dataset express it in terms of the target variable (survivorship) and columns of features, which fit well in a table or dataframe (figure 1.2). Each row of such tables represents one person.</p>
+
+  <p class="figurea"><img alt="" class="calibre1" id="image8.png" src="../Images/01image002.png" /></p>
+
+  <p class="figureacaption">Figure 1.2. The Titanic Dataset is usually displayed and analyzed using a table format.</p>
+
+  <p class="body">As expressive as tables like this are, their account of links and relationships are superficial at best. In particular, they fail to convey the social links between the people, the corridors that linked locations on the ship, and the communication network.</p>
+
+  <p class="body">First, the people on the ship shared multiple types of relationships, including marital and blood relations (married, engaged, parent/child, siblings, and cousins), business and employment relationships, and, of course, friendships. Many table versions of the Titanic dataset give boolean indicators or counts of immediate family relationships (e.g., in the table above, the <span>alone</span> feature is True if a person had immediate family on the ship).</p>
+
+  <p class="body">Network representations of social relationships can add depth via specificity. For example, having relatives on the ship may be a factor in favor of survival, but having socially important relatives would probably give a greater chance at survival. Social networks can convey social importance via their structure. An example of a graph representation of families on the Titanic is shown in figure 1.3.</p>
+
+  <p class="body">The next example of a network on the Titanic is the ship’s corridors, consisting of connected hallways, stairways, junctions and landings, and the adjoining cabins and workrooms can also be represented as a graph. These are important to the survival question because the ease to quickly get to a lifeboat in a crisis depends on one’s starting location. From certain cabins and decks, it would be easier to reach a lifeboat in time than others.</p>
+
+  <p class="body">The third example of a network on the Titanic is the ship’s communication network, whereby the ship’s crew communicated between themselves, to the passengers, and to the outside world (figure 1. 3). This is relevant to the question of survival, because critical information about the crisis would reach individuals only in proximity to communication nodes. The communication networks of the Titanic and surrounding ships (both by wireless telegraph and by analog signals, such as flares), also impacted survivability. There were two ships within 14 miles of the Titanic when it sank. They saw the distress flare, but for different reasons, decided not to help. If they were linked by wireless, the compelling information about the rapid sinking of the ship may have swayed one or both ships to attempt a rescue.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre2" id="image4.png" src="../Images/01image003.png" /></p>
+
+  <p class="figureacaption">Figure 1.3. The Titanic Dataset. Left: with family relationships visualized as graphs (credit: Matt Hagy). Right: An old illustration of the wireless communication between the Titanic and other ships. It’s easy to interpret the ships as nodes and the wireless connections as edges.</p>
+
+  <p class="body">Assuming one had access to this graph data and it was of sufficient quantity and quality, what could a GNN glean from it? First, since the historical records are not altogether intact, we could use it to fill in missing information. GNNs use <span>node classification</span> to predict node attributes, which in our case could be applied to predict missing passenger information. An example could be if citizenship information was missing from some of the passenger data We could use node classification for uncover these citizenship labels. GNNs also use <span>edge prediction (or link prediction)</span> to uncover hidden or missing links between nodes. In our case, we could use it to find non-obvious relationships between the passengers, Examples would be extended family relationships (cousins on the ship), and business relationships. At the ship level, if we had similar data for several other large ships, we could classify the ships themselves and possibly find characteristics that could portend disaster. Finally, we could encode this graph data, known as <span>embedding</span>, and use it as additional features in conventional Titanic-focused machine learning and deep learning solutions. This book will teach how to practically implement the methods above.</p>
+
+  <h2 class="head" id="sigil_toc_id_2">1.2&nbsp;&nbsp; Goals of the book</h2>
+
+  <p class="body"><span>GNNs in Action</span> is a book aimed at practitioners who want to deploy graph neural networks to solve real problems. This could be a machine learning engineer not familiar with graph data structures, or a graph data scientist who has not tried machine or deep learning, or software engineers who may not be familiar with either.</p>
+
+  <p class="body">My aim is to enable you to</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Assess the suitability of a GNN solution for your problem</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Implement a GNN architecture to solve a relevant problem</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Understand the tradeoffs in using the different GNN architectures and graph tools in a production environment</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Make clear the limitations of GNNs</p>
+
+  <p class="body">As a result, this book is weighted towards implementation using programming and mainstream data ecosystems. We devote just enough space on essential theory and concepts, so that the techniques covered can be sufficiently understood.</p>
+
+  <p class="body">I cover the end to end workflow of machine learning - including data loading and preprocessing, model setup and training, and inference - and apply it to graphs and GNNs.</p>
+
+  <p class="body">I also cover practical guidelines in implementing a GNN solution, including prototyping and developing applications that will be put into production.</p>
+
+  <p class="body"><span>GNNs in Action</span> is a book designed for people to jump quickly into this new field and start building applications. I hope to offer a book that can reduce the friction of implementing new technologies by filling in the gaps and answering key development questions whose answers may have been heretofore scattered over the internet, or not covered at all. And to do so in a way that emphasizes approachability rather than high rigor.</p>
+
+  <p class="body">In Part 1, we cover fundamentals of graphs, related workflows and data pipelines, and graph representations. Chapter 2 is devoted to a tour of graphs and the graph technical ecosystem. Chapter 3 covers the graph data pipeline from raw data to graph representations. [For readers familiar with graphs, this material may seem elementary. For those readers, I suggest skimming these chapters and reviewing topics as needed, then jumping to the chapters on Graph Neural Networks, which start in Part 2.]</p>
+
+  <p class="body">In Part 2, the core of the book, you’ll get introduced to the major types of GNNs, including Convolutional Networks (GCNs) and GraphSage, Graph Attention Networks (GATs), Graph Auto-Encoders (GAEs), and GNNs for Knowledge Graphs</p>
+
+  <p class="body">In Part 3, we’ll look at advanced topics, such as customizing GNN Architectures, Dynamic Graphs, Methods for GNNs at Scale, and Bias in Graph Data.</p>
+
+  <p class="body">Python is the language of choice. At this time, there are several GNN libraries; our focus will be on Pytorch Geometric, Deep Graph Library, and Alibaba’s GraphScope. We want this book to be approachable by an audience with a wide set of hardware constraints, and will try to reflect this in the code examples. Code will be available in github and colab.</p>
+
+  <h2 class="head" id="sigil_toc_id_3">1.3&nbsp;&nbsp; Why are people excited about GNNs?</h2>
+
+  <p class="body">In fields that have no lack of hype for new technologies and methods, GNNs are without hyperbole a leap forward for both the field of deep learning and for the domain of graph analytics.</p>
+
+  <p class="body">In deep learning, previously if one wanted to incorporate features from a graph into model training, it was done in an indirect way which was not easily scalable, and could not seamlessly take into account node and edge properties.</p>
+
+  <p class="body">Meanwhile, in the venerable field of graph analysis, several methods have existed to characterize networks and their elements, many of which are used in modern graph databases and analytical software [Deo]. However, such methods have also fallen short in incorporating node and edge properties. In addition, it has not been possible up to now to develop generalizable models that could be applied to unseen nodes, edges, or graphs.</p>
+
+  <p class="body">Graph neural networks have made strides in remedying these issues, and as a result are allowing two important types of applications to be developed:</p>
+
+  <p class="listnumberedcxspfirst">1.&nbsp;&nbsp; Applications based on new and unique data segments and domains; and</p>
+
+  <p class="listnumberedcxsplast">2.&nbsp;&nbsp; Applications that enhance traditional machine learning problems in fresh ways.</p>
+
+  <p class="body">Let’s look at examples of both of these applications. Following are two novel applications of GNNs, and one example of using a GNN in a traditional application.</p>
+
+  <p class="body"><b class="charbold">Molecular Fingerprints and Interfaces [Sanchez-Lengeling</b>]<b class="charbold">.</b> In chemistry and molecular sciences, a prominent problem has been representing molecules in a general, application-agnostic way, and inferring possible interfaces between organic molecules, such as proteins. For molecule representation, we can see that the drawings of molecules that are common in high school chemistry classes bear resemblance to a graph structure, consisting of nodes (atoms) and edges (atomic bonds).</p>
+
+  <p class="figurea"><img alt="" class="calibre2" id="u7XAU5BxKwYEm6NftYdmQ2A" src="../Images/01image004.png" /></p>
+
+  <p class="figureacaption">Figure 1.4. A molecule. We can see that individual atoms are nodes and the atomic bonds are edges.</p>
+
+  <p class="body">Applying Graph Convolutional Networks to these structures is a nascent field that promises to outperform traditional ‘fingerprint’ methods, which involve the creation of features by domain experts to capture a molecule’s properties.</p>
+
+  <p class="figurea"><img alt="" class="calibre3" id="image13.png" src="../Images/01image005.png" /></p>
+
+  <p class="figureacaption">Figure 1.5. A GNN system used to match molecules to odors. The workflow here starts on the left with a representation of a molecule as a graph. In the middle parts of the figure, this graph representation is transformed via GNN and MLP layers to a vector representation that can be trained against odor descriptions on the right. Finally a graph representation of the molecule can be cast in a space which also corresponds to odors (bottom right).</p>
+
+  <p class="body"><b class="charbold">Mechanical Reasoning [Sanchez-Gonzalez].</b> From infancy, many living beings, including humans, have an intuition about mechanics without any formal training in the subject. Given a bouncing ball, we don’t need pencil and paper and a set of equations to predict its trajectory. We can innately forecast where the ball will likely go. We don’t even have to be in the presence of a physical ball. Given a 2-D snapshot of a bouncing ball, we can rely on our reasoning to predict in a 3D world where the ball will end up.</p>
+
+  <p class="figurea"><img alt="" class="calibre2" id="image3.png" src="../Images/01image006.png" /></p>
+
+  <p class="figureacaption">Figure 1.6 A graph representation of a mechanical body. The body’s segments are represented as nodes, and the mechanical forces binding them are edges.</p>
+
+  <p class="body">An example of a relevant industry problem would be for an autonomous driving system to anticipate what will happen in a traffic scene consisting of many moving objects. Until recently, this was an impossible task for a computer vision system. Recent advances in Interaction Networks (IN), a type of GNN, are enabling machines to pick up this physical intuition for a few objects at a time.</p>
+
+  <p class="body">The input graphs for physical reasoning consist of nodes which represent physical objects, and edges which represent the physical relationship (e.g., gravity, elastic spring, rigid connection, etc) between objects. Given these inputs, INs can predict future states of a set of objects without explicitly calling on physical/mechanical laws.</p>
+
+  <p class="body"><b class="charbold">Recommendation Engines at Pinterest [Ying].</b> Many of the applications mentioned stem from the research literature. But practitioners will want to know that these techniques are put into practice on enterprise problems and at scale.</p>
+
+  <p class="body">Enterprise graphs can exceed billions of nodes and billions of edges. On the other hand, many graph neural networks have been benchmarked on datasets that consist of much less than a million nodes. When applied to large scale graphs, adjustments of the training and inference algorithms, storage techniques, or some combination of each have to be made.</p>
+
+  <p class="body">Pinterest is a social media platform for finding and sharing images and ideas. There are two major concepts to Pinterest’s users: collections or categories of ideas, called <span>boards</span> (like a bulletin board); and objects a user wants to bookmark called <span>pins</span>. Pins include images, videos, and website URLs. For example, a user board focused on dogs would include pins of pet photos, puppy videos, and dog-related website links. A board’s pins are not exclusive to it; a pet photo that was pinned to the dog board could also be pinned to a ‘pet enthusiasts’ board (figure 1.6).</p>
+
+  <p class="figurea"><img alt="" class="calibre4" id="image6.png" src="../Images/01image007.png" /></p>
+
+  <p class="figureacaption">Figure 1.7. A graph representing the ‘pins’ and ‘boards’ of Pinterest. Pins make up one set of nodes (circles) and the boards make up the other set (squares). In this particular graph, nodes can only link to nodes of the other group.</p>
+
+  <p class="body">As of this writing, Pinterest has 400M active users, who have pinned quite a number of items. One imperative of Pinterest is to help their users find content of interest via recommendations. Such recommendations should not only take into account image data and user tags, but draw insights from the relationships between pins and boards.</p>
+
+  <p class="body">One way to interpret the relationships between pins and boards is with a special type of graph called a <span>bipartite graph</span>. Here, pins and boards are two classes of nodes. Members of these classes can be linked to members of the other class, but not to members of the same class. This graph was reported to have 3 billion nodes and 18 billion edges.</p>
+
+  <p class="body">PinSage, a graph convolutional network, was one of the first documented highly scaled GNNs used in an enterprise system. Used at Pinterest to power recommendation systems on its massive bipartite graphs (consisting of object pins linked to boards), this system was able to overcome challenges of GNN models that weren’t optimized for large scale problems. Compared to baseline methods, AB tests on this system showed it improved user engagement by 30%.</p>
+
+  <h2 class="head" id="sigil_toc_id_4">1.4&nbsp;&nbsp; How do GNNs Work?</h2>
+
+  <p class="body">Neural networks are themselves a type of graph. In this section, I will only use <span>network</span> to refer to neural networks.</p>
+
+  <p class="body">Though there are a variety of GNN architectures at this point, they all tackle the problem of dealing with the unstructured nature of graph data, and issues such as permutation invariance (permutation invariance and equivariance will be explained in chapter 5). The mechanism to tackle this problem is by exchanging information across the graph structure during the learning process (also explained in more detail in Chapter 5).</p>
+
+  <p class="body">In a conventional neural network (and in machine learning methods in general), we initialize a set of parameters. Then we iteratively update these parameters by:</p>
+
+  <p class="listbulletcxspmiddle1">a)&nbsp;&nbsp; Inputting our data</p>
+
+  <p class="listbulletcxspmiddle1">b)&nbsp;&nbsp; Having that data flow through layers that transform the data according to the parameters of that layer.</p>
+
+  <p class="listbulletcxspmiddle1">c)&nbsp;&nbsp; Output a prediction, which is used to update the parameters.</p>
+
+  <p class="figurea"><img alt="" class="calibre4" id="image11.png" src="../Images/01image008.jpg" /></p>
+
+  <p class="figureacaption">Figure 1.8. Comparison of (simple) non-graph neural network (above) and graph neural network. GNNs have a layer that distributes data amongst its vertices.</p>
+
+  <p class="body">With a Graph Neural Network, we add a step. We still have to initialize the neural network parameters, but we also initialize a representation of the nodes of the graph. So in our iterative process we:</p>
+
+  <p class="listbulletcxspmiddle1">a)&nbsp;&nbsp; Input the graph data</p>
+
+  <p class="listbulletcxspmiddle1">b)&nbsp;&nbsp; Update the node representations using GNN layers</p>
+
+  <p class="listbulletcxspmiddle1">c)&nbsp;&nbsp; Have the resulting data flow through the conventional neural networks layers.</p>
+
+  <p class="listbulletcxspmiddle1">d)&nbsp;&nbsp; Output a prediction, and an updated set of node representations, which are used to update the neural network parameters.</p>
+
+  <p class="body">This set of GNN layers’ are designed specifically for interrogating the graph structure. For each node in the graph, each GNN layer represents a communication that can span nodes <span>x</span> hops away. For this reason, GNN layers are almost never as ‘deep’ as a deep learning network could be. From a performance point of view, there is a law of diminishing returns in applying many layers. We’ll get into the specifics of this as we review each architecture.</p>
+
+  <p class="body">Most of this book will be focused on the middle sections of the diagram: the different ways graph updating layers are done, and the downstream neural network architecture of the GNN. We study these in chapters 4 through 9.</p>
+
+  <h2 class="head" id="sigil_toc_id_5">1.5&nbsp;&nbsp; When to use a GNN?</h2>
+
+  <p class="body">We just shared three real applications of GNNs: studying molecular fingerprints, deriving physical laws and motion, and improving a recommendation system. What were the commonalities? Listing these can give us a hint as to where a GNN may be a good fit.</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Data was modeled as a graph.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; A prediction task was involved.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Individual Nodes and Edges had non trivial features critical to the problem.</p>
+
+  <p class="body">Let’s flesh out these points below.</p>
+
+  <h3 class="head1" id="sigil_toc_id_6">1.5.1&nbsp;&nbsp; Data modeled as a graph</h3>
+
+  <p class="body">Graph data structures are a versatile data structure, so with a little imagination, many problems could be framed in this way. A critical consideration is whether the relationships being modeled are of relevance to the problem at hand. A graph data model is also helpful when relationships are an important characteristic of the situation being modeled.</p>
+
+  <p class="body">So far in this chapter, we’ve encountered a few examples where relationships are of importance. Table 1.1 shows how we could assign nodes and edges to express those relationships.</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable" width="100%">
+    <tr class="calibre5">
+      <td char="132" class="calibre6">
+        <p class="tablehead">Problem</p>
+      </td>
+
+      <td char="169" class="calibre6">
+        <p class="tablehead">Nodes</p>
+      </td>
+
+      <td char="203" class="calibre6">
+        <p class="tablehead">Edges</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="132" class="calibre6">
+        <p class="tablebodycxspfirst">Titanic Dataset</p>
+      </td>
+
+      <td char="169" class="calibre6">
+        <p class="tablebodycxspmiddle">Individual People</p>
+
+        <p class="tablebodycxspmiddle">Corridor Junctions</p>
+
+        <p class="tablebodycxspmiddle">Communication Hubs</p>
+      </td>
+
+      <td char="203" class="calibre6">
+        <p class="tablebodycxspmiddle">Societal Relationships</p>
+
+        <p class="tablebodycxspmiddle">Ship Corridors</p>
+
+        <p class="tablebodycxsplast">Communication Links</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="132" class="calibre6">
+        <p class="tablebodycxspfirst">Molecular Fingerprints</p>
+      </td>
+
+      <td char="169" class="calibre6">
+        <p class="tablebodycxspmiddle">Atoms</p>
+      </td>
+
+      <td char="203" class="calibre6">
+        <p class="tablebodycxsplast">Atomic Bonds</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="132" class="calibre6">
+        <p class="tablebodycxspfirst">Mechanical Reasoning</p>
+      </td>
+
+      <td char="169" class="calibre6">
+        <p class="tablebodycxspmiddle">Physical Objects</p>
+      </td>
+
+      <td char="203" class="calibre6">
+        <p class="tablebodycxsplast">Forces and Physical Connections</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="132" class="calibre6">
+        <p class="tablebodycxspfirst">Pinterest Recommender</p>
+      </td>
+
+      <td char="169" class="calibre6">
+        <p class="tablebodycxspmiddle">Pins and Boards</p>
+      </td>
+
+      <td char="203" class="calibre6">
+        <p class="tablebodycxsplast">User-created Pin/Board Links</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="tablecaption">Table 1.1 Comparison of graph examples discussed in this chapter, particularly showing what nodes and edges represent. We see that nodes and edges can represent a range of concrete and abstract entities and ideas.</p>
+
+  <p class="body">In contrast, for many applications, individual data entries are meant to stand alone, and relationships are not useful. For example, consider a non-profit organization that has maintained a database of donors and their financial contributions. These donors are spread across the country, and for the most part don’t personally know each other. Also, the non-profit is primarily concerned with growing donor contributions. Representing their donor data with a graph data structure and storing it using a graph database would be a waste of time and money.</p>
+
+  <h3 class="head1" id="sigil_toc_id_7">1.5.2&nbsp;&nbsp; A prediction task is involved</h3>
+
+  <p class="body">A slew of graph algorithms and analytical methods has existed for decades, for a variety of use cases. Many of these methods are quite powerful, are used at scale, and have proven lucrative. PageRank, the first algorithm used by Google to order web search results, is probably the most famous example of a graph algorithm used to great success by an enterprise.</p>
+
+  <p class="body">Applications where graph neural networks shine are problems that require predictive models. We either use the GNN to train such a model, or we use it to produce a representation of the graph data that can be used in a downstream model. We list typical GNN predictive tasks below.</p>
+
+  <p class="body"><b class="charbold">Graph Representation.</b> The challenge of dealing with graphs, which are non-Euclidian in nature, is to represent them accurately in a way that can be input into a neural network environment. For GNNs, usually the starting layers of an architecture are designed to do just that. These layers use embedding to transform a graph structure into a vector or matrix representation. This will be covered in detail in a later chapter.</p>
+
+  <p class="figurea"><img alt="" class="calibre3" id="image14.png" src="../Images/01image009.png" /></p>
+
+  <p class="figureacaption">Figure 1.9. A visual example of a graph embedding. We start (left) with a non-Euclidean graph structure, and end up with an embedding (right) that can be projected in a 2D euclidean space.</p>
+
+  <p class="body"><b class="charbold">Node-Level Tasks.</b> Nodes in graphs often have attributes and labels. Node classification is the node analog to traditional machine learning classification: given a graph with node classes, can we accurately predict the class of an unlabeled node.</p>
+
+  <p class="figurea"><img alt="" class="calibre3" id="image12.png" src="../Images/01image010.png" /></p>
+
+  <p class="figureacaption">Figure 1.10 Node classification.</p>
+
+  <p class="body"><b class="charbold">Edge-Level Tasks.</b> Edge tasks are very similar to nodes. Link classification involves predicting a link’s label in a supervised or semi-supervised way. <b class="charbold">Edge Prediction</b> is inferring a link between nodes, where one may not exist in the graph under study.</p>
+
+  <p class="body"><b class="charbold">Graph-Level Tasks.</b> In real scenarios, graphs may consist of a large set of connected nodes, many disconnected graphs, or a combination of a large connected graph with many smaller unconnected graphs. In these situations the learning task may be different.</p>
+
+  <p class="body">Graph classification and regression involve predicting the label or a quantity associated with the graph. An example of graph classification will be outlined in the next section.</p>
+
+  <p class="body">There are also unsupervised tasks that involve GNNs. These involve Graph Auto Encoders that embed graphs and do the opposite process of generating a graph from an embedding. There is also a class of models that use adversarial methods to generate graphs.</p>
+
+  <h3 class="head1" id="sigil_toc_id_8">1.5.3&nbsp;&nbsp; Incorporation of Node and Edge Features</h3>
+
+  <p class="body">In many graphs, nodes and edges have properties associated with them that can be used as features in a machine learning problem. For example, in the Pinterest case above, a pin that is the image of a dog may have user-generated tags attached to it (e.g., ‘dog’, ‘pooch’). The node that represents this pin could thus have features related to the text data and the image.</p>
+
+  <p class="body">GNNs stand apart from previous graph analytical methods in being able to use this feature information.</p>
+
+  <h2 class="head" id="sigil_toc_id_9">1.6&nbsp;&nbsp; The GNN Workflow</h2>
+
+  <p class="body">What’s the big picture for the working practitioner? In this section, I highlight two types of workflows. One involves system planning, involving setting the project and infrastructure details required to create a successful GNN implementation for an application. This workflow illustrated in figure 1.9, is touched upon particularly in the first chapters.</p>
+
+  <p class="figurea"><img alt="" class="pcalibre2" id="image2.png" src="../Images/01image011.jpg" /></p>
+
+  <p class="figureacaption">Figure 1.11 The GNN Planning Workflow</p>
+
+  <p class="body">The second workflow involves the data and model development workflow, where we start with raw data and end up with a trained GNN model and its outputs. I’ve illustrated this below in stages related to the state and usage of the data. This is similar to, but not meant to be a data pipeline, which is an exact implementation of elements in this workflow.</p>
+
+  <p class="body">Not all implemented workflows will include all of these steps, but most will draw from these items. At different stages of a development project, different parts of this process will be used. For example, when developing a model, data analysis and visualization may be prominent to make design decisions, but when deploying a model, it may only be necessary to stream raw data and quickly process it for ingestion into a model.</p>
+
+  <p class="body">Though this book touches on the earlier stages in this workflow, the bulk of the book is on how to do model development and deployment of GNNs. When the other items are discussed, it is in service of clarifying the role of graph data and GNN model in this process.</p>
+
+  <p class="figurea"><img alt="" class="calibre7" id="image1.png" src="../Images/01image012.jpg" /></p>
+
+  <p class="figureacaption">Figure 1.12 Graph Data Workflow. Starts as raw data, which is transformed via ETL into a graph data model that can be stored in a graph database, or used in a graph processing system. From the graph processing system (and some graph databases), exploratory data analysis and visualization can be done. Finally for graph machine learning, data is preprocessed into a form which can be submitted for training.</p>
+
+  <p class="body">Let’s examine this diagram from top to bottom.</p>
+
+  <p class="body">First, we start with data in some initial state. Raw data refers to data which contains the information needed to drive an application or analysis, but has not been put into a form which can be ingested by an analytics or machine learning tool. Such data can exist in databases, encoded files, or streamed data. For our purposes, graph databases are important data stores that we will emphasize.</p>
+
+  <p class="body">Going down a level in our diagram, we focus on extraction, merging, and transformation of this raw data. The objective could be to explore the data, integrate key components of the data that may sit in different data stores, and have different formats, and prepare the data to be ingested by a downstream application. One important tool at this stage is the graph processing system, which can provide a means to manipulate graph data as required.</p>
+
+  <p class="body">Going down another level, the diagram splits into two possible downstream applications: data exploration and visualization, and model training/inference. Data exploration and visualization tools allow engineers and analysis to draw useful insights and assessments of a dataset. For graph data, many unique properties and metrics exist that are key to such an assessment. Visualizing graph data and its properties also require special software and metrics.</p>
+
+  <p class="body">For machine learning, we must preprocess our data for training and inference. This involves sampling, batching, and splitting (between train, validation, and test sets) the data. The GNN libraries we will study in this book, Pytorch Geometric and Deep Graph Library, have classes specially made for preprocessing. For graph data, we must take special care to format our data to preserve its structure when preprocessing it for loading into a model.</p>
+
+  <h3 class="head1" id="sigil_toc_id_10">1.6.1&nbsp;&nbsp; Hospital Case: Health Event Prediction</h3>
+
+  <p class="body">In the following example, we’ll explore the frameworks and process we’ve just discussed.. This example is meant to illustrate how GNN application development works at a high level and to point out what skills will be covered in this book.</p>
+
+  <h3 class="head1" id="sigil_toc_id_11">1.6.2&nbsp;&nbsp; Problem Overview</h3>
+
+  <p class="figurea"><img alt="" class="calibre8" id="image015.png" src="../Images/01image0001.jpg" /></p>
+
+  <p class="body">Imagine you’re the data scientist for a hospital. This state-of-the-art facility extensively monitors its patients with an array of sensors on the patients’ bodies and in their rooms. Based on the data from these sensors, they have extensively catalogued a set of health status events that are common amongst the people in the hospital’s charge.</p>
+
+  <p class="body">Examples of such events are listed in the table 1.2.</p>
+
+  <p class="body">The chief doctor has the hypothesis that certain sequences of events have a relationship with serious negative health events (e.g., heart attacks and strokes). Thus, the doctor wants you to train a model that can use the log data to identify such events. Not the serious negative events themselves, but ‘prelude’ events that indicate a more serious occurrence happening in the near future. This model will be used to power an alert application in the hospital’s existing management system. Given the importance of relationships in this problem, you think a GNN model may provide some advantages.</p>
+
+  <p class="body">With the problem defined, let’s focus the example on the development issues most relevant to graphs and GNNs, since the entire process of the machine learning application development is well covered elsewhere. We will cover:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Project and System Planning</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Specifying a Graph Data Model from Raw Data</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Defining the GNN problem and approach</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Data Pipelines for Training and Inference</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable1" width="100%">
+    <tr class="calibre5">
+      <td char="24%" class="calibre6">
+        <p class="tablehead">Patient Physiological Events</p>
+      </td>
+
+      <td char="24%" class="calibre6">
+        <p class="tablehead">Room Events</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablehead">Social Events</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablehead">Serious Negative Health Event</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="24%" class="calibre6">
+        <p class="tablebodycxspfirst">Heart palpitation</p>
+      </td>
+
+      <td char="24%" class="calibre6">
+        <p class="tablebodycxspmiddle">Door opens</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspmiddle">Doctor administers medicines</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Heart Attack</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="24%" class="calibre6">
+        <p class="tablebodycxspfirst">Begin sleeping</p>
+      </td>
+
+      <td char="24%" class="calibre6">
+        <p class="tablebodycxspmiddle">Lights turned off</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspmiddle">Family comes to visit</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Stroke</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="24%" class="calibre6">
+        <p class="tablebodycxspfirst">Prolonged coughing</p>
+      </td>
+
+      <td char="24%" class="calibre6">
+        <p class="tablebodycxspmiddle">TV turned on</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspmiddle">Patient undertakes daily exercise with physical therapist</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Falling</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="tablecaption">Table 1.2 Types of patient events that are logged.</p>
+
+  <p class="figurea"><img alt="" class="calibre8" id="image016.png" src="../Images/01image0002.jpg" /></p>
+
+  <h3 class="head1" id="sigil_toc_id_12">1.6.3&nbsp;&nbsp; System and Project Planning</h3>
+
+  <p class="body">Scale of Facility. The hospital has an average of 500 patients and an average of 5 sensors per patient. The system can ingest 5000 events per second with low latency.</p>
+
+  <p class="body">Data Systems. The hospital employs an IoT system to ingest and parse data produced by the sensor devices. This data is streamed to a relational database. Every 24 hours, the data in this first database is transferred to longer term storage built for analytics.</p>
+
+  <p class="body">For training, data will be pulled from the analytics system. Upon deployment, for real-time alerts, your model will have to make predictions using the streamed data. The time to make a prediction should be fast, so that the alerts can be effectively used by the medical staff. Predictions will have to be made at scale simultaneously.</p>
+
+  <h3 class="head1" id="sigil_toc_id_13">1.6.4&nbsp;&nbsp; Log Data and its Graph Representation</h3>
+
+  <p class="figurea"><img alt="" class="calibre8" id="image017.png" src="../Images/01image0003.jpg" /></p>
+
+  <p class="body">Given the doctor’s hypothesis, you examine the data and propose a graph representation that can be used by a model.</p>
+
+  <p class="body">Log Data. Logs are kept by the minute for each patient. These records are maintained in a relational database. A query of log information for 3 patients over a few minutes looks like this:</p>
+
+  <table border="1" cellpadding="0" cellspacing="0" class="msonormaltable1" width="100%">
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablehead">TimeStamp</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablehead">Patient ID</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablehead">Event</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablehead">Location ID</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:00:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">Null</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Door Opens</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room A</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:02:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Breakfast is served</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room A</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:04:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">Null</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Door Opens</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room A</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:19:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">1</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Begin Sleep</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room A</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:30:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">2</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Room TV Turned On</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room C</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:36:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">3</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Patient begins exercise</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room A</p>
+      </td>
+    </tr>
+
+    <tr class="calibre5">
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxspfirst">9:40:00 Dec 3rd</p>
+      </td>
+
+      <td char="17%" class="calibre6">
+        <p class="tablebodycxspmiddle">2</p>
+      </td>
+
+      <td char="32%" class="calibre6">
+        <p class="tablebodycxspmiddle">Patient Sneezes</p>
+      </td>
+
+      <td char="25%" class="calibre6">
+        <p class="tablebodycxsplast">Room C</p>
+      </td>
+    </tr>
+  </table>
+
+  <p class="tablecaption">Table 1.3 An excerpt from a daily log.</p>
+
+  <p class="figurea"><img alt="" class="calibre9" id="image15.png" src="../Images/01image013.png" /></p>
+
+  <p class="figureacaption">Figure 1.13 A graph representation of our medical data.</p>
+
+  <p class="body">Graph Data Model. As you study the data, you notice a few things:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Each event/observation in the query results can be interpreted as a node in a graph</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; The columns in the each row observation can be used as node features</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Certain sets of events happen in time and space proximity to one another. This proximity can be interpreted as edges between the event nodes. An example would be when two patients share a room. Events of the room, and for each patient that happen near each other in time would have edges between them. A third patient in a room on another floor would not have linked events. Also, events that happen more than several minutes apart would not be directly linked.</p>
+
+  <h3 class="head1" id="sigil_toc_id_14">1.6.5&nbsp;&nbsp; Defining the Machine Learning Problem</h3>
+
+  <p class="figurea"><img alt="" class="calibre8" id="image19.png" src="../Images/01image0004.jpg" /></p>
+
+  <p class="body">From your initial data inspection and problem formulation, you have decided to treat this as a supervised binary classification problem, where events are classified as leading to negative health outcomes or not.</p>
+
+  <p class="body">Though you think a GNN would be the best fit for this problem, you establish baselines with simpler models:</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Random forest where individual events are classified</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Time-series classification, where selected sequences of events are classified</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; The GNN model has the following characteristics:</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Supervised Node Classification, following the graph data model above</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Based on the GraphSage architecture</p>
+
+  <h3 class="head1" id="sigil_toc_id_15">1.6.6&nbsp;&nbsp; System Specification</h3>
+
+  <p class="figurea"><img alt="" class="calibre8" id="image20.png" src="../Images/01image0005.jpg" /></p>
+
+  <p class="body">Some of the decisions that may be made for system specification.</p>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Data Extraction and Transformation. Important here are the processes and systems used to transform the IoT data to graph data, following the graph data model set above. Since the training data is drawn from a longer term data store, and the live data will be streamed, care must be taken to make the transformed data consistent.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; GNN Library and Ecosystem. At present, there are few choices for the GNN library, the most prevalent being Deep Graph Library and Pytorch Geometric. Factors influencing this choice would depend upon the ease of use and learning curve; need for support of training and inference on large scale data; and training time and cost.</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Experimental Design. In developing the GNN, factors in the experimental design would include the graph data model, as well as input features, parameters and hyperparameters. For example, the size limits of the graphs submitted for inference (e.g., number of nodes, or number of edges) may have an impact on the GNN performance.</p>
+
+  <h2 class="head" id="sigil_toc_id_16">1.7&nbsp;&nbsp; Summary</h2>
+
+  <p class="listbulletcxspfirst">·&nbsp;&nbsp; Graph Neural Networks (GNNs) apply deep learning methodologies to network (also called graph) data structures.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; GNNs came about due to modern techniques that allowed neural networks to learn from non-Euclidean data structures.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; Graph neural networks have a wide potential use space, since most systems in the real world have non-Euclidean geometries.</p>
+
+  <p class="listbulletcxspmiddle">·&nbsp;&nbsp; GNNs have made an impact in the physical sciences, knowledge and semantics, and have been applied to</p>
+
+  <p class="listbulletcxsplast">·&nbsp;&nbsp; Much of the academic work and developed frameworks have been based upon relatively small systems. Only recently have some techniques been introduced that can be applied to large scale production systems.</p>
+
+  <h2 class="head" id="sigil_toc_id_17">1.8&nbsp;&nbsp; References and Further Reading</h2>
+
+  <h3 class="head1" id="sigil_toc_id_18">1.8.1&nbsp;&nbsp; Academic Overviews of GNNs</h3>
+
+  <p class="body">Hamilton, William, <span>Graph Representational Learning</span>, Morgan &amp; Claypool, 2020.</p>
+
+  <p class="body">Bronstein, Michael M. “Bronstein, Michael M., et al. "Geometric deep learning: going beyond euclidean data." <span>IEEE Signal Processing Magazine</span> 34.4 (2017): 18-42.”</p>
+
+  <p class="body">Liu, Zhiyuan; Zhou, Jie, <span>Introduction to Graph Neural Networks</span>, Morgan &amp; Claypool, 2020.</p>
+
+  <p class="body">Wu, Zonghan, et al. "A comprehensive survey on graph neural networks." <span>IEEE transactions on neural networks and learning systems</span> (2020).</p>
+
+  <h3 class="head1" id="sigil_toc_id_19">1.8.2&nbsp;&nbsp; References to Section 1.2 Examples</h3>
+
+  <p class="body">Ying, Rex, et al. "Graph convolutional neural networks for web-scale recommender systems." <span>Proceedings of the 24th ACM SIGKDD International Conference on Knowledge Discovery &amp; Data Mining</span>. 2018</p>
+
+  <p class="body">Sanchez-Gonzalez, Alvaro, et al. "Graph networks as learnable physics engines for inference and control." International Conference on Machine Learning. PMLR, 2018.</p>
+
+  <p class="body">Sanchez-Lengeling, Benjamin, et al. "Machine learning for scent: Learning generalizable perceptual representations of small molecules." arXiv preprint arXiv:1910.10685 (2019).</p>
+
+  <h3 class="head1" id="sigil_toc_id_20">1.8.3&nbsp;&nbsp; Academic Overviews of Graphs</h3>
+
+  <p class="body">Deo, Narsingh, Graph Theory with Applications to Engineering and Computer Science, Prentice-Hall of India, 1974.</p>
+</body>
+</html>

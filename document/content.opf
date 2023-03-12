@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<package xmlns="http://www.idpf.org/2007/opf" unique-identifier="uuid_id" version="2.0">
+  <metadata xmlns:calibre="http://calibre.kovidgoyal.net/2009/metadata" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:opf="http://www.idpf.org/2007/opf" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <dc:identifier id="uuid_id" opf:scheme="uuid">b9ad09b4-c584-4397-84fe-5748f2d3b6aa</dc:identifier>
+    <dc:title>Graph Neural Networks in Action MEAP V04</dc:title>
+    <dc:creator opf:file-as="Broadwater, Keita" opf:role="aut">Keita Broadwater</dc:creator>
+    <dc:contributor opf:role="bkp">calibre (5.35.0) [https://calibre-ebook.com]</dc:contributor>
+    <dc:publisher>Manning Publications Co.</dc:publisher>
+    <dc:language>en</dc:language>
+    <dc:identifier opf:scheme="calibre">b9ad09b4-c584-4397-84fe-5748f2d3b6aa</dc:identifier>
+    <dc:date opf:event="modification">2022-07-07</dc:date>
+    <meta content="Graph Neural Networks in Action MEAP V04" name="calibre:title_sort" />
+    <meta content="2022-07-06T15:59:26.111713+00:00" name="calibre:timestamp" />
+    <meta name="cover" content="cover" />
+    <meta content="{&quot;Keita Broadwater&quot;: &quot;&quot;}" name="calibre:author_link_map" />
+    <meta content="0.7.4" name="Sigil version" />
+  </metadata>
+  <manifest>
+    <item href="Text/titlepage.xhtml" id="titlepage" media-type="application/xhtml+xml" />
+    <item href="Text/copyright.xhtml" id="copyright.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/WL.xhtml" id="WL.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/toc.xhtml" id="toc.xhtml" media-type="application/xhtml+xml" />
+    <item href="Text/01.htm" id="x01.htm" media-type="application/xhtml+xml" />
+    <item href="Text/02.htm" id="x02.htm" media-type="application/xhtml+xml" />
+    <item href="Text/03.htm" id="x03.htm" media-type="application/xhtml+xml" />
+    <item href="Text/04.htm" id="x04.htm" media-type="application/xhtml+xml" />
+    <item href="Text/A.htm" id="A.htm" media-type="application/xhtml+xml" />
+    <item href="toc.ncx" id="ncx" media-type="application/x-dtbncx+xml" />
+    <item href="Styles/page_styles.css" id="page_css" media-type="text/css" />
+    <item href="Styles/stylesheet.css" id="css" media-type="text/css" />
+    <item href="Images/01image0001.jpg" id="x01image0001.jpg" media-type="image/jpeg" />
+    <item href="Images/01image0002.jpg" id="x01image0002.jpg" media-type="image/jpeg" />
+    <item href="Images/01image0003.jpg" id="x01image0003.jpg" media-type="image/jpeg" />
+    <item href="Images/01image0004.jpg" id="x01image0004.jpg" media-type="image/jpeg" />
+    <item href="Images/01image0005.jpg" id="x01image0005.jpg" media-type="image/jpeg" />
+    <item href="Images/01image001.png" id="x01image001.png" media-type="image/png" />
+    <item href="Images/01image002.png" id="x01image002.png" media-type="image/png" />
+    <item href="Images/01image003.png" id="x01image003.png" media-type="image/png" />
+    <item href="Images/01image004.png" id="x01image004.png" media-type="image/png" />
+    <item href="Images/01image005.png" id="x01image005.png" media-type="image/png" />
+    <item href="Images/01image006.png" id="x01image006.png" media-type="image/png" />
+    <item href="Images/01image007.png" id="x01image007.png" media-type="image/png" />
+    <item href="Images/01image008.jpg" id="x01image008.jpg" media-type="image/jpeg" />
+    <item href="Images/01image009.png" id="x01image009.png" media-type="image/png" />
+    <item href="Images/01image010.png" id="x01image010.png" media-type="image/png" />
+    <item href="Images/01image011.jpg" id="x01image011.jpg" media-type="image/jpeg" />
+    <item href="Images/01image012.jpg" id="x01image012.jpg" media-type="image/jpeg" />
+    <item href="Images/01image013.png" id="x01image013.png" media-type="image/png" />
+    <item href="Images/02_01.png" id="x02_01.png" media-type="image/png" />
+    <item href="Images/02_01a.png" id="x02_01a.png" media-type="image/png" />
+    <item href="Images/02_02.png" id="x02_02.png" media-type="image/png" />
+    <item href="Images/02_03.png" id="x02_03.png" media-type="image/png" />
+    <item href="Images/02_04.png" id="x02_04.png" media-type="image/png" />
+    <item href="Images/02_05.png" id="x02_05.png" media-type="image/png" />
+    <item href="Images/02_06.png" id="x02_06.png" media-type="image/png" />
+    <item href="Images/02_06a.png" id="x02_06a.png" media-type="image/png" />
+    <item href="Images/02_06b.png" id="x02_06b.png" media-type="image/png" />
+    <item href="Images/02_06c.png" id="x02_06c.png" media-type="image/png" />
+    <item href="Images/02_06d.png" id="x02_06d.png" media-type="image/png" />
+    <item href="Images/02_07.png" id="x02_07.png" media-type="image/png" />
+    <item href="Images/02_08.png" id="x02_08.png" media-type="image/png" />
+    <item href="Images/02_09.png" id="x02_09.png" media-type="image/png" />
+    <item href="Images/02_10.png" id="x02_10.png" media-type="image/png" />
+    <item href="Images/02_SB01.png" id="x02_SB01.png" media-type="image/png" />
+    <item href="Images/03_01.png" id="x03_01.png" media-type="image/png" />
+    <item href="Images/03_02.png" id="x03_02.png" media-type="image/png" />
+    <item href="Images/03_03.png" id="x03_03.png" media-type="image/png" />
+    <item href="Images/03_04.png" id="x03_04.png" media-type="image/png" />
+    <item href="Images/03_05.png" id="x03_05.png" media-type="image/png" />
+    <item href="Images/03_06.png" id="x03_06.png" media-type="image/png" />
+    <item href="Images/03_07.png" id="x03_07.png" media-type="image/png" />
+    <item href="Images/03_09.png" id="x03_09.png" media-type="image/png" />
+    <item href="Images/03_09a.png" id="x03_09a.png" media-type="image/png" />
+    <item href="Images/03_10.png" id="x03_10.png" media-type="image/png" />
+    <item href="Images/03_11.png" id="x03_11.png" media-type="image/png" />
+    <item href="Images/03_12.png" id="x03_12.png" media-type="image/png" />
+    <item href="Images/04image001.png" id="x04image001.png" media-type="image/png" />
+    <item href="Images/04image002.png" id="x04image002.png" media-type="image/png" />
+    <item href="Images/04image003.png" id="x04image003.png" media-type="image/png" />
+    <item href="Images/04image004.png" id="x04image004.png" media-type="image/png" />
+    <item href="Images/04image005.png" id="x04image005.png" media-type="image/png" />
+    <item href="Images/04image006.png" id="x04image006.png" media-type="image/png" />
+    <item href="Images/04image008.png" id="x04image008.png" media-type="image/png" />
+    <item href="Images/04image009.png" id="x04image009.png" media-type="image/png" />
+    <item href="Images/04image013.png" id="x04image013.png" media-type="image/png" />
+    <item href="Images/04image014.png" id="x04image014.png" media-type="image/png" />
+    <item href="Images/04image015.png" id="x04image015.png" media-type="image/png" />
+    <item href="Images/04image016.png" id="x04image016.png" media-type="image/png" />
+    <item href="Images/04image017.png" id="x04image017.png" media-type="image/png" />
+    <item href="Images/04image018.png" id="x04image018.png" media-type="image/png" />
+    <item href="Images/04image019.png" id="x04image019.png" media-type="image/png" />
+    <item href="Images/04image022.png" id="x04image022.png" media-type="image/png" />
+    <item href="Images/04image023.png" id="x04image023.png" media-type="image/png" />
+    <item href="Images/04image024.png" id="x04image024.png" media-type="image/png" />
+    <item href="Images/04image025.png" id="x04image025.png" media-type="image/png" />
+    <item href="Images/04image026.png" id="x04image026.png" media-type="image/png" />
+    <item href="Images/04image027.png" id="x04image027.png" media-type="image/png" />
+    <item href="Images/04image028.png" id="x04image028.png" media-type="image/png" />
+    <item href="Images/cover_u1.jpg" id="cover" media-type="image/jpeg" />
+    <item href="Images/cover.jpg" id="cover.jpg" media-type="image/jpeg" />
+    <item href="Images/Listing_3.6.png" id="Listing_3.6.png" media-type="image/png" />
+    <item href="Images/Manning_copyright.png" id="Manning_copyright.png" media-type="image/png" />
+    <item href="Images/04image011-inline.gif" id="x04image011-inline.gif" media-type="image/gif" />
+    <item href="Images/04image020-inline.gif" id="x04image020-inline.gif" media-type="image/gif" />
+    <item href="Images/Aimage001.png" id="Aimage001.png" media-type="image/png" />
+    <item href="Images/Aimage002.png" id="Aimage002.png" media-type="image/png" />
+    <item href="Images/Aimage003.jpg" id="Aimage003.jpg" media-type="image/jpeg" />
+    <item href="Images/Aimage004.png" id="Aimage004.png" media-type="image/png" />
+    <item href="Images/Aimage005.png" id="Aimage005.png" media-type="image/png" />
+    <item href="Images/Aimage006.png" id="Aimage006.png" media-type="image/png" />
+    <item href="Images/Aimage007.jpg" id="Aimage007.jpg" media-type="image/jpeg" />
+    <item href="Images/Aimage008.png" id="Aimage008.png" media-type="image/png" />
+    <item href="Images/Aimage009.png" id="Aimage009.png" media-type="image/png" />
+    <item href="Images/Aimage010.png" id="Aimage010.png" media-type="image/png" />
+    <item href="Images/Aimage011.png" id="Aimage011.png" media-type="image/png" />
+    <item href="Images/Aimage013.png" id="Aimage013.png" media-type="image/png" />
+    <item href="Images/Aimage014.png" id="Aimage014.png" media-type="image/png" />
+    <item href="Images/Aimage015.png" id="Aimage015.png" media-type="image/png" />
+    <item href="Images/Aimage016.png" id="Aimage016.png" media-type="image/png" />
+    <item href="Images/Aimage017.png" id="Aimage017.png" media-type="image/png" />
+    <item href="Images/Aimage018.png" id="Aimage018.png" media-type="image/png" />
+    <item href="Images/Aimage019.jpg" id="Aimage019.jpg" media-type="image/jpeg" />
+    <item href="Images/Aimage020.png" id="Aimage020.png" media-type="image/png" />
+    <item href="Images/Aimage0001.png" id="Aimage0001.png" media-type="image/png" />
+    <item href="Images/equation_4_4.png" id="equation_4_4.png" media-type="image/png" />
+    <item href="Images/equation_4_9.png" id="equation_4_9.png" media-type="image/png" />
+    <item href="Images/equation_4_10.png" id="equation_4_10.png" media-type="image/png" />
+    <item href="Images/equation_4_7.png" id="equation_4_7.png" media-type="image/png" />
+  </manifest>
+  <spine toc="ncx">
+    <itemref idref="titlepage" />
+    <itemref idref="copyright.xhtml" />
+    <itemref idref="WL.xhtml" />
+    <itemref idref="toc.xhtml" />
+    <itemref idref="x01.htm" />
+    <itemref idref="x02.htm" />
+    <itemref idref="x03.htm" />
+    <itemref idref="x04.htm" />
+    <itemref idref="A.htm" />
+  </spine>
+  <guide>
+    <reference href="Text/titlepage.xhtml" title="Cover" type="cover" />
+    <reference href="Text/titlepage.xhtml" title="Title page" type="other.titlepage" />
+  </guide>
+</package>
