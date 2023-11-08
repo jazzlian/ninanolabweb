@@ -7,13 +7,13 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: GlotPress/4.0.0-alpha.9\n"
+"X-Generator: GlotPress/4.0.0-alpha.11\n"
 "Language: ko_KR\n"
 "Project-Id-Version: Plugins - Akismet Anti-spam: Spam Protection - Stable (latest release)\n"
 
 #. Author of the plugin
 msgid "Automattic - Anti-spam Team"
-msgstr "Automattic - 스팸 방지 팀"
+msgstr "Automattic - 안티스팸 팀"
 
 #. translators: %1$s is a human-readable time difference, like "3 hours ago",
 #. and %2$s is an already-translated phrase describing how a comment's status
@@ -118,7 +118,7 @@ msgstr "이 사이트는 스팸을 줄이는 아키스밋을 사용합니다. <a
 
 #: class.akismet-admin.php:88
 msgid "We collect information about visitors who comment on Sites that use our Akismet Anti-spam service. The information we collect depends on how the User sets up Akismet for the Site, but typically includes the commenter's IP address, user agent, referrer, and Site URL (along with other information directly provided by the commenter such as their name, username, email address, and the comment itself)."
-msgstr "당사는 Akismet 스팸 방지 서비스를 사용하는 사이트에 댓글을 다는 방문자에 대한 정보를 수집합니다. 당사가 수집하는 정보는 사용자가 사이트에 Akismet을 설정하는 방법에 따라 다르지만 일반적으로 댓글 작성자의 IP 주소, 사용자 에이전트, 리퍼러, 사이트 URL(댓글 작성자가 직접 제공한 이름, 사용자 이름, 이메일 주소, 댓글 자체 등 기타 정보와 함께)이 포함됩니다."
+msgstr "아키스밋 스팸 방지 서비스를 이용하는 사이트의 방문자에 대한 정보를 수집하고 있습니다. 수집한 정보는 사용자가 사이트에 대한 아키스밋 설정에 의존하지만, 일반적으로 댓글 작성자의 IP 주소, 사용자 에이전트, 참조자, 그리고 사이트 URL (댓글 작성자가 직접 제공한 이름, 이욤자명, 이메일 주소, 그리고 댓글 자체와 같은 것에 따라)을 포함합니다."
 
 #: class.akismet.php:325
 msgid "Comment discarded."
@@ -172,11 +172,11 @@ msgstr "이 페이지에서, 아키스밋 설정을 업데이트하고 스팸 �
 
 #. Description of the plugin
 msgid "Used by millions, Akismet is quite possibly the best way in the world to <strong>protect your blog from spam</strong>. Akismet Anti-spam keeps your site protected even while you sleep. To get started: activate the Akismet plugin and then go to your Akismet Settings page to set up your API key."
-msgstr "수백만 명이 사용하는 Akismet은 <strong>스팸으로부터 블로그를 보호</strong>하는 세계 최고의 방법일 것입니다. Akismet 안티스팸은 잠자는 동안에도 사이트를 보호합니다. 시작하기: Akismet 플러그인을 활성화한 다음 Akismet 설정 페이지로 이동하여 API 키를 설정합니다."
+msgstr "수백만 명이 사용하는 아키스밋은 <strong>스팸으로부터 블로그를 보호</strong>하는 세계 최고의 방법일 가능성이 높습니다. 아키스밋 안티 스팸은 잠자는 동안에도 사이트를 보호합니다. 시작하기: 아키스밋 플러그인을 활성화한 다음 아키스밋 설정 페이지로 이동하여 API 키를 설정합니다."
 
 #: class.akismet-admin.php:114 class.akismet-admin.php:117
 msgid "Akismet Anti-spam"
-msgstr "Akismet 스팸 방지"
+msgstr "아키스밋 스팸 방지"
 
 #: views/enter.php:10
 msgid "Connect with API key"
@@ -542,7 +542,7 @@ msgstr "최악의 가장 공격성이 높은 스팸을 조용히 버리고 다�
 
 #: views/config.php:154
 msgid "Akismet Anti-spam strictness"
-msgstr "Akismet 스팸 방지 엄격성"
+msgstr "아키스밋 스팸 방지 엄격성"
 
 #: views/config.php:141
 msgid "Show the number of approved comments beside each comment author."
