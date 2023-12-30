@@ -1091,11 +1091,11 @@ msgstr "%s 파일이 없는 것 같습니다. 설치가 계속되려면 필요�
 msgid "The date and time the preferences were updated."
 msgstr "선택사항이 업데이트 된 날짜와 시간."
 
-#: wp-includes/theme.php:4141
+#: wp-includes/theme.php:4104
 msgid "Whether the theme disables generated layout styles."
 msgstr "테마가 생성된 레이아웃 스타일을 비활성화하는지 여부."
 
-#: wp-includes/theme.php:3951
+#: wp-includes/theme.php:3914
 msgid "Whether a theme uses block-based template parts."
 msgstr "테마가 블록 기반 템플릿 파트를 사용하는지 여부."
 
@@ -1293,7 +1293,7 @@ msgstr "다음 후크에 대한 크론 예약해제 이벤트 에러: %1$s, 에�
 msgid "Cron reschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s"
 msgstr "다음 후크에 대한 크론 재예약 이벤트 에러: %1$s, 에러코드: %2$s, 에러메시지: %3$s, 데이터: %4$s"
 
-#: wp-includes/theme.php:3944
+#: wp-includes/theme.php:3907
 msgid "Whether a theme uses block-based templates."
 msgstr "테마가 블록 기반 템플릿을 사용하는지 여부."
 
@@ -4915,11 +4915,11 @@ msgstr "블록 API의 버전."
 msgid "Invalid parameters."
 msgstr "유효하지 않은 매개 변수."
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1668
+#: wp-includes/rest-api/class-wp-rest-server.php:1675
 msgid "The requested route does not support batch requests."
 msgstr "요청한 라우트는 일괄 요청을 지원하지 않습니다."
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1618
+#: wp-includes/rest-api/class-wp-rest-server.php:1625
 msgid "Could not parse the path."
 msgstr "경로를 파싱할 수 없습니다."
 
@@ -4927,7 +4927,7 @@ msgstr "경로를 파싱할 수 없습니다."
 msgid "The handler for the route is invalid."
 msgstr "라우트 핸들러가 유효하지 않습니다."
 
-#: wp-includes/theme.php:2717
+#: wp-includes/theme.php:2680
 msgid "You need to pass an array of post formats."
 msgstr "글 형식의 배열을 전달할 필요가 있습니다."
 
@@ -5056,7 +5056,7 @@ msgid "Please use %s to add new schema properties."
 msgstr "%s(을)를 사용하여 새로운 스키마 속성을 추가하세요."
 
 #. translators: %s: prepare_callback
-#: wp-includes/theme.php:3352
+#: wp-includes/theme.php:3315
 msgid "The \"%s\" must be a callable function."
 msgstr "“%s”은(는) 호출할 수 있는 함수여야만 합니다."
 
@@ -5857,44 +5857,44 @@ msgstr "기본 메타 값을 등록할 때 데이터는 제공된 유형과 일�
 msgid "RSS Feed"
 msgstr "RSS 피드"
 
-#: wp-includes/theme.php:4277
+#: wp-includes/theme.php:4240
 msgid "The post types that support thumbnails or true if all post types are supported."
 msgstr "썸네일을 지원하는 글 유형. 또는 모든 글 유형을 지원할 경우 참입니다."
 
-#: wp-includes/theme.php:3339
+#: wp-includes/theme.php:3302
 msgid "When registering an \"object\" feature, the feature's schema must include the \"properties\" keyword."
 msgstr "“객체” 기능을 등록할 때, 해당 기능의 스키마는 “속성” 키워드를 포함해야 합니다."
 
-#: wp-includes/theme.php:3332
+#: wp-includes/theme.php:3295
 msgid "When registering an \"array\" feature, the feature's schema must include the \"items\" keyword."
 msgstr "“배열” 기능을 등록할 때, 해당 기능의 스키마는 “아이템” 키워드를 포함해야 합니다."
 
-#: wp-includes/theme.php:3325
+#: wp-includes/theme.php:3288
 msgid "When registering an \"array\" or \"object\" feature to show in the REST API, the feature's schema must also be defined."
 msgstr "REST API에 보이기 위해 \"배열\"이나 \"객체\"를 등록할 때, 해당 기능의 스키마도 정의돼야 합니다."
 
-#: wp-includes/theme.php:3317
+#: wp-includes/theme.php:3280
 msgid "When registering a \"variadic\" theme feature, the \"type\" must be an \"array\"."
 msgstr "“variadic” 테마 기능을 등록할 때, “유형”은 “배열”이어야 합니다."
 
-#: wp-includes/theme.php:3310
+#: wp-includes/theme.php:3273
 msgid "The feature \"type\" is not valid JSON Schema type."
 msgstr "기능 “유형”이 유효한 JSON 스키마 유형이 아닙니다."
 
 #. translators: %s: Theme name.
-#: wp-includes/theme.php:1013
+#: wp-includes/theme.php:976
 msgctxt "theme"
 msgid "<strong>Error:</strong> Current WordPress version does not meet minimum requirements for %s."
 msgstr "<strong>오류:</strong> 현재 워드프레스 버전이 %s인 최소 요구사항을 만족하지 않습니다."
 
 #. translators: %s: Theme name.
-#: wp-includes/theme.php:1004
+#: wp-includes/theme.php:967
 msgctxt "theme"
 msgid "<strong>Error:</strong> Current PHP version does not meet minimum requirements for %s."
 msgstr "<strong>오류:</strong> 현재 PHP 버전이 %s의 최소 요구사항을 만족하지 않습니다."
 
 #. translators: %s: Theme name.
-#: wp-includes/theme.php:995
+#: wp-includes/theme.php:958
 msgctxt "theme"
 msgid "<strong>Error:</strong> Current WordPress and PHP versions do not meet minimum requirements for %s."
 msgstr "<strong>오류:</strong> 현재의 워드프레스와 PHP 버전은 %s의 최소 요구사항을 충족하지 않습니다."
@@ -6137,71 +6137,71 @@ msgstr "다중 택소노미 간의 관계에 기반하여 결과 세트를 제�
 msgid "The \"%1$s\" taxonomy \"%2$s\" property (%3$s) conflicts with an existing property on the REST API Posts Controller. Specify a custom \"rest_base\" when registering the taxonomy to avoid this error."
 msgstr "“%1$s” 택소노미 “%2$s” 속성 (%3$s)이(가) REST API 글 콘트롤러에 있는 기존의 속성과 충돌합니다. 이 오류를 피하려면 택소노미를 등록할 때 사용자 정의 “rest_base”를 특정하세요."
 
-#: wp-includes/theme.php:4305
+#: wp-includes/theme.php:4268
 msgid "Whether theme opts in to default WordPress block styles for viewing."
 msgstr "테마가 보기용으로 기본 워드프레스 블록 스타일을 선택할지 여부."
 
-#: wp-includes/theme.php:4298
+#: wp-includes/theme.php:4261
 msgid "Whether the theme can manage the document title tag."
 msgstr "테마가 문서 타이틀 태그를 관리할 수 있는지 여부."
 
-#: wp-includes/theme.php:4231
+#: wp-includes/theme.php:4194
 msgid "Allows use of HTML5 markup for search forms, comment forms, comment lists, gallery, and caption."
 msgstr "검색 양식, 댓글 양식, 댓글 목록, 갤러리, 그리고 캡션에 대한 HTML5 마크업 사용허용."
 
-#: wp-includes/theme.php:4223
+#: wp-includes/theme.php:4186
 msgid "Whether theme opts in to the editor styles CSS wrapper."
 msgstr "테마가 스타일 CSS 래퍼(wrapper)를 선택할 지 여부."
 
-#: wp-includes/theme.php:4199
+#: wp-includes/theme.php:4162
 msgid "Custom gradient presets if defined by the theme."
 msgstr "테마가 정의했을 경우 사용자 정의 그라디언트 사전설정."
 
-#: wp-includes/theme.php:4174
+#: wp-includes/theme.php:4137
 msgid "Custom font sizes if defined by the theme."
 msgstr "테마가 정의했을 경우 사용자 정의 글꼴 크기."
 
-#: wp-includes/theme.php:4149
+#: wp-includes/theme.php:4112
 msgid "Custom color palette if defined by the theme."
 msgstr "테마가 정의했을 경우 사용자 정의 색상 팔레트."
 
-#: wp-includes/theme.php:4134
+#: wp-includes/theme.php:4097
 msgid "Whether the theme disables custom gradients."
 msgstr "테마가 사용자 정의 그라디언트를 비활성화 할 지 여부."
 
-#: wp-includes/theme.php:4127
+#: wp-includes/theme.php:4090
 msgid "Whether the theme disables custom font sizes."
 msgstr "테마가 사용자 정의 글꼴 크기를 비활성화 할 지 여부."
 
-#: wp-includes/theme.php:4120
+#: wp-includes/theme.php:4083
 msgid "Whether the theme disables custom colors."
 msgstr "테마가 사용자 정의 색상을 비활성화 할 지 여부."
 
-#: wp-includes/theme.php:4113
+#: wp-includes/theme.php:4076
 msgid "Whether theme opts in to the dark editor style UI."
 msgstr "테마가 어두운 편집기 스타일 이용환경을 선택 할 지 여부."
 
-#: wp-includes/theme.php:4106
+#: wp-includes/theme.php:4069
 msgid "Whether the theme enables Selective Refresh for Widgets being managed with the Customizer."
 msgstr "테마가 사용자 정의하기에서 관리되고 있는 위젯에 대해 선택적 새로 고침을 활성화 할 지 여부."
 
-#: wp-includes/theme.php:4073
+#: wp-includes/theme.php:4036
 msgid "Custom logo if defined by the theme."
 msgstr "테마가 정의했을 경우 사용자 정의 로고."
 
-#: wp-includes/theme.php:3958
+#: wp-includes/theme.php:3921
 msgid "Custom background if defined by the theme."
 msgstr "테마가 정의했을 경우 사용자 정의 배경."
 
-#: wp-includes/theme.php:4028
+#: wp-includes/theme.php:3991
 msgid "Custom header if defined by the theme."
 msgstr "테마가 정의했을 경우 사용자 정의 헤더."
 
-#: wp-includes/theme.php:3937
+#: wp-includes/theme.php:3900
 msgid "Whether posts and comments RSS feed links are added to head."
 msgstr "글과 댓글 RSS 피드 연결을 헤드에 추가할 것인지 여부."
 
-#: wp-includes/theme.php:3930
+#: wp-includes/theme.php:3893
 msgid "Whether theme opts in to wide alignment CSS class."
 msgstr "테마가 넓은 정렬 CSS 클래스를 선택할 지 여부."
 
@@ -7326,7 +7326,7 @@ msgstr "블록에 대한 속성."
 msgid "Unique registered name for the block."
 msgstr "블록에 고유하게 등록한 이름."
 
-#: wp-includes/theme.php:4291
+#: wp-includes/theme.php:4254
 msgid "Whether the theme supports responsive embedded content."
 msgstr "테마의 반응형 임베드 콘텐츠 지원 여부."
 
@@ -7339,7 +7339,7 @@ msgstr "지금부터 %s"
 msgid "Limit result set to themes assigned one or more statuses."
 msgstr "하나 이상의 상태를 지정한 글로 결과모음을 제한합니다."
 
-#: wp-includes/theme.php:4254
+#: wp-includes/theme.php:4217
 msgid "Post formats supported."
 msgstr "지원되는 글 형식."
 
@@ -9663,60 +9663,60 @@ msgstr "유효하지 않은 페이지 템플릿."
 msgid "Invalid date."
 msgstr "유효하지 않은 날짜."
 
-#: wp-includes/theme.php:1732
+#: wp-includes/theme.php:1695
 msgid "Video is playing."
 msgstr "비디오 실행중."
 
-#: wp-includes/theme.php:1731
+#: wp-includes/theme.php:1694
 msgid "Video is paused."
 msgstr "비디오 정지됨."
 
-#: wp-includes/theme.php:2334
+#: wp-includes/theme.php:2297
 msgctxt "Theme starter content"
 msgid "Archives"
 msgstr "글 보관함"
 
-#: wp-includes/theme.php:2486
+#: wp-includes/theme.php:2449
 msgctxt "Theme starter content"
 msgid "This is an example of a homepage section. Homepage sections can be any page other than the homepage itself, including the page that shows your latest blog posts."
 msgstr "이것은 홈페이지 영역의 예제입니다. 홈페이지 영역에서는 최근 글을 보여주는 블로그 글 목록 페이지와 홈페이지 자체를 제외한 어떤 페이지라도 선택할 수 있습니다."
 
-#: wp-includes/theme.php:2478
+#: wp-includes/theme.php:2441
 msgctxt "Theme starter content"
 msgid "News"
 msgstr "뉴스"
 
-#: wp-includes/theme.php:2469
+#: wp-includes/theme.php:2432
 msgctxt "Theme starter content"
 msgid "This is a page with some basic contact information, such as an address and phone number. You might also try a plugin to add a contact form."
 msgstr "이것은 주소와 전화번호 등 기본적인 컨택트 정보가 있는 페이지입니다. 컨택트 폼을 추가하려면 플러그인을 설치하면 됩니다."
 
-#: wp-includes/theme.php:2461
+#: wp-includes/theme.php:2424
 msgctxt "Theme starter content"
 msgid "You might be an artist who would like to introduce yourself and your work here or maybe you are a business with a mission to describe."
 msgstr "여기에서 자신과 자신의 작품을 소개하고 싶은 아티스트이거나 설명할 미션이 있는 비즈니스일 수도 있습니다."
 
-#: wp-includes/theme.php:2453
+#: wp-includes/theme.php:2416
 msgctxt "Theme starter content"
 msgid "Welcome to your site! This is your homepage, which is what most visitors will see when they come to your site for the first time."
 msgstr "사이트에 오신 것을 환영합니다! 이것은 홈페이지이며 대부분의 방문자들이 사이트를 처음 방문할 때 보는 곳입니다."
 
-#: wp-includes/theme.php:2364
+#: wp-includes/theme.php:2327
 msgctxt "Theme starter content"
 msgid "Recent Posts"
 msgstr "최신 글"
 
-#: wp-includes/theme.php:2358
+#: wp-includes/theme.php:2321
 msgctxt "Theme starter content"
 msgid "Recent Comments"
 msgstr "최신 댓글"
 
-#: wp-includes/theme.php:2352
+#: wp-includes/theme.php:2315
 msgctxt "Theme starter content"
 msgid "Meta"
 msgstr "메타"
 
-#: wp-includes/theme.php:2340
+#: wp-includes/theme.php:2303
 msgctxt "Theme starter content"
 msgid "Calendar"
 msgstr "캘린더"
@@ -9784,37 +9784,37 @@ msgstr "죄송합니다. 이 댓글을 읽을 권한이 없습니다."
 msgid "Sorry, you are not allowed to read comments without a post."
 msgstr "죄송합니다. 글이 없는 댓글을 읽을 권한이 없습니다."
 
-#: wp-includes/theme.php:2443
+#: wp-includes/theme.php:2406
 msgctxt "Theme starter content"
 msgid "YouTube"
 msgstr "유투브"
 
-#: wp-includes/theme.php:2431
+#: wp-includes/theme.php:2394
 msgctxt "Theme starter content"
 msgid "Pinterest"
 msgstr "핀터레스트"
 
-#: wp-includes/theme.php:2427
+#: wp-includes/theme.php:2390
 msgctxt "Theme starter content"
 msgid "LinkedIn"
 msgstr "링크트인"
 
-#: wp-includes/theme.php:2419
+#: wp-includes/theme.php:2382
 msgctxt "Theme starter content"
 msgid "GitHub"
 msgstr "깃허브"
 
-#: wp-includes/theme.php:2415
+#: wp-includes/theme.php:2378
 msgctxt "Theme starter content"
 msgid "Foursquare"
 msgstr "Foursquare"
 
-#: wp-includes/theme.php:2326
+#: wp-includes/theme.php:2289
 msgctxt "Theme starter content"
 msgid "This may be a good place to introduce yourself and your site or include some credits."
 msgstr "이곳은 자신과 자신의 사이트를 소개하거나 몇 가지 크레딧을 추가할 수 있는 적합한 장소입니다."
 
-#: wp-includes/theme.php:2325
+#: wp-includes/theme.php:2288
 msgctxt "Theme starter content"
 msgid "About This Site"
 msgstr "이 사이트 소개"
@@ -9864,97 +9864,97 @@ msgstr "비디오 변경"
 msgid "Select video"
 msgstr "비디오 선택"
 
-#: wp-includes/theme.php:2483
+#: wp-includes/theme.php:2446
 msgctxt "Theme starter content"
 msgid "A homepage section"
 msgstr "홈페이지 영역"
 
-#: wp-includes/theme.php:2474
+#: wp-includes/theme.php:2437
 msgctxt "Theme starter content"
 msgid "Blog"
 msgstr "블로그"
 
-#: wp-includes/theme.php:2466
+#: wp-includes/theme.php:2429
 msgctxt "Theme starter content"
 msgid "Contact"
 msgstr "문의"
 
-#: wp-includes/theme.php:2458
+#: wp-includes/theme.php:2421
 msgctxt "Theme starter content"
 msgid "About"
 msgstr "소개"
 
-#: wp-includes/theme.php:2377 wp-includes/theme.php:2450
+#: wp-includes/theme.php:2340 wp-includes/theme.php:2413
 msgctxt "Theme starter content"
 msgid "Home"
 msgstr "홈"
 
-#: wp-includes/theme.php:2407
+#: wp-includes/theme.php:2370
 msgctxt "Theme starter content"
 msgid "Email"
 msgstr "이메일"
 
-#: wp-includes/theme.php:2423
+#: wp-includes/theme.php:2386
 msgctxt "Theme starter content"
 msgid "Instagram"
 msgstr "인스타그램"
 
-#: wp-includes/theme.php:2435
+#: wp-includes/theme.php:2398
 msgctxt "Theme starter content"
 msgid "Twitter"
 msgstr "트위터"
 
-#: wp-includes/theme.php:2411
+#: wp-includes/theme.php:2374
 msgctxt "Theme starter content"
 msgid "Facebook"
 msgstr "페이스북"
 
-#: wp-includes/theme.php:2439
+#: wp-includes/theme.php:2402
 msgctxt "Theme starter content"
 msgid "Yelp"
 msgstr "Yelp"
 
-#: wp-includes/theme.php:2346
+#: wp-includes/theme.php:2309
 msgctxt "Theme starter content"
 msgid "Categories"
 msgstr "카테고리"
 
-#: wp-includes/theme.php:2370
+#: wp-includes/theme.php:2333
 msgctxt "Theme starter content"
 msgid "Search"
 msgstr "검색"
 
-#: wp-includes/theme.php:2315
+#: wp-includes/theme.php:2278
 msgctxt "Theme starter content"
 msgid "Saturday &amp; Sunday: 11:00AM&ndash;3:00PM"
 msgstr "토요일 &amp; 일요일: 오전 11:00&ndash;오후 3:00"
 
-#: wp-includes/theme.php:2314
+#: wp-includes/theme.php:2277
 msgctxt "Theme starter content"
 msgid "Monday&ndash;Friday: 9:00AM&ndash;5:00PM"
 msgstr "월요일&ndash;금요일: 오전 9:00&ndash;오후 5:00"
 
-#: wp-includes/theme.php:2313
+#: wp-includes/theme.php:2276
 msgctxt "Theme starter content"
 msgid "Hours"
 msgstr "시간"
 
-#: wp-includes/theme.php:2312
+#: wp-includes/theme.php:2275
 msgctxt "Theme starter content"
 msgid "New York, NY 10001"
 msgstr "뉴욕주, 뉴욕시 10001"
 
-#: wp-includes/theme.php:2311
+#: wp-includes/theme.php:2274
 msgctxt "Theme starter content"
 msgid "123 Main Street"
 msgstr "123번가"
 
-#: wp-includes/theme.php:2310
+#: wp-includes/theme.php:2273
 msgctxt "Theme starter content"
 msgid "Address"
 msgstr "주소"
 
-#: wp-includes/theme.php:2306
+#: wp-includes/theme.php:2269
 msgctxt "Theme starter content"
 msgid "Find Us"
 msgstr "위치"
@@ -11325,11 +11325,11 @@ msgstr "비디오 플레이어"
 msgid "Time Slider"
 msgstr "타임 슬라이더"
 
-#: wp-includes/script-loader.php:1080 wp-includes/theme.php:1729
+#: wp-includes/script-loader.php:1080 wp-includes/theme.php:1692
 msgid "Pause"
 msgstr "일시정지"
 
-#: wp-includes/script-loader.php:1079 wp-includes/theme.php:1730
+#: wp-includes/script-loader.php:1079 wp-includes/theme.php:1693
 msgid "Play"
 msgstr "재생"
 
@@ -12082,7 +12082,7 @@ msgstr "%1$s (%2$s 이후; 대체 수단 없음)"
 msgid "%1$s (since %2$s; use %3$s instead)"
 msgstr "%1$s (%2$s 이후; 대신 %3$s 사용)"
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1418
+#: wp-includes/rest-api/class-wp-rest-server.php:1425
 msgid "The specified namespace could not be found."
 msgstr "지정된 네임스페이스를 찾을 수 없습니다."
 
@@ -12090,7 +12090,7 @@ msgstr "지정된 네임스페이스를 찾을 수 없습니다."
 msgid "No route was found matching the URL and request method."
 msgstr "URL과 요청한 메소드에 일치하는 라우트를 찾을 수 없습니다."
 
-#: wp-includes/rest-api/class-wp-rest-server.php:1741
+#: wp-includes/rest-api/class-wp-rest-server.php:1748
 msgid "The handler for the route is invalid"
 msgstr "라우트 핸들러가 유효하지 않습니다"
 
@@ -13043,7 +13043,7 @@ msgid "%1$s response to %2$s"
 msgid_plural "%1$s responses to %2$s"
 msgstr[0] "%2$s에 대한 %1$s개의 응답"
 
-#: wp-includes/theme.php:3736
+#: wp-includes/theme.php:3699
 msgid "Customizer"
 msgstr "사용자 정의 하기"
 
@@ -13248,7 +13248,7 @@ msgid "Distraction-free writing mode"
 msgstr "글쓰기 집중 모드"
 
 #. translators: 1: title-tag, 2: wp_loaded
-#: wp-includes/theme.php:2922
+#: wp-includes/theme.php:2885
 msgid "Theme support for %1$s should be registered before the %2$s hook."
 msgstr "%1$s의 테마 지원은 %2$s hook 이전에 등록돼야 합니다."
 
@@ -13295,7 +13295,7 @@ msgstr "다음 값은 유효한 날짜를 설명하지 않습니다: %1$s월, %2
 msgid "%s must set a database connection for use with escaping."
 msgstr "이스케이프해서 사용하기 위해서는 %s은(는) 데이터베이스 연결을 해야만 합니다."
 
-#: wp-includes/theme.php:2729
+#: wp-includes/theme.php:2692
 msgid "You need to pass an array of types."
 msgstr "유형의 배열을 전달해야 합니다."
 
@@ -18013,7 +18013,7 @@ msgid "Document properties"
 msgstr "문서 속성"
 
 #: wp-includes/class-wp-editor.php:1370 wp-includes/script-loader.php:1293
-#: wp-includes/theme.php:3735 wp-admin/js/nav-menu.js:1260
+#: wp-includes/theme.php:3698 wp-admin/js/nav-menu.js:1260
 #: wp-admin/js/post.js:512 wp-admin/js/theme-plugin-editor.js:71
 #: wp-admin/js/widgets.js:98
 msgid "The changes you made will be lost if you navigate away from this page."
