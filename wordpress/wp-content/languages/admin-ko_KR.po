@@ -7,7 +7,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: GlotPress/4.0.0-alpha.11\n"
+"X-Generator: GlotPress/4.0.0-beta.2\n"
 "Language: ko_KR\n"
 "Project-Id-Version: WordPress - 6.4.x - Development - Administration\n"
 
@@ -38,7 +38,7 @@ msgid "0"
 msgstr "Asia/Seoul"
 
 #. translators: %s: WordPress version.
-#: wp-admin/about.php:68 wp-admin/about.php:93
+#: wp-admin/about.php:68 wp-admin/about.php:94 wp-admin/about.php:120
 msgid "https://wordpress.org/support/wordpress-version/version-%s/"
 msgstr "https://wordpress.org/support/wordpress-version/version-%s/"
 
@@ -622,12 +622,12 @@ msgid "<a href=\"https://wordpress.org/documentation/article/customizer/\">Docum
 msgstr "<a href=\"https://wordpress.org/documentation/article/customizer/\">사용자 정의하기 문서</a>"
 
 #. translators: The localized WordPress download URL.
-#: wp-admin/about.php:406
+#: wp-admin/about.php:433
 msgid "https://wordpress.org/download/"
 msgstr "https://wordpress.org/download/"
 
 #. translators: %s: The major version of WordPress for this branch.
-#: wp-admin/about.php:403
+#: wp-admin/about.php:430
 msgid "This is the final release of WordPress %s"
 msgstr "워드프레스 %s의 최종 릴리즈입니다."
 
@@ -962,17 +962,17 @@ msgid "Reach out to WordPress Core developers to ensure you'll never have this p
 msgstr "이 문제가 다시는 발생하지 않도록 워드프레스 코어 개발자에 문의하세요."
 
 #. translators: 1: WordPress version number, 2: Link to update WordPress
-#: wp-admin/about.php:400
+#: wp-admin/about.php:427
 msgid "Important! Your version of WordPress (%1$s) will stop receiving security updates in the near future. To keep your site secure, please <a href=\"%2$s\">update to the latest version of WordPress</a>."
 msgstr "중요! 사용중인 워드프레스 버전 (%1$s)은 조만간 보안 업데이트가 중지될 것입니다. 사이트를 안정하게 지키려면 <a href=\"%2$s\">워드프레스 최신 버전으로 업데이트</a>해주세요."
 
 #. translators: 1: WordPress version number, 2: Link to update WordPress
-#: wp-admin/about.php:397
+#: wp-admin/about.php:424
 msgid "Important! Your version of WordPress (%1$s) is no longer supported, you will not receive any security updates for your website. To keep your site secure, please <a href=\"%2$s\">update to the latest version of WordPress</a>."
 msgstr "중요! 사용중인 워드프레스 버전 (%1$s)이 더 이상 지원되지 않습니다. 더 이상 보안 업데이트를 사이트에서 받지 못합니다. 사이트를 안전하게 유지하려면 <a href=\"%2$s\">워드프레스를 최신 버전으로 업데이트 해주세요</a>."
 
 #. translators: %s: Version number.
-#: wp-admin/about.php:271
+#: wp-admin/about.php:298
 msgid "Learn more about WordPress %s"
 msgstr "워드프레스 %s에 대해 더 알아보기"
 
@@ -1878,7 +1878,7 @@ msgstr "새 응용 프로그램 비밀번호 추가"
 msgid "Required to create an Application Password, but not to update the user."
 msgstr "응용 프로그램 비밀번호 생성은 필수지만, 사용자 업데이트는 하지 않습니다."
 
-#: wp-admin/about.php:341
+#: wp-admin/about.php:368
 msgid "Go to Updates"
 msgstr "업데이트로 가기"
 
@@ -2200,7 +2200,7 @@ msgstr "“%1$s” 값은 “%2$s”보다 작습니다."
 msgid "Environment type"
 msgstr "환경 유형"
 
-#: wp-admin/about.php:257
+#: wp-admin/about.php:284
 msgid "Accessibility"
 msgstr "접근성"
 
@@ -3840,7 +3840,7 @@ msgstr "https://make.wordpress.org/hosting/handbook/handbook/server-environment/
 msgid "The WordPress Hosting Team maintains a list of those modules, both recommended and required, in <a href=\"%1$s\" %2$s>the team handbook%3$s</a>."
 msgstr "워드프레스 호스팅 팀은 <a href=\"%1$s\" %2$s>팀 소책자%3$s</a>에서 권장 및 필수 모 듈의 목록을 유지관리합니다."
 
-#: wp-admin/about.php:247 wp-admin/includes/class-wp-site-health.php:259
+#: wp-admin/about.php:274 wp-admin/includes/class-wp-site-health.php:259
 #: wp-admin/includes/class-wp-site-health.php:737
 #: wp-admin/includes/class-wp-site-health.php:884
 #: wp-admin/includes/class-wp-site-health.php:1122
@@ -5096,7 +5096,7 @@ msgstr "다음에 추가: %s"
 msgid "Track %s."
 msgstr "트랙 %s."
 
-#: wp-admin/includes/schema.php:1282
+#: wp-admin/includes/schema.php:1280
 msgid "My Network"
 msgstr "내 네트워크"
 
@@ -5123,7 +5123,7 @@ msgstr "설치할 수 없음"
 
 #. translators: %s: WordPress version number.
 #. translators: %s: WordPress version.
-#: wp-admin/about.php:323 wp-admin/includes/update.php:323
+#: wp-admin/about.php:350 wp-admin/includes/update.php:323
 #: wp-admin/index.php:119 wp-admin/install.php:249 wp-admin/update-core.php:94
 #: wp-admin/upgrade.php:81
 msgid "https://wordpress.org/documentation/wordpress-version/version-%s/"
@@ -6719,8 +6719,8 @@ msgstr "죄송합니다. 이 네트워크에 사용자를 추가할 권한이 �
 msgid "Sorry, you are not allowed to edit this changeset."
 msgstr "죄송합니다. 이 변경세트를 편집할 권한이 없습니다."
 
-#: wp-admin/includes/ajax-actions.php:4329 wp-admin/update.php:207
-#: wp-admin/update.php:230
+#: wp-admin/includes/ajax-actions.php:4329 wp-admin/update.php:211
+#: wp-admin/update.php:234
 msgid "Sorry, you are not allowed to update themes for this site."
 msgstr "죄송합니다. 이 사이트의 테마를 업데이트 할 권한이 없습니다."
 
@@ -6964,7 +6964,7 @@ msgid "Sorry, you are not allowed to delete themes on this site."
 msgstr "죄송합니다. 이 사이트에서 테마를 삭제할 권한이 없습니다."
 
 #: wp-admin/includes/ajax-actions.php:4202 wp-admin/theme-install.php:16
-#: wp-admin/update.php:258 wp-admin/update.php:300 wp-admin/update.php:334
+#: wp-admin/update.php:262 wp-admin/update.php:304 wp-admin/update.php:342
 msgid "Sorry, you are not allowed to install themes on this site."
 msgstr "죄송합니다. 이 사이트에서 태마를 설치할 권한이 없습니다."
 
@@ -7436,7 +7436,7 @@ msgid "(Currently set to: %s)"
 msgstr "(현재 설정: %s)"
 
 #. translators: %s: WordPress version number.
-#: wp-admin/about.php:371
+#: wp-admin/about.php:398
 msgid "<strong>Version %s</strong> addressed one security issue."
 msgstr "<strong>버전 %s</strong>은(는) 보안 문제를 처리했습니다."
 
@@ -7448,15 +7448,15 @@ msgstr "https://en.gravatar.com/"
 msgid "Profile Picture"
 msgstr "프로필 사진"
 
-#: wp-admin/about.php:48 wp-admin/about.php:368
+#: wp-admin/about.php:48 wp-admin/about.php:395
 msgid "Maintenance and Security Releases"
 msgstr "유지보수와 보안 릴리스"
 
-#: wp-admin/about.php:365
+#: wp-admin/about.php:392
 msgid "Security Releases"
 msgstr "보안 릴리스"
 
-#: wp-admin/about.php:362
+#: wp-admin/about.php:389
 msgid "Maintenance Releases"
 msgstr "유지보수 릴리즈"
 
@@ -10738,13 +10738,15 @@ msgstr "사이트를 볼 때 도구모음을 보기"
 
 #. translators: %s: HelpHub URL.
 #. translators: %s: Documentation URL.
-#: wp-admin/about.php:65 wp-admin/about.php:90 wp-admin/about.php:394
+#: wp-admin/about.php:65 wp-admin/about.php:91 wp-admin/about.php:117
+#: wp-admin/about.php:421
 msgid "For more information, see <a href=\"%s\">the release notes</a>."
 msgstr "자세한 정보는 <a href=\"%s\">릴리즈 안내</a>를 참고하세요."
 
+#. translators: 1: WordPress version number, 2: Plural number of bugs.
 #. translators: 1: WordPress version number, 2: Plural number of bugs. More
 #. than one security issue.
-#: wp-admin/about.php:388
+#: wp-admin/about.php:53 wp-admin/about.php:415
 msgid "<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bug."
 msgid_plural "<strong>Version %1$s</strong> addressed some security issues and fixed %2$s bugs."
 msgstr[0] "<strong>버전 %1$s</strong>이(가) 몇 가지 보안 문제를 해결하고 %2$s 버그를 수정했습니다."
@@ -10752,31 +10754,31 @@ msgstr[0] "<strong>버전 %1$s</strong>이(가) 몇 가지 보안 문제를 해�
 #. translators: 1: WordPress version number, 2: Plural number of bugs.
 #. translators: 1: WordPress version number, 2: Plural number of bugs. Singular
 #. security issue.
-#: wp-admin/about.php:78 wp-admin/about.php:382
+#: wp-admin/about.php:79 wp-admin/about.php:409
 msgid "<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bug."
 msgid_plural "<strong>Version %1$s</strong> addressed a security issue and fixed %2$s bugs."
 msgstr[0] "<strong>버전 %1$s</strong>이(가) 보안 문제를 해결하고 %2$s 버그를 수정했습니다."
 
 #. translators: 1: WordPress version number, 2: Plural number of bugs.
-#: wp-admin/about.php:53 wp-admin/about.php:376
+#: wp-admin/about.php:105 wp-admin/about.php:403
 msgid "<strong>Version %1$s</strong> addressed %2$s bug."
 msgid_plural "<strong>Version %1$s</strong> addressed %2$s bugs."
 msgstr[0] "<strong>버전 %1$s</strong>이(가) %2$s 버그를 해결했습니다."
 
 #. translators: %s: WordPress version number.
-#: wp-admin/about.php:373
+#: wp-admin/about.php:400
 msgid "<strong>Version %s</strong> addressed some security issues."
 msgstr "<strong>버전 %s</strong>은(는) 보안 문제를 처리했습니다."
 
-#: wp-admin/about.php:367
+#: wp-admin/about.php:394
 msgid "Maintenance and Security Release"
 msgstr "유지 보수와 보안 릴리스"
 
-#: wp-admin/about.php:364
+#: wp-admin/about.php:391
 msgid "Security Release"
 msgstr "보안 릴리스"
 
-#: wp-admin/about.php:361
+#: wp-admin/about.php:388
 msgid "Maintenance Release"
 msgstr "유지 보수 릴리스"
 
@@ -11050,15 +11052,15 @@ msgid "Because this is a multisite installation, you may add accounts that alrea
 msgstr "왜냐하면 이는 다중 사이트 설치이기 때문입니다. 사용자명이나 이메일, 그리고 정의한 역할로 네트워크에 이미 존재하는 계정을 추가할 수도 있습니다. 비밀번호를 지정하는 것과 같은 더 많은 옵션에 대해, 네트워크 관리자여야하고 네트워크 관리자 > 모든 사용자 아래에 있는 사용자 프로필을 편집할 수 있는 존재하는 사용자의 이름 아래 있는 마우스 올리기 링크를 사용해야 합니다."
 
 #. translators: %s: Version number.
-#: wp-admin/about.php:108
+#: wp-admin/about.php:135
 msgid "Welcome to WordPress %s"
 msgstr "워드프레스 %s에 오신 것을 환영합니다."
 
-#: wp-admin/about.php:348
+#: wp-admin/about.php:375
 msgid "Go to Dashboard &rarr; Home"
 msgstr "알림판 &rarr; 홈으로 이동하기"
 
-#: wp-admin/about.php:341
+#: wp-admin/about.php:368
 msgid "Go to Dashboard &rarr; Updates"
 msgstr "알림판 &rarr; 업데이트로 이동하기"
 
@@ -11717,7 +11719,7 @@ msgstr "워드프레스 %s을(를) <strong>영어(미국)로</strong>설치하�
 msgid "There is a new version of %1$s available. <a href=\"%2$s\" %3$s>View version %4$s details</a>. <em>Automatic update is unavailable for this plugin.</em>"
 msgstr "%1$s의 새 버전을 사용할 수 있습니다. <a href=\"%2$s\" %3$s>새 버전 %4$s 세부정보</a>입니다. <em>이 플러그인은 자동 업데이트를 사용할 수 없습니다.</em>"
 
-#: wp-admin/includes/class-theme-upgrader-skin.php:44 wp-admin/update.php:215
+#: wp-admin/includes/class-theme-upgrader-skin.php:44 wp-admin/update.php:219
 msgid "Update Theme"
 msgstr "테마 업데이트"
 
@@ -12494,12 +12496,12 @@ msgid "No items."
 msgstr "항목이 없습니다."
 
 #. translators: %s: Asterisk symbol (*).
-#: wp-admin/includes/schema.php:1143
+#: wp-admin/includes/schema.php:1141
 msgid "To use a subdomain configuration, you must have a wildcard entry in your DNS. This usually means adding a %s hostname record pointing at your web server in your DNS configuration tool."
 msgstr "하위 도매인 구성을 사용하려면, DNS에 와일드카드 항목을 가지고 있어야만 합니다. 이는 보통 DNS 구성 도구에서 웹서버를 지정하는 %s 호스트이름 기록을 추가하는 것을 의미합니다."
 
 #. translators: %s: Host name.
-#: wp-admin/includes/schema.php:1132
+#: wp-admin/includes/schema.php:1130
 msgid "The installer attempted to contact a random hostname (%s) on your domain."
 msgstr "설치 도구가 도매인에서 무작위 호스트이름(%s)에 연락하려고 시도했습니다."
 
@@ -12701,28 +12703,28 @@ msgstr "메뉴 저장"
 msgid "Updating Theme %1$s (%2$d/%3$d)"
 msgstr "테마 %1$s을(를) 업데이트하는 중 (%2$d/%3$d)"
 
-#: wp-admin/includes/schema.php:1147
+#: wp-admin/includes/schema.php:1145
 msgid "You can still use your site but any subdomain you create may not be accessible. If you know your DNS is correct, ignore this message."
 msgstr "아직 사이트를 사용할 수 있지만 만든 하위 도매인은 접근할 수 없을 수도 있습니다. DNS가 바르다고 알고 있다면, 이 안내문을 무시하세요."
 
 #. translators: %s: Error message.
-#: wp-admin/includes/schema.php:1137
+#: wp-admin/includes/schema.php:1135
 msgid "This resulted in an error message: %s"
 msgstr "이 때문에 오류 안내문을 보입니다: %s"
 
-#: wp-admin/includes/schema.php:1016
+#: wp-admin/includes/schema.php:1014
 msgid "You must provide a valid email address."
 msgstr "유효한 이메일 주소를 제공해야만 합니다."
 
-#: wp-admin/includes/schema.php:1005 wp-admin/includes/schema.php:1011
+#: wp-admin/includes/schema.php:1003 wp-admin/includes/schema.php:1009
 msgid "The network already exists."
 msgstr "네트워크가 이미 존재합니다."
 
-#: wp-admin/includes/schema.php:998
+#: wp-admin/includes/schema.php:996
 msgid "You must provide a name for your network of sites."
 msgstr "사이트의 네트워크에 대한 이름을 제공해야만 합니다."
 
-#: wp-admin/includes/schema.php:995
+#: wp-admin/includes/schema.php:993
 msgid "You must provide a domain name."
 msgstr "도매인 이름을 제공해야만 합니다."
 
@@ -12783,7 +12785,7 @@ msgstr "워드프레스 업데이트"
 msgid "Edit menu item"
 msgstr "메뉴 아이템 편집"
 
-#: wp-admin/about.php:348 wp-admin/includes/network.php:166
+#: wp-admin/about.php:375 wp-admin/includes/network.php:166
 msgid "Go to Dashboard"
 msgstr "알림판으로 가기"
 
@@ -13119,27 +13121,27 @@ msgid "Your WordPress database is already up to date!"
 msgstr "워드프레스 데이터베이스가 이미 최신입니다!"
 
 #. translators: %s: File name.
-#: wp-admin/update.php:315
+#: wp-admin/update.php:323
 msgid "Installing theme from uploaded file: %s"
 msgstr "업로드한 파일에서 테마를 설치하는 중: %s"
 
 #: wp-admin/theme-install.php:60 wp-admin/theme-install.php:178
-#: wp-admin/theme-install.php:180 wp-admin/update.php:308
+#: wp-admin/theme-install.php:180 wp-admin/update.php:316
 msgid "Upload Theme"
 msgstr "테마 업로드"
 
 #. translators: %s: Theme name and version.
-#: wp-admin/update.php:287
+#: wp-admin/update.php:291
 msgid "Installing Theme: %s"
 msgstr "테마 설치 중: %s"
 
 #. translators: %s: File name.
-#: wp-admin/update.php:167
+#: wp-admin/update.php:171
 msgid "Installing plugin from uploaded file: %s"
 msgstr "업로드한 파일에서 플러그인을 설치하는 중: %s"
 
 #: wp-admin/includes/class-wp-plugin-install-list-table.php:122
-#: wp-admin/plugin-install.php:150 wp-admin/update.php:160
+#: wp-admin/plugin-install.php:150 wp-admin/update.php:164
 msgid "Upload Plugin"
 msgstr "플러그인 업로드"
 
@@ -13924,7 +13926,7 @@ msgstr "안녕하세요!"
 
 #. translators: %s: Site link.
 #. translators: First post content. %s: Site link.
-#: wp-admin/includes/schema.php:1295 wp-admin/includes/upgrade.php:196
+#: wp-admin/includes/schema.php:1293 wp-admin/includes/upgrade.php:196
 msgid "Welcome to %s. This is your first post. Edit or delete it, then start writing!"
 msgstr "%s에 오신 것을 환영합니다. 이것은 첫 글입니다. 바로 편집하거나 삭제한 다음 쓰기 시작하세요!"
 
@@ -14087,7 +14089,7 @@ msgstr "접근성 모두 비활성화"
 msgid "Enable accessibility mode"
 msgstr "접근성 모드 활성화"
 
-#: wp-admin/update.php:280
+#: wp-admin/update.php:284
 msgid "Install Themes"
 msgstr "테마 설치"
 
@@ -14245,7 +14247,7 @@ msgstr "빠른 편집"
 msgid "Quick Edit"
 msgstr "빠른 편집"
 
-#: wp-admin/includes/schema.php:1128
+#: wp-admin/includes/schema.php:1126
 msgid "Warning! Wildcard DNS may not be configured correctly!"
 msgstr "경고! 와일드카드 DNS를 바르게 구성하지 않았을 수 있습니다!"
 
@@ -15152,8 +15154,8 @@ msgid "The uploaded file could not be moved to %s."
 msgstr "업로드한 파일을 %s(으)로 이동할 수 없습니다."
 
 #: wp-admin/includes/class-file-upload-upgrader.php:57
-#: wp-admin/includes/class-file-upload-upgrader.php:96
-#: wp-admin/includes/class-file-upload-upgrader.php:112
+#: wp-admin/includes/class-file-upload-upgrader.php:120
+#: wp-admin/includes/class-file-upload-upgrader.php:136
 msgid "Please select a file"
 msgstr "파일을 선택해주세요"
 
@@ -15256,6 +15258,7 @@ msgstr "유지 관리 모드 해제하는 중&#8230;"
 msgid "Enabling Maintenance mode&#8230;"
 msgstr "유지 관리 모드 사용하는 중&#8230;"
 
+#: wp-admin/includes/class-file-upload-upgrader.php:92
 #: wp-admin/includes/file.php:1666 wp-admin/includes/file.php:1864
 msgid "Incompatible Archive."
 msgstr "호환되지 않는 보관함."
