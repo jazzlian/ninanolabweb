@@ -7,16 +7,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: GlotPress/4.0.0-beta.2\n"
+"X-Generator: GlotPress/4.0.1\n"
 "Language: ko_KR\n"
 "Project-Id-Version: Themes - Twenty Twenty-Two\n"
 
 #. Description of the theme
+#: style.css
 #, gp-priority: high
 msgid "Built on a solidly designed foundation, Twenty Twenty-Two embraces the idea that everyone deserves a truly unique website. The theme’s subtle styles are inspired by the diversity and versatility of birds: its typography is lightweight yet strong, its color palette is drawn from nature, and its layout elements sit gently on the page. The true richness of Twenty Twenty-Two lies in its opportunity for customization. The theme is built to take advantage of the Site Editor features introduced in WordPress 5.9, which means that colors, typography, and the layout of every single page on your site can be customized to suit your vision. It also includes dozens of block patterns, opening the door to a wide range of professionally designed layouts in just a few clicks. Whether you’re building a single-page website, a blog, a business website, or a portfolio, Twenty Twenty-Two will help you create a site that is uniquely yours."
 msgstr "Twenty Twenty-Two는 견고하게 디자인된 기반위에 만들어졌으며 모든 사람들은 진정으로 독특한 웹사이트를 가질 자격이 있다는 아이디어를 품고있습니다. 테마의 미묘한 스타일은 새의 다양성과 다재다능함에서 영감을 받았습니다. 타이포그래피는 가벼우면서도 강하고, 색상 팔레트는 자연에서 가져왔으며, 레이아웃 요소는 페이지에 부드럽게 배치됩니다. Twenty Twenty-Two의 진정한 장점은 맞춤화의 기회에 있습니다. 테마는 WordPress 5.9에 도입된 전체 사이트 편집 기능을 활용하도록 제작되었습니다. 즉, 사이트의 모든 단일 페이지의 색상, 타이포그래피 및 레이아웃을 사용자의 비전에 맞게 사용자 지정할 수 있습니다. 또한 수십 개의 블록 패턴이 포함되어 있어 클릭 몇 번으로 전문적으로 디자인된 다양한 레이아웃의 문을 열 수 있습니다. 단일 페이지 웹 사이트, 블로그, 비즈니스 웹 사이트 또는 포트폴리오를 구축하든 Twenty Twenty-Two는 여러분의 고유한 사이트를 만드는 데 도움이 될 것입니다."
 
 #. Theme Name of the theme
+#: style.css
 #, gp-priority: high
 msgid "Twenty Twenty-Two"
 msgstr "Twenty Twenty-Two"
@@ -180,27 +182,27 @@ msgctxt "Gradient name"
 msgid "Vertical secondary to tertiary"
 msgstr "수직 두번째에서 세번째로"
 
-#: theme.json styles/blue.json styles/pink.json styles/swiss.json
+#: styles/blue.json styles/pink.json styles/swiss.json theme.json
 msgctxt "Color name"
 msgid "Tertiary"
 msgstr "세번째"
 
-#: theme.json styles/blue.json styles/pink.json styles/swiss.json
+#: styles/blue.json styles/pink.json styles/swiss.json theme.json
 msgctxt "Color name"
 msgid "Secondary"
 msgstr "두번째"
 
-#: theme.json styles/blue.json styles/pink.json styles/swiss.json
+#: styles/blue.json styles/pink.json styles/swiss.json theme.json
 msgctxt "Color name"
 msgid "Primary"
 msgstr "첫번째"
 
-#: theme.json styles/blue.json styles/pink.json styles/swiss.json
+#: styles/blue.json styles/pink.json styles/swiss.json theme.json
 msgctxt "Color name"
 msgid "Background"
 msgstr "배경"
 
-#: theme.json styles/blue.json styles/pink.json styles/swiss.json
+#: styles/blue.json styles/pink.json styles/swiss.json theme.json
 msgctxt "Color name"
 msgid "Foreground"
 msgstr "전경"
@@ -924,16 +926,19 @@ msgid "Featured"
 msgstr "특성"
 
 #. Theme URI of the theme
+#: style.css
 #, gp-priority: low
 msgid "https://wordpress.org/themes/twentytwentytwo/"
 msgstr "https://wordpress.org/themes/twentytwentytwo/"
 
 #. Author URI of the theme
+#: style.css
 #, gp-priority: low
 msgid "https://wordpress.org/"
 msgstr "https://wordpress.org/"
 
 #. Author of the theme
+#: style.css
 #, gp-priority: low
 msgid "the WordPress team"
 msgstr "워드프레스 팀"
