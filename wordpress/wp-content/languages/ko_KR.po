@@ -298,7 +298,7 @@ msgid "Disable"
 msgstr "비활성화"
 
 #: wp-includes/js/dist/patterns.js:372 wp-includes/js/dist/patterns.js:1451
-#: wp-admin/about.php:104
+#: wp-admin/about.php:135
 msgid "Overrides"
 msgstr "오버라이드"
 
