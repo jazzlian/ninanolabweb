@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.6.x - Development - Administration package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-07-05 04:20:55+0000\n"
+"PO-Revision-Date: 2024-08-14 02:03:45+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -36,6 +36,10 @@ msgstr "1"
 msgctxt "default GMT offset or timezone string"
 msgid "0"
 msgstr "0"
+
+#: wp-admin/includes/class-wp-debug-data.php:1678
+msgid "The directory does not exist."
+msgstr "디렉토리가 존재하지 않습니다."
 
 #: wp-admin/update-core.php:1048
 msgid "<a href=\"https://developer.wordpress.org/advanced-administration/wordpress/common-errors/\">Common Errors</a>"
@@ -4370,15 +4374,15 @@ msgstr "플러그인을 제대로 로드하는데 실패했으며 복구 모드�
 msgid "Go to the Themes screen"
 msgstr "테마 화면으로 가기"
 
-#: wp-admin/includes/class-wp-debug-data.php:1734
+#: wp-admin/includes/class-wp-debug-data.php:1746
 msgid "Total size is not available. Some errors were encountered when determining the size of your installation."
 msgstr "전체 크기가 가능하지 않습니다. 설치의 크기를 결정하던 중 일부 오류가 발생했습니다. "
 
-#: wp-admin/includes/class-wp-debug-data.php:1683
+#: wp-admin/includes/class-wp-debug-data.php:1695
 msgid "The size cannot be calculated. The directory is not accessible. Usually caused by invalid permissions."
 msgstr "크기를 계산할 수 없습니다. 디렉터리에 접근할 수 없습니다. 보통 유효하지 않은 권한 때문에 발생합니다."
 
-#: wp-admin/includes/class-wp-debug-data.php:1690
+#: wp-admin/includes/class-wp-debug-data.php:1702
 msgid "The directory size calculation has timed out. Usually caused by a very large number of sub-directories and files."
 msgstr "디렉터리 크기 계산이 시간이 초과했습니다. 보통 매우 큰 하위 디렉터리와 파일의 수 때문에 발생합니다."
 
@@ -5085,7 +5089,7 @@ msgstr "ImageMagick 버전 번호"
 #: wp-admin/includes/class-wp-debug-data.php:521
 #: wp-admin/includes/class-wp-debug-data.php:543
 #: wp-admin/includes/class-wp-debug-data.php:560
-#: wp-admin/includes/class-wp-debug-data.php:1718 wp-admin/includes/ms.php:803
+#: wp-admin/includes/class-wp-debug-data.php:1730 wp-admin/includes/ms.php:803
 msgid "Not available"
 msgstr "사용할 수 없습니다"
 
