@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the WordPress - 6.6.x - Development package.
 msgid ""
 msgstr ""
-"PO-Revision-Date: 2024-07-31 02:42:26+0000\n"
+"PO-Revision-Date: 2024-09-06 05:34:29+0000\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -26,7 +26,7 @@ msgstr "노토 세리프:400, 400i,700,700i"
 #, gp-priority: high
 msgctxt "Comment number declension: on or off"
 msgid "off"
-msgstr "off"
+msgstr "끄기"
 
 #. translators: Translate this to the correct language tag for your locale, see
 #. https://www.w3.org/International/articles/language-tags/ for reference. Do
@@ -52,13 +52,13 @@ msgstr "off"
 #: wp-includes/js/dist/block-library.js:42653
 #: wp-includes/js/dist/block-library.js:44751
 #: wp-includes/js/dist/editor.js:18695 wp-includes/js/dist/editor.js:18733
-#: wp-includes/js/dist/editor.js:26400
+#: wp-includes/js/dist/editor.js:26403
 #, gp-priority: high
 msgctxt "Word count type. Do not translate!"
 msgid "words"
 msgstr "words"
 
-#: wp-includes/admin-bar.php:186
+#: wp-includes/admin-bar.php:188
 #: wp-includes/widgets/class-wp-widget-meta.php:91 wp-login.php:129
 #: wp-admin/admin-footer.php:38 wp-admin/includes/upgrade.php:273
 #: wp-admin/maint/repair.php:24 wp-admin/upgrade.php:69
@@ -73,7 +73,7 @@ msgstr "https://wordpress.org/"
 #, gp-priority: high
 msgctxt "Open Sans font: on or off"
 msgid "on"
-msgstr "on"
+msgstr "켜기"
 
 #. translators: Localized date and time format, see
 #. https://www.php.net/manual/datetime.format.php
@@ -277,10 +277,10 @@ msgid "January"
 msgstr "1월"
 
 #: wp-includes/category-template.php:162
-#: wp-includes/js/dist/block-editor.js:45238
-#: wp-includes/js/dist/block-editor.js:45243
-#: wp-includes/js/dist/block-editor.js:46100
-#: wp-includes/js/dist/edit-site.js:34426 wp-includes/js/dist/editor.js:27857
+#: wp-includes/js/dist/block-editor.js:45275
+#: wp-includes/js/dist/block-editor.js:45280
+#: wp-includes/js/dist/block-editor.js:46137
+#: wp-includes/js/dist/edit-site.js:34429 wp-includes/js/dist/editor.js:27860
 #: wp-admin/includes/upgrade.php:173
 #, gp-priority: high
 msgid "Uncategorized"
@@ -298,12 +298,12 @@ msgid "Disable"
 msgstr "비활성화"
 
 #: wp-includes/js/dist/patterns.js:372 wp-includes/js/dist/patterns.js:1451
-#: wp-admin/about.php:135
+#: wp-admin/about.php:160
 msgid "Overrides"
 msgstr "오버라이드"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/js/dist/editor.js:12064 wp-includes/js/dist/editor.js:26892
+#: wp-includes/js/dist/editor.js:12064 wp-includes/js/dist/editor.js:26895
 #: wp-admin/edit-form-comment.php:133
 msgid "Comment status"
 msgstr "댓글 상태"
@@ -327,7 +327,7 @@ msgstr "https://developer.wordpress.org/advanced-administration/wordpress/wp-con
 
 #: wp-includes/theme.php:4235
 msgid "Custom spacing sizes if defined by the theme."
-msgstr "테마에서 정의한 경우 사용자 지정 간격이 사용됩니다."
+msgstr "테마에서 정의한 경우 사용자 정의 간격이 사용됩니다."
 
 #. translators: %s: Taxonomy name.
 #: wp-includes/taxonomy.php:726
@@ -337,11 +337,11 @@ msgstr "%s 글 보관함"
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-themes-controller.php:479
 msgid "The uri for the theme's template directory. If this is a child theme, this refers to the parent theme, otherwise this is the same as the theme's stylesheet directory."
-msgstr "테마의 템플릿 디렉토리에 대한 URL입니다. 하위 테마인 경우 상위 테마를 가리키며, 그렇지 않으면 테마의 스타일시트 디렉토리와 동일합니다."
+msgstr "테마의 템플릿 디렉터리에 대한 URL입니다. 하위 테마인 경우 상위 테마를 가리키며, 그렇지 않으면 테마의 스타일시트 디렉터리와 동일합니다."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-themes-controller.php:468
 msgid "The uri for the theme's stylesheet directory."
-msgstr "테마의 스타일시트 디렉토리에 대한 URL입니다."
+msgstr "테마의 스타일시트 디렉터리에 대한 URL입니다."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:2362
 msgid "An array of the class names for the post container element."
@@ -982,7 +982,7 @@ msgid "sub item"
 msgstr "하위 항목"
 
 #. translators: 1: theme.json, 2: settings.spacing.spacingScale
-#: wp-includes/class-wp-theme-json.php:3896
+#: wp-includes/class-wp-theme-json.php:3917
 msgid "Some of the %1$s %2$s values are invalid"
 msgstr "%1$s %2$s 값 중 일부가 잘못되었습니다"
 
@@ -1283,7 +1283,7 @@ msgstr "미디어 파일 보기"
 #: wp-includes/post.php:78 wp-admin/menu.php:68 wp-admin/upload.php:215
 #: wp-admin/upload.php:422
 msgid "Add New Media File"
-msgstr "새 미디어 파일 추가하기"
+msgstr "새 미디어 파일 추가"
 
 #: wp-includes/meta.php:1473
 msgid "Meta keys cannot enable revisions support unless the object subtype supports revisions."
@@ -1379,7 +1379,7 @@ msgstr "블록을 자기 자신에 훅할 수 없습니다."
 msgid "Could not register file \"%s\" as a block pattern as the file does not exist."
 msgstr "파일이 존재하지 않으므로 \"%s\" 파일을 블록 패턴으로 등록할 수 없습니다."
 
-#: wp-includes/admin-bar.php:205
+#: wp-includes/admin-bar.php:207
 msgid "Learn WordPress"
 msgstr "워드프레스 알아보기"
 
@@ -1459,7 +1459,7 @@ msgid "Maximum posts per page"
 msgstr "페이지당 최대 글"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/js/dist/block-editor.js:45456
+#: wp-includes/js/dist/block-editor.js:45493
 #: wp-includes/js/dist/edit-site.js:15708
 #: wp-includes/js/dist/edit-site.js:23032
 #: wp-admin/includes/class-wp-list-table.php:1157
@@ -1468,7 +1468,7 @@ msgstr "마지막 페이지"
 
 #. translators: %1$s: Current page number, %2$s: Total number of pages.
 #. translators: 1: Current page, 2: Total pages.
-#: wp-includes/js/dist/block-editor.js:45438
+#: wp-includes/js/dist/block-editor.js:45475
 #: wp-includes/js/dist/edit-site.js:23015
 #: wp-admin/includes/class-wp-list-table.php:1127
 msgctxt "paging"
@@ -1476,7 +1476,7 @@ msgid "%1$s of %2$s"
 msgstr "%2$s 중 %1$s"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/js/dist/block-editor.js:45419
+#: wp-includes/js/dist/block-editor.js:45456
 #: wp-includes/js/dist/edit-site.js:15660
 #: wp-includes/js/dist/edit-site.js:22999
 #: wp-admin/includes/class-wp-list-table.php:1081
@@ -1487,7 +1487,7 @@ msgstr "첫 페이지"
 #: wp-includes/js/dist/edit-site.js:11354 wp-admin/includes/media.php:1742
 #: wp-admin/upgrade.php:75 wp-admin/upgrade.php:155
 msgid "Continue"
-msgstr "계속하기"
+msgstr "계속"
 
 #: wp-includes/js/dist/block-library.js:39561
 #: wp-includes/js/dist/editor.js:10002 wp-includes/js/dist/editor.js:10056
@@ -1497,7 +1497,7 @@ msgstr "계속하기"
 msgid "Parent"
 msgstr "부모"
 
-#: wp-includes/js/dist/edit-site.js:38033 wp-admin/includes/dashboard.php:2129
+#: wp-includes/js/dist/edit-site.js:38036 wp-admin/includes/dashboard.php:2129
 msgid "Edit styles"
 msgstr "스타일 편집"
 
@@ -1749,21 +1749,21 @@ msgctxt "block category"
 msgid "Patterns"
 msgstr "패턴"
 
-#: wp-includes/admin-bar.php:1134
+#: wp-includes/admin-bar.php:1136
 #: wp-admin/includes/class-custom-image-header.php:77
 #: wp-admin/includes/class-custom-image-header.php:78 wp-admin/menu.php:226
 msgctxt "custom image header"
 msgid "Header"
 msgstr "헤더"
 
-#: wp-includes/admin-bar.php:1120
+#: wp-includes/admin-bar.php:1122
 #: wp-admin/includes/class-custom-background.php:70
 #: wp-admin/includes/class-custom-background.php:71 wp-admin/menu.php:231
 msgctxt "custom background"
 msgid "Background"
 msgstr "배경"
 
-#: wp-includes/admin-bar.php:174 wp-admin/about.php:41
+#: wp-includes/admin-bar.php:176 wp-admin/about.php:41
 #: wp-admin/contribute.php:13 wp-admin/contribute.php:24
 #: wp-admin/contribute.php:38 wp-admin/credits.php:41 wp-admin/freedoms.php:44
 #: wp-admin/privacy.php:38
@@ -1796,7 +1796,7 @@ msgstr "특정 날짜를 방문하면 글 보관함을 표시합니다(예: exam
 
 #: wp-includes/block-template-utils.php:181
 msgid "Displays a custom taxonomy archive. Like categories and tags, taxonomies have terms which you use to classify things. For example: a taxonomy named \"Art\" can have multiple terms, such as \"Modern\" and \"18th Century.\" This template will serve as a fallback when a more specific template (e.g. Taxonomy: Art) cannot be found."
-msgstr "사용자 지정 분류 아카이브를 표시합니다. 카테고리 및 태그와 마찬가지로 분류에는 사물을 분류하는 데 사용하는 용어가 있습니다. 예를 들어 \"미술\"이라는 분류에는 \"현대\", \"18세기\"와 같은 여러 용어가 있을 수 있습니다. 이 템플릿은 보다 구체적인 템플릿(예: 분류: 미술)을 찾을 수 없을 때 대체용으로 사용됩니다."
+msgstr "사용자 정의 분류 아카이브를 표시합니다. 카테고리 및 태그와 마찬가지로 분류에는 사물을 분류하는 데 사용하는 용어가 있습니다. 예를 들어 \"미술\"이라는 분류에는 \"현대\", \"18세기\"와 같은 여러 용어가 있을 수 있습니다. 이 템플릿은 보다 구체적인 템플릿(예: 분류: 미술)을 찾을 수 없을 때 대체용으로 사용됩니다."
 
 #: wp-includes/block-template-utils.php:177
 msgid "Displays a post category archive. This template will serve as a fallback when a more specific template (e.g. Category: Recipes) cannot be found."
@@ -1883,13 +1883,13 @@ msgstr "페이지 목록 항목"
 msgid "Style Variations"
 msgstr "스타일 변형"
 
-#: wp-includes/js/dist/block-editor.js:24535
-#: wp-includes/js/dist/block-editor.js:33640
-#: wp-includes/js/dist/block-editor.js:66432 wp-admin/widgets-form.php:300
+#: wp-includes/js/dist/block-editor.js:24544
+#: wp-includes/js/dist/block-editor.js:33649
+#: wp-includes/js/dist/block-editor.js:66469 wp-admin/widgets-form.php:300
 msgid "Position"
 msgstr "위치"
 
-#: wp-includes/js/dist/block-editor.js:33304
+#: wp-includes/js/dist/block-editor.js:33313
 #: wp-includes/js/dist/editor.js:17375 wp-includes/js/dist/editor.js:17379
 #: wp-admin/includes/class-wp-posts-list-table.php:1999
 #: wp-admin/includes/class-wp-posts-list-table.php:2002
@@ -1936,7 +1936,7 @@ msgstr "%s PHP 확장이 설치되고 활성화되었는지 확인하십시오."
 msgid "When using the %1$s constant, make sure to set these globals to an array: %2$s."
 msgstr "%1$s 상수를 사용할 때 이러한 전역 항목을 배열로 설정해야 합니다: %2$s."
 
-#: wp-includes/html-api/class-wp-html-tag-processor.php:3283
+#: wp-includes/html-api/class-wp-html-tag-processor.php:3289
 msgid "The query argument must be an array or a tag name."
 msgstr "쿼리 인수는 배열 또는 태그 이름이어야 합니다."
 
@@ -2093,7 +2093,7 @@ msgstr "여러 열에 더 복잡한 레이아웃이 있는 패턴입니다."
 msgid "Patterns that contain buttons and call to actions."
 msgstr "버튼과 행동 유도가 있는 패턴입니다."
 
-#: wp-includes/admin-bar.php:196
+#: wp-includes/admin-bar.php:198
 msgid "https://wordpress.org/documentation/"
 msgstr "https://wordpress.org/documentation/"
 
@@ -2152,7 +2152,7 @@ msgstr "카테고리 목록"
 
 #. translators: %s: Post type name.
 #. translators: %s: Name of the post type e.g: "Post".
-#: wp-includes/post.php:2102 wp-includes/js/dist/edit-site.js:35636
+#: wp-includes/post.php:2102 wp-includes/js/dist/edit-site.js:35639
 msgid "Single item: %s"
 msgstr "단일 아이템: %s"
 
@@ -2180,7 +2180,7 @@ msgstr "사이트 도메인 (서브도메인만):"
 
 #: wp-signup.php:118
 msgid "Site Name (subdirectory only):"
-msgstr "사이트 이름 (서브디렉토리만):"
+msgstr "사이트 이름 (서브디렉터리만):"
 
 #. translators: %s: wp-config.php
 #: wp-load.php:88
@@ -2276,18 +2276,18 @@ msgid "Logged in as %1$s. <a href=\"%2$s\">Edit your profile</a>. <a href=\"%3$s
 msgstr "%1$s(으)로 로그인 됨. <a href=\"%2$s\">자신의 프로필 편집</a>. <a href=\"%3$s\">로그아웃?</a>"
 
 #. translators: %s: Digit to indicate multiple of sizing, eg. 2X-Large.
-#: wp-includes/class-wp-theme-json.php:4065
+#: wp-includes/class-wp-theme-json.php:4086
 msgid "%sX-Large"
 msgstr "%sX-크게"
 
 #. translators: %s: Digit to indicate multiple of sizing, eg. 2X-Small.
-#: wp-includes/class-wp-theme-json.php:4028
+#: wp-includes/class-wp-theme-json.php:4049
 msgid "%sX-Small"
 msgstr "%sX-작게"
 
 #. translators: 1: theme.json, 2: Value name, 3: Value path, 4: Another value
 #. name.
-#: wp-includes/class-wp-theme-json.php:2426
+#: wp-includes/class-wp-theme-json.php:2447
 msgid "Your %1$s file uses a dynamic value (%2$s) for the path at %3$s. However, the value at %3$s is also a dynamic value (pointing to %4$s) and pointing to another dynamic value is not supported. Please update %3$s to point directly to %4$s."
 msgstr "%1$s 파일이 %3$s에서 경로에 대해 동적인 값(%2$s)을 사용하고 있습니다. 하지만 %3$s에서의 값은 또한 동적인 값(%4$s에 지정됨)이며 다른 동적인 값에 지저되는 것은 지원하지 않습니다. %4$s에 직접 지저되려면 %3$s을(를) 업데이트 하세요."
 
@@ -2382,12 +2382,12 @@ msgstr "푸터"
 #. translators: 1: Hook name, 2: Error code, 3: Error message, 4: Event data.
 #: wp-cron.php:162
 msgid "Cron unschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s"
-msgstr "다음 후크에 대한 크론 예약해제 이벤트 에러: %1$s, 에러코드: %2$s, 에러메시지: %3$s, 데이터: %4$s"
+msgstr "Cron unschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s"
 
 #. translators: 1: Hook name, 2: Error code, 3: Error message, 4: Event data.
 #: wp-cron.php:135
 msgid "Cron reschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s"
-msgstr "다음 후크에 대한 크론 재예약 이벤트 에러: %1$s, 에러코드: %2$s, 에러메시지: %3$s, 데이터: %4$s"
+msgstr "Cron reschedule event error for hook: %1$s, Error code: %2$s, Error message: %3$s, Data: %4$s"
 
 #: wp-includes/theme.php:3955
 msgid "Whether a theme uses block-based templates."
@@ -2474,7 +2474,7 @@ msgstr "홈 링크"
 #: wp-includes/blocks/group/block.json
 msgctxt "block description"
 msgid "Gather blocks in a layout container."
-msgstr "레이아웃 콘테이너에 블록 모으기"
+msgstr "레이아웃 컨테이너에 블록 모으기"
 
 #: wp-includes/blocks/comments-title/block.json
 msgctxt "block description"
@@ -2613,7 +2613,7 @@ msgstr "기본 아바타"
 
 #: wp-includes/media-template.php:843 wp-includes/media-template.php:1099
 #: wp-includes/media-template.php:1163
-#: wp-includes/js/dist/block-editor.js:20804
+#: wp-includes/js/dist/block-editor.js:20813
 msgctxt "Alignment option"
 msgid "None"
 msgstr "없음"
@@ -2797,7 +2797,7 @@ msgstr "어두움"
 
 #: wp-includes/class-wp-theme.php:326
 msgid "<strong>Error:</strong> The themes directory is either empty or does not exist. Please check your installation."
-msgstr "<strong>오류</strong>: 테마 디렉토리가 비어있거나 존재하지 않습니다. 설치를 점검하세요."
+msgstr "<strong>오류</strong>: 테마 디렉터리가 비어있거나 존재하지 않습니다. 설치를 점검하세요."
 
 #: wp-includes/class-wp-image-editor-gd.php:94
 #: wp-includes/class-wp-image-editor-gd.php:103
@@ -3534,7 +3534,7 @@ msgstr "부모 템플릿 파트:"
 
 #: wp-includes/post.php:424
 msgid "Search Template Parts"
-msgstr "템플릿 파트 검색하기"
+msgstr "템플릿 파트 검색"
 
 #: wp-includes/post.php:423 wp-includes/js/dist/editor.js:9004
 msgid "Template Parts"
@@ -3546,7 +3546,7 @@ msgstr "템플릿 파트 보기"
 
 #: wp-includes/post.php:421
 msgid "Edit Template Part"
-msgstr "템플릿 파트 편집하기"
+msgstr "템플릿 파트 편집"
 
 #: wp-includes/post.php:420
 msgid "New Template Part"
@@ -3554,7 +3554,7 @@ msgstr "새 템플릿 파트"
 
 #: wp-includes/post.php:418 wp-includes/post.php:419
 msgid "Add New Template Part"
-msgstr "새 템플릿 파트 추가하기"
+msgstr "새 템플릿 파트 추가"
 
 #: wp-includes/post.php:417
 msgctxt "post type singular name"
@@ -3740,7 +3740,7 @@ msgstr "헤더 템플릿은 사이트 제목, 로고, 주 메뉴를 포함하는
 msgid "General templates often perform a specific role like displaying post content, and are not tied to any particular area."
 msgstr "일반 템플릿은 글 콘텐츠를 표시하는 것과 간이 특정 역할을 수행하며 특정 영역과 묶여있지 않습니다."
 
-#: wp-includes/admin-bar.php:480 wp-admin/site-editor.php:165
+#: wp-includes/admin-bar.php:482 wp-admin/site-editor.php:165
 msgid "Edit site"
 msgstr "사이트 편집"
 
@@ -3946,7 +3946,7 @@ msgstr "나눔자"
 #: wp-includes/blocks/separator/block.json
 msgctxt "block keyword"
 msgid "hr"
-msgstr "hr"
+msgstr "시간"
 
 #: wp-includes/blocks/separator/block.json
 msgctxt "block keyword"
@@ -4314,7 +4314,7 @@ msgstr "래퍼(wrapper)"
 #: wp-includes/blocks/group/block.json
 msgctxt "block keyword"
 msgid "container"
-msgstr "콘테이너"
+msgstr "컨테이너"
 
 #: wp-includes/blocks/gallery/block.json
 msgctxt "block keyword"
@@ -4409,7 +4409,7 @@ msgstr "방문자가 어떤 작업을 취할지 버튼 스타일의 링크 제�
 #: wp-includes/blocks/audio/block.json
 msgctxt "block keyword"
 msgid "recording"
-msgstr "기록하기"
+msgstr "기록"
 
 #: wp-includes/blocks/audio/block.json
 msgctxt "block keyword"
@@ -4444,20 +4444,20 @@ msgstr "전면에서의 페이지"
 msgid "Show on front"
 msgstr "전면에서 보이기"
 
-#: wp-includes/post.php:299 wp-includes/js/dist/block-editor.js:52963
-#: wp-includes/js/dist/block-editor.js:60150
+#: wp-includes/post.php:299 wp-includes/js/dist/block-editor.js:53000
+#: wp-includes/js/dist/block-editor.js:60187
 msgid "Patterns list"
 msgstr "패턴 목록"
 
-#: wp-includes/js/dist/block-editor.js:48320
+#: wp-includes/js/dist/block-editor.js:48357
 #: wp-includes/js/dist/block-library.js:40476 wp-admin/edit-form-blocks.php:193
 msgid "Type / to choose a block"
 msgstr "입력 / 블록 선택"
 
-#: wp-includes/js/dist/block-editor.js:35243
+#: wp-includes/js/dist/block-editor.js:35280
 #: wp-includes/js/dist/edit-site.js:12173
 #: wp-includes/js/dist/edit-site.js:21794
-#: wp-includes/js/dist/edit-site.js:26228
+#: wp-includes/js/dist/edit-site.js:26231
 #: wp-admin/includes/class-wp-screen.php:1209 wp-admin/includes/theme.php:351
 #: wp-admin/includes/theme.php:387 wp-admin/index.php:70
 msgid "Layout"
@@ -4736,7 +4736,7 @@ msgstr "템플릿 id"
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-sidebars-controller.php:494
 msgid "Nested widgets."
-msgstr "내포된 위젯"
+msgstr "중첩된 위젯"
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-sidebars-controller.php:487
 msgid "Status of sidebar."
@@ -5016,10 +5016,10 @@ msgstr "새 템플릿 추가"
 
 #: wp-includes/post.php:358 wp-includes/js/dist/block-library.js:60943
 #: wp-includes/js/dist/core-commands.js:533
-#: wp-includes/js/dist/edit-site.js:37436
-#: wp-includes/js/dist/edit-site.js:38128
-#: wp-includes/js/dist/edit-site.js:39256 wp-includes/js/dist/editor.js:11360
-#: wp-includes/js/dist/editor.js:27181
+#: wp-includes/js/dist/edit-site.js:37439
+#: wp-includes/js/dist/edit-site.js:38131
+#: wp-includes/js/dist/edit-site.js:39259 wp-includes/js/dist/editor.js:11360
+#: wp-includes/js/dist/editor.js:27184
 msgid "Templates"
 msgstr "템플릿"
 
@@ -5135,7 +5135,7 @@ msgstr "텍스트"
 #. translators: Hidden accessibility text. %s: Total number of updates
 #. available.
 #. translators: %s: Total number of updates available.
-#: wp-includes/admin-bar.php:1161 wp-admin/js/updates.js:361
+#: wp-includes/admin-bar.php:1163 wp-admin/js/updates.js:361
 msgid "%s update available"
 msgid_plural "%s updates available"
 msgstr[0] "%s 업데이트 가능"
@@ -5202,7 +5202,7 @@ msgstr "공백"
 #: wp-includes/blocks/shortcode/block.json
 msgctxt "block title"
 msgid "Shortcode"
-msgstr "숏코드"
+msgstr "쇼트코드"
 
 #: wp-includes/blocks/separator/block.json
 msgctxt "block title"
@@ -5412,7 +5412,7 @@ msgstr "%1$s은(는) %2$s이(가) 아닙니다."
 
 #: wp-includes/cron.php:1248
 msgid "The cron event list could not be saved."
-msgstr "크론 이벤트 목록이 저장되지 않았습니다."
+msgstr "The cron event list could not be saved."
 
 #: wp-includes/cron.php:589 wp-includes/cron.php:679
 msgid "A plugin prevented the hook from being cleared."
@@ -5570,7 +5570,7 @@ msgstr "텀 ID 택소노미 쿼리"
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:3146
 msgid "Match terms with the listed IDs."
-msgstr "텀을 목록 ID와 일치하기."
+msgstr "나열된 ID와 텀을 일치시킵니다."
 
 #: wp-includes/rest-api/endpoints/class-wp-rest-posts-controller.php:3145
 msgid "Term ID List"
@@ -5629,9 +5629,9 @@ msgstr "&larr; 태그로 이동"
 msgid "&#8592; Go to library"
 msgstr "&#8592; 라이브러리로 이동"
 
-#: wp-includes/js/dist/block-editor.js:27946
-#: wp-includes/js/dist/block-editor.js:28819
-#: wp-includes/js/dist/editor.js:28039 wp-includes/js/dist/editor.js:28041
+#: wp-includes/js/dist/block-editor.js:27955
+#: wp-includes/js/dist/block-editor.js:28828
+#: wp-includes/js/dist/editor.js:28042 wp-includes/js/dist/editor.js:28044
 #: wp-admin/menu.php:189
 msgid "Appearance"
 msgstr "모양"
@@ -6308,11 +6308,11 @@ msgstr "%1$s의 “유형” 스키마 키워드는 내장 유형만 포함할 �
 #: wp-includes/block-template-utils.php:943 wp-includes/rest-api.php:722
 #: wp-includes/js/dist/block-library.js:33510
 #: wp-includes/js/dist/edit-site.js:13685
-#: wp-includes/js/dist/edit-site.js:35640
-#: wp-includes/js/dist/edit-site.js:35773
-#: wp-includes/js/dist/edit-site.js:35775
-#: wp-includes/js/dist/edit-site.js:38665
-#: wp-includes/js/dist/edit-site.js:38990
+#: wp-includes/js/dist/edit-site.js:35643
+#: wp-includes/js/dist/edit-site.js:35776
+#: wp-includes/js/dist/edit-site.js:35778
+#: wp-includes/js/dist/edit-site.js:38668
+#: wp-includes/js/dist/edit-site.js:38993
 #: wp-admin/includes/class-wp-debug-data.php:1132
 #: wp-admin/includes/class-wp-debug-data.php:1151
 #: wp-admin/includes/class-wp-debug-data.php:1246
@@ -6827,7 +6827,7 @@ msgstr "<strong>오류:</strong> 현재의 워드프레스와 PHP 버전은 %s�
 msgid "This image cannot be displayed in a web browser. For best results convert it to JPEG before uploading."
 msgstr "이 이미지는 웹브라우저에 표시할 수 없습니다. 최상의 결과를 얻으려면 업로드하기 전에 JPEG으로 변환하세요."
 
-#: wp-includes/admin-bar.php:335
+#: wp-includes/admin-bar.php:337
 msgid "Edit Profile"
 msgstr "프로필 편집"
 
@@ -6957,7 +6957,7 @@ msgid "Slug"
 msgstr "슬러그"
 
 #. translators: %s: Digit to indicate multiple of sizing, eg. 2X-Small.
-#: wp-includes/class-wp-theme-json.php:4028
+#: wp-includes/class-wp-theme-json.php:4049
 #: wp-includes/js/dist/block-library.js:55604
 #: wp-includes/js/dist/components.js:59580
 msgid "Small"
@@ -7192,14 +7192,14 @@ msgid "Filter media"
 msgstr "미디어 필터"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/media-template.php:335 wp-includes/js/dist/block-editor.js:60045
+#: wp-includes/media-template.php:335 wp-includes/js/dist/block-editor.js:60082
 #: wp-admin/includes/class-wp-media-list-table.php:44
 msgid "Grid view"
 msgstr "그리드 보기"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/media-template.php:327 wp-includes/js/dist/block-editor.js:59500
-#: wp-includes/js/dist/block-editor.js:59534
+#: wp-includes/media-template.php:327 wp-includes/js/dist/block-editor.js:59537
+#: wp-includes/js/dist/block-editor.js:59571
 #: wp-admin/includes/class-wp-media-list-table.php:43
 msgid "List view"
 msgstr "목록 보기"
@@ -7618,7 +7618,7 @@ msgid "Restore from Trash"
 msgstr "휴지통에서 복구"
 
 #. translators: Localized Support reference.
-#: wp-includes/admin-bar.php:216 wp-includes/class-wpdb.php:1234
+#: wp-includes/admin-bar.php:218 wp-includes/class-wpdb.php:1234
 #: wp-includes/class-wpdb.php:2019 wp-includes/class-wpdb.php:2179
 #: wp-includes/customize/class-wp-customize-themes-section.php:90
 #: wp-includes/load.php:191
@@ -7639,7 +7639,7 @@ msgstr "휴지통에서 복구"
 msgid "https://wordpress.org/support/forums/"
 msgstr "https://wordpress.org/support/forums/"
 
-#: wp-includes/admin-bar.php:215
+#: wp-includes/admin-bar.php:217
 msgid "Support"
 msgstr "지원"
 
@@ -7798,7 +7798,7 @@ msgstr "쿠키가 없습니다."
 #. Error message.
 #: wp-includes/error-protection.php:63
 msgid "An error of type %1$s was caused in line %2$s of the file %3$s. Error message: %4$s"
-msgstr "유형 %1$s의 오류는 %3$s 파일의 %2$s 행에서 발생했습니다. 오류 메시지: %4$s"
+msgstr "An error of type %1$s was caused in line %2$s of the file %3$s. Error message: %4$s"
 
 #: wp-includes/class-wp-theme.php:399
 #: wp-admin/includes/class-theme-upgrader.php:638
@@ -7822,13 +7822,13 @@ msgstr "이 갤러리에 첨부된 추가 이미지: %s"
 msgid "The current image has no alternative text. The file name is: %s"
 msgstr "현재 이미지는 대체 텍스트가 없습니다. 파일 이름: %s"
 
-#: wp-includes/admin-bar.php:1232
+#: wp-includes/admin-bar.php:1234
 msgid "Exit Recovery Mode"
 msgstr "복구 모드 나가기"
 
 #. translators: Hidden accessibility text. %s: Number of comments.
 #. translators: %s: Number of comments.
-#: wp-includes/admin-bar.php:1046 wp-admin/includes/ajax-actions.php:500
+#: wp-includes/admin-bar.php:1048 wp-admin/includes/ajax-actions.php:500
 #: wp-admin/includes/ajax-actions.php:571
 #: wp-admin/includes/ajax-actions.php:1443 wp-admin/includes/dashboard.php:342
 #: wp-admin/menu.php:92
@@ -7984,7 +7984,7 @@ msgstr[0] "%s초"
 
 #. translators: %s: Time duration in minute or minutes.
 #. translators: %s: the number of minutes to read the post.
-#: wp-includes/functions.php:557 wp-includes/js/dist/editor.js:26411
+#: wp-includes/functions.php:557 wp-includes/js/dist/editor.js:26414
 msgid "%s minute"
 msgid_plural "%s minutes"
 msgstr[0] "%s분"
@@ -8045,8 +8045,8 @@ msgstr "고전 블록 키보드 단축키"
 msgid "Sorry, you are not allowed to view autosaves of this post."
 msgstr "죄송합니다. 이 글의 자동저장을 볼 권한이 없습니다."
 
-#: wp-includes/js/dist/edit-site.js:32826
-#: wp-includes/js/dist/edit-site.js:33203 wp-includes/js/dist/editor.js:16754
+#: wp-includes/js/dist/edit-site.js:32829
+#: wp-includes/js/dist/edit-site.js:33206 wp-includes/js/dist/editor.js:16754
 #: wp-includes/js/dist/editor.js:16786 wp-admin/includes/ajax-actions.php:2273
 #: wp-admin/includes/class-wp-posts-list-table.php:1214
 #: wp-admin/includes/class-wp-posts-list-table.php:1983
@@ -8055,8 +8055,8 @@ msgid "Scheduled"
 msgstr "예약됨"
 
 #: wp-includes/js/dist/block-library.js:60236
-#: wp-includes/js/dist/edit-post.js:1681 wp-includes/js/dist/edit-site.js:36773
-#: wp-includes/js/dist/edit-site.js:39580 wp-includes/js/dist/editor.js:10268
+#: wp-includes/js/dist/edit-post.js:1681 wp-includes/js/dist/edit-site.js:36776
+#: wp-includes/js/dist/edit-site.js:39583 wp-includes/js/dist/editor.js:10268
 #: wp-includes/js/dist/reusable-blocks.js:410 wp-admin/options-privacy.php:277
 msgid "Create"
 msgstr "생성"
@@ -8107,8 +8107,8 @@ msgid "Embeds"
 msgstr "임베드"
 
 #: wp-includes/js/dist/editor.js:12152 wp-includes/js/dist/editor.js:12252
-#: wp-includes/js/dist/editor.js:26862 wp-includes/js/dist/editor.js:26883
-#: wp-includes/js/dist/editor.js:28020 wp-admin/includes/meta-boxes.php:1679
+#: wp-includes/js/dist/editor.js:26865 wp-includes/js/dist/editor.js:26886
+#: wp-includes/js/dist/editor.js:28023 wp-admin/includes/meta-boxes.php:1679
 #: wp-admin/menu.php:381
 msgid "Discussion"
 msgstr "토론"
@@ -8686,7 +8686,7 @@ msgstr ""
 "안녕히 계세요.\n"
 "###SITEURL###"
 
-#: wp-includes/js/dist/edit-site.js:32850 wp-includes/js/dist/editor.js:16752
+#: wp-includes/js/dist/edit-site.js:32853 wp-includes/js/dist/editor.js:16752
 #: wp-includes/js/dist/editor.js:16768 wp-admin/edit-form-comment.php:120
 msgid "Pending"
 msgstr "대기중"
@@ -8909,7 +8909,7 @@ msgstr "돌아가기"
 #. translators: %s: User who is customizing the changeset in customizer.
 #: wp-includes/class-wp-customize-manager.php:4140
 msgid "%s is already customizing this site. Please wait until they are done to try customizing. Your latest changes have been autosaved."
-msgstr "%s이(가) 이미 이 사이트를 사용자 지정하고 있습니다. 사용자 정의를 시도하려면 완료될 때까지 기다려주세요. 최근 변경 내용이 자동 저장되었습니다."
+msgstr "%s이(가) 이미 이 사이트를 사용자 정의하고 있습니다. 사용자 정의를 시도하려면 완료될 때까지 기다려주세요. 최근 변경 내용이 자동 저장되었습니다."
 
 #. translators: %s: User who is customizing the changeset in customizer.
 #: wp-includes/class-wp-customize-manager.php:4142
@@ -9151,7 +9151,7 @@ msgstr "업데이트중"
 msgid "Draft Saved"
 msgstr "임시글 저장됨"
 
-#: wp-includes/script-loader.php:1274 wp-admin/customize.php:195
+#: wp-includes/script-loader.php:1274 wp-admin/customize.php:197
 msgid "Activate &amp; Publish"
 msgstr "활성화 및 발행"
 
@@ -9643,7 +9643,7 @@ msgstr "월"
 
 #: wp-includes/customize/class-wp-customize-date-time-control.php:127
 #: wp-includes/js/dist/components.js:57331
-#: wp-includes/js/dist/edit-site.js:33435
+#: wp-includes/js/dist/edit-site.js:33438
 #: wp-admin/includes/ajax-actions.php:2261
 #: wp-admin/includes/class-wp-media-list-table.php:404
 #: wp-admin/includes/class-wp-posts-list-table.php:717
@@ -9755,10 +9755,10 @@ msgstr "WordPress.org 테마"
 msgid "Installed themes"
 msgstr "설치된 테마"
 
-#: wp-includes/script-loader.php:1334 wp-admin/customize.php:198
-#: wp-admin/customize.php:203 wp-admin/edit-form-advanced.php:396
+#: wp-includes/script-loader.php:1334 wp-admin/customize.php:200
+#: wp-admin/customize.php:205 wp-admin/edit-form-advanced.php:396
 msgid "Publish Settings"
-msgstr "공개하기 설정"
+msgstr "공개 설정"
 
 #: wp-includes/class-wp-customize-manager.php:4386
 msgid "Copied"
@@ -9815,11 +9815,11 @@ msgstr "예약하려면 미래의 날짜를 설정해야 합니다."
 msgid "The previous set of changes has already been published. Please try saving your current set of changes again."
 msgstr "이전의 변경사항 모음을 이미 발행했습니다. 현재의 변경사항 모음의 다시 저장을 시도해주세요."
 
-#: wp-includes/admin-bar.php:930
+#: wp-includes/admin-bar.php:932
 msgid "Edit User"
 msgstr "사용자 편집"
 
-#: wp-includes/admin-bar.php:884
+#: wp-includes/admin-bar.php:886
 msgid "View User"
 msgstr "사용자 보기"
 
@@ -9877,7 +9877,7 @@ msgstr "태그 수 보이기"
 #. translators: %s: Number of items.
 #. translators: Number of items.
 #: wp-includes/category-template.php:878 wp-includes/category-template.php:889
-#: wp-includes/js/dist/block-editor.js:45405
+#: wp-includes/js/dist/block-editor.js:45442
 #: wp-includes/js/dist/edit-site.js:22990
 #: wp-admin/includes/ajax-actions.php:563
 #: wp-admin/includes/class-wp-list-table.php:1041
@@ -10883,7 +10883,7 @@ msgctxt "label for hide controls button without length constraints"
 msgid "Show Controls"
 msgstr "컨트롤 표시"
 
-#: wp-includes/script-loader.php:1297 wp-admin/customize.php:268
+#: wp-includes/script-loader.php:1297 wp-admin/customize.php:270
 msgctxt "label for hide controls button without length constraints"
 msgid "Hide Controls"
 msgstr "컨트롤 감추기"
@@ -11909,7 +11909,7 @@ msgstr "테마 실시간 미리보기: %s"
 #. translators: %s: Theme name.
 #: wp-includes/customize/class-wp-customize-theme-control.php:63
 msgid "Customize theme: %s"
-msgstr "테마 사용자 정의하기: %s"
+msgstr "테마 사용자 정의: %s"
 
 #. translators: %s: Theme name.
 #: wp-includes/customize/class-wp-customize-theme-control.php:61
@@ -12023,7 +12023,7 @@ msgid "Learn more about CSS"
 msgstr "CSS에 대해 더 알아보기"
 
 #: wp-includes/class-wp-customize-manager.php:5740
-#: wp-includes/js/dist/block-editor.js:68051
+#: wp-includes/js/dist/block-editor.js:68088
 #: wp-includes/js/dist/edit-site.js:12879
 #: wp-includes/js/dist/edit-site.js:12883
 #: wp-includes/js/dist/edit-site.js:23276
@@ -12160,7 +12160,7 @@ msgid "PHP's XML extension is not available. Please contact your hosting provide
 msgstr "PHP의 XML 확장이 가능하지 않습니다. 호스팅 회사에게 연락하여 PHP의 XML 확장을 활성화하세요."
 
 #. translators: %s: Current user's display name.
-#: wp-includes/admin-bar.php:278 wp-includes/admin-bar.php:290
+#: wp-includes/admin-bar.php:280 wp-includes/admin-bar.php:292
 msgid "Howdy, %s"
 msgstr "안녕하세요 %s님"
 
@@ -12405,7 +12405,7 @@ msgstr "링크 옵션"
 msgid "Link inserted."
 msgstr "링크 삽입됨."
 
-#: wp-includes/script-loader.php:1246 wp-includes/js/dist/block-editor.js:22045
+#: wp-includes/script-loader.php:1246 wp-includes/js/dist/block-editor.js:22054
 msgid "Link selected."
 msgstr "링크 선택됨."
 
@@ -12438,7 +12438,7 @@ msgstr "%1$s을 수동으로 제거하면 PHP 경고가 발생합니다. 대신 
 
 #: wp-includes/class-wp-editor.php:1425
 msgid "The next group of formatting shortcuts are applied as you type or when you insert them around plain text in the same paragraph. Press Escape or the Undo button to undo."
-msgstr "포맷 단축키의 다음 그룹은 글자를 입력하거나 또는 같은 문단에서 단순 글자 주위에 삽입할 때 적용됩니다. 취소하려면 Esc를 누르거나 되돌리기 버튼을 클릭하세요."
+msgstr "다음 서식 지정 단축키 그룹은 입력할 때 또는 같은 단락의 일반 텍스트 주위에 삽입할 때 적용됩니다. 실행 취소하려면 Escape 또는 실행 취소 버튼을 누릅니다."
 
 #: wp-login.php:1434
 msgid "Your session has expired. Please log in to continue where you left off."
@@ -12607,7 +12607,7 @@ msgid "Invalid object type."
 msgstr "유효하지 않은 오브젝트 형식"
 
 #: wp-includes/class-wp-editor.php:1394
-#: wp-includes/js/dist/block-editor.js:22111
+#: wp-includes/js/dist/block-editor.js:22120
 msgid "Paste URL or type to search"
 msgstr "URL을 붙여넣거나 글자를 입력해 검색"
 
@@ -13275,7 +13275,7 @@ msgstr "결과 제거"
 
 #: wp-includes/class-wp-editor.php:1423
 msgid "The following formatting shortcuts are replaced when pressing Enter. Press Escape or the Undo button to undo."
-msgstr "다음 포매팅 단축키는 엔터키를 누르면 바뀔 것입니다. 되돌리려면 ESC 키를 누르거나 되돌리기 버튼을 눌러주세요."
+msgstr "Enter 키를 누르면 다음 서식 지정 단축키가 대체됩니다. 실행 취소하려면 Escape 또는 실행 취소 버튼을 누릅니다."
 
 #. translators: %s: Title of a section with menu items.
 #: wp-includes/class-wp-customize-nav-menus.php:1233
@@ -13331,7 +13331,7 @@ msgstr "아이템 없음"
 msgid "Registration confirmation will be emailed to you."
 msgstr "가입 확인용 이메일이 발송될 것입니다."
 
-#: wp-includes/js/dist/edit-site.js:25392 wp-admin/includes/media.php:1621
+#: wp-includes/js/dist/edit-site.js:25395 wp-admin/includes/media.php:1621
 #: wp-admin/includes/media.php:2579 wp-admin/install.php:149
 #: wp-admin/user-edit.php:678 wp-admin/user-new.php:594
 #: wp-admin/js/password-toggle.js:28 wp-admin/js/user-profile.js:89
@@ -13393,7 +13393,7 @@ msgstr "메뉴에 추가: %1$s (%2$s)"
 
 #: wp-includes/class-wp-editor.php:1421
 msgid "When starting a new paragraph with one of these formatting shortcuts followed by a space, the formatting will be applied automatically. Press Backspace or Escape to undo."
-msgstr "이들 포매팅 단축키 중 하나로 새 문단을 시작하고 스페이스를 누르면, 포맷이 자동으로 적용됩니다. 백스패이스를 누르거나 ESC를 눌러 실행을 취소하세요."
+msgstr "이러한 서식 지정 단축키 중 하나를 사용하여 새 단락을 시작하고 공백을 넣으면 자동으로 서식이 적용됩니다. 실행 취소하려면 Backspace 또는 Escape 키를 누릅니다."
 
 #: wp-includes/class-wpdb.php:1830 wp-includes/class-wpdb.php:1847
 msgid "WordPress database error:"
@@ -13540,7 +13540,7 @@ msgstr "태그 없음"
 #. translators: %s: Shortcode tag.
 #: wp-includes/shortcodes.php:407
 msgid "Attempting to parse a shortcode without a valid callback: %s"
-msgstr "유효한 콜백 없이 단축코드를 분석하려는 시도를 하고 있습니다: %s"
+msgstr "유효한 콜백 없이 쇼트코드 구문 분석을 시도하는 경우: %s"
 
 #: wp-includes/script-loader.php:793
 msgid "Close code tag"
@@ -13870,7 +13870,7 @@ msgstr "내비게이션 레이블"
 #: wp-includes/customize/class-wp-customize-nav-menu-auto-add-control.php:46
 #: wp-admin/nav-menus.php:1189
 msgid "Automatically add new top-level pages to this menu"
-msgstr "새로 만드는 최상위 페이지를 이 메뉴에 자동으로 추가하기"
+msgstr "이 메뉴에 새 최상위 페이지를 자동으로 추가"
 
 #: wp-includes/class-wp-customize-nav-menus.php:511
 #: wp-includes/js/dist/core-data.js:2898
@@ -13888,7 +13888,7 @@ msgstr "아이템 추가"
 
 #. translators: %s: Site title.
 #. translators: User dashboard screen title. %s: Network title.
-#: wp-includes/admin-bar.php:386 wp-admin/admin-header.php:43
+#: wp-includes/admin-bar.php:388 wp-admin/admin-header.php:43
 msgid "User Dashboard: %s"
 msgstr "사용자 알림판: %s"
 
@@ -13913,7 +13913,7 @@ msgstr[0] "%2$s에 대한 %1$s개의 응답"
 
 #: wp-includes/theme.php:3747
 msgid "Customizer"
-msgstr "사용자 정의 하기"
+msgstr "사용자 정의"
 
 #: wp-includes/taxonomy.php:4274
 msgid "Could not split shared term."
@@ -14349,12 +14349,12 @@ msgid "Custom color"
 msgstr "사용자 정의 색상"
 
 #: wp-includes/class-wp-editor.php:1276
-#: wp-includes/js/dist/block-editor.js:26798
-#: wp-includes/js/dist/block-editor.js:27246
-#: wp-includes/js/dist/block-editor.js:66566
-#: wp-includes/js/dist/block-editor.js:67006
-#: wp-includes/js/dist/block-editor.js:67126
-#: wp-includes/js/dist/block-editor.js:68248
+#: wp-includes/js/dist/block-editor.js:26807
+#: wp-includes/js/dist/block-editor.js:27255
+#: wp-includes/js/dist/block-editor.js:66603
+#: wp-includes/js/dist/block-editor.js:67043
+#: wp-includes/js/dist/block-editor.js:67163
+#: wp-includes/js/dist/block-editor.js:68285
 #: wp-includes/js/dist/edit-site.js:20762
 msgid "Color"
 msgstr "색상"
@@ -14406,7 +14406,7 @@ msgctxt "list style"
 msgid "Default"
 msgstr "기본"
 
-#: wp-includes/admin-bar.php:961
+#: wp-includes/admin-bar.php:963
 msgctxt "add new from admin bar"
 msgid "Link"
 msgstr "링크"
@@ -14461,8 +14461,8 @@ msgstr "형식으로 필터"
 msgid "Filter by date"
 msgstr "날짜로 필터"
 
-#: wp-includes/js/dist/edit-site.js:25214
-#: wp-includes/js/dist/edit-site.js:32431 wp-admin/edit.php:288
+#: wp-includes/js/dist/edit-site.js:25217
+#: wp-includes/js/dist/edit-site.js:32434 wp-admin/edit.php:288
 #: wp-admin/includes/class-wp-list-table.php:607
 msgid "Bulk actions"
 msgstr "일괄 작업"
@@ -14567,7 +14567,7 @@ msgstr "위젯은 콘텐츠의 독립적인 영역이며 사용 중인 테마가
 #. translators: %s: The site/panel title in the Customizer.
 #: wp-includes/class-wp-customize-panel.php:386
 #: wp-includes/customize/class-wp-customize-nav-menus-panel.php:83
-#: wp-admin/customize.php:237
+#: wp-admin/customize.php:239
 msgid "You are customizing %s"
 msgstr "%s을(를) 사용자정의 중입니다"
 
@@ -14692,7 +14692,7 @@ msgstr "보기 설정"
 
 #: wp-includes/media-template.php:1283
 msgid "Edit Original"
-msgstr "원본 편집하기"
+msgstr "원본 편집"
 
 #: wp-includes/media-template.php:1022
 msgid "Show Video List"
@@ -15104,14 +15104,14 @@ msgstr "새 재생목록 만들기"
 #: wp-includes/class-wp-customize-widgets.php:897
 #: wp-includes/customize/class-wp-customize-nav-menus-panel.php:75
 #: wp-includes/customize/class-wp-customize-themes-panel.php:73
-#: wp-includes/media.php:4793 wp-includes/js/dist/block-editor.js:46204
-#: wp-includes/js/dist/block-editor.js:46242
+#: wp-includes/media.php:4793 wp-includes/js/dist/block-editor.js:46241
+#: wp-includes/js/dist/block-editor.js:46279
 #: wp-includes/js/dist/block-library.js:35374
 #: wp-includes/js/dist/components.js:61863
 #: wp-includes/js/dist/edit-post.js:1481 wp-includes/js/dist/edit-site.js:12986
 #: wp-includes/js/dist/edit-site.js:15083
 #: wp-includes/js/dist/edit-site.js:15606
-#: wp-includes/js/dist/edit-site.js:37554 wp-includes/js/dist/editor.js:8121
+#: wp-includes/js/dist/edit-site.js:37557 wp-includes/js/dist/editor.js:8121
 #: wp-includes/js/dist/preferences.js:733 wp-admin/includes/ms.php:49
 #: wp-admin/theme-install.php:60
 msgid "Back"
@@ -15168,8 +15168,8 @@ msgstr "더보기 태그 삽입"
 msgid "Toolbar Toggle"
 msgstr "툴바 토글"
 
-#: wp-includes/js/dist/block-editor.js:65665
-#: wp-includes/js/dist/block-editor.js:65673
+#: wp-includes/js/dist/block-editor.js:65702
+#: wp-includes/js/dist/block-editor.js:65710
 #: wp-includes/js/dist/block-library.js:33609
 #: wp-includes/js/dist/customize-widgets.js:941
 #: wp-includes/js/dist/edit-widgets.js:4093 wp-includes/js/dist/editor.js:23224
@@ -15227,9 +15227,9 @@ msgid "Column group"
 msgstr "열 그룹"
 
 #: wp-includes/class-wp-editor.php:1311
-#: wp-includes/js/dist/block-editor.js:20493
-#: wp-includes/js/dist/block-editor.js:20508
-#: wp-includes/js/dist/block-editor.js:20523
+#: wp-includes/js/dist/block-editor.js:20502
+#: wp-includes/js/dist/block-editor.js:20517
+#: wp-includes/js/dist/block-editor.js:20532
 msgid "Rows"
 msgstr "행"
 
@@ -15246,7 +15246,7 @@ msgid "Find and replace"
 msgstr "찾기 및 변경"
 
 #: wp-includes/media-template.php:1284 wp-includes/media.php:4791
-#: wp-includes/js/dist/block-editor.js:23893
+#: wp-includes/js/dist/block-editor.js:23902
 #: wp-includes/js/dist/block-library.js:13707
 #: wp-includes/js/dist/block-library.js:46843
 #: wp-includes/js/dist/block-library.js:60923
@@ -15345,7 +15345,7 @@ msgid "Visual aids"
 msgstr "비주얼 도움"
 
 #: wp-includes/class-wp-editor.php:1174
-#: wp-includes/js/dist/block-editor.js:20808
+#: wp-includes/js/dist/block-editor.js:20817
 msgid "Align left"
 msgstr "왼쪽 정렬"
 
@@ -15362,7 +15362,7 @@ msgid "Decrease indent"
 msgstr "들여쓰기 줄이기"
 
 #: wp-includes/class-wp-editor.php:1172
-#: wp-includes/js/dist/block-editor.js:20812
+#: wp-includes/js/dist/block-editor.js:20821
 msgid "Align center"
 msgstr "중앙 정렬"
 
@@ -15371,7 +15371,7 @@ msgid "Clear formatting"
 msgstr "포맷 제거"
 
 #: wp-includes/widgets/class-wp-widget-block.php:45
-#: wp-includes/js/dist/edit-widgets.js:3310 wp-includes/js/dist/editor.js:27299
+#: wp-includes/js/dist/edit-widgets.js:3310 wp-includes/js/dist/editor.js:27302
 msgid "Block"
 msgstr "블록"
 
@@ -15384,7 +15384,7 @@ msgid "Numbered list"
 msgstr "숫자 있는 목록"
 
 #: wp-includes/class-wp-editor.php:1173
-#: wp-includes/js/dist/block-editor.js:20816
+#: wp-includes/js/dist/block-editor.js:20825
 msgid "Align right"
 msgstr "우측 정렬"
 
@@ -15402,9 +15402,9 @@ msgstr "이 위젯을 이동할 영역을 선택하세요:"
 #. translators: Hidden accessibility text.
 #: wp-includes/class-wp-customize-nav-menus.php:1096
 #: wp-includes/class-wp-customize-widgets.php:723
-#: wp-includes/js/dist/block-editor.js:51710
+#: wp-includes/js/dist/block-editor.js:51747
 #: wp-includes/js/dist/block-library.js:35094
-#: wp-includes/js/dist/edit-site.js:38478
+#: wp-includes/js/dist/edit-site.js:38481
 #: wp-admin/includes/class-walker-nav-menu-edit.php:148
 #: wp-admin/includes/template.php:1401
 msgid "Move up"
@@ -15413,9 +15413,9 @@ msgstr "위로 올리기"
 #. translators: Hidden accessibility text.
 #: wp-includes/class-wp-customize-nav-menus.php:1097
 #: wp-includes/class-wp-customize-widgets.php:722
-#: wp-includes/js/dist/block-editor.js:51715
+#: wp-includes/js/dist/block-editor.js:51752
 #: wp-includes/js/dist/block-library.js:35101
-#: wp-includes/js/dist/edit-site.js:38485
+#: wp-includes/js/dist/edit-site.js:38488
 #: wp-admin/includes/class-walker-nav-menu-edit.php:165
 #: wp-admin/includes/template.php:1414
 msgid "Move down"
@@ -15465,7 +15465,7 @@ msgstr "제안된 헤더 랜덤화"
 msgid "Randomize uploaded headers"
 msgstr "업로드 된 헤더 랜덤화"
 
-#: wp-includes/admin-bar.php:226
+#: wp-includes/admin-bar.php:228
 msgid "https://wordpress.org/support/forum/requests-and-feedback"
 msgstr "https://wordpress.org/support/forum/requests-and-feedback"
 
@@ -15473,7 +15473,7 @@ msgstr "https://wordpress.org/support/forum/requests-and-feedback"
 msgid "Change"
 msgstr "변경"
 
-#: wp-includes/js/dist/core-data.js:2934 wp-includes/js/dist/edit-site.js:33419
+#: wp-includes/js/dist/core-data.js:2934 wp-includes/js/dist/edit-site.js:33422
 #: wp-includes/js/dist/editor.js:13081 wp-includes/js/dist/editor.js:16884
 #: wp-includes/js/dist/editor.js:16914 wp-admin/includes/ajax-actions.php:2261
 #: wp-admin/includes/class-wp-posts-list-table.php:1975
@@ -15585,7 +15585,7 @@ msgid "Default"
 msgstr "기본"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/admin-bar.php:245 wp-includes/blocks/navigation.php:485
+#: wp-includes/admin-bar.php:247 wp-includes/blocks/navigation.php:485
 #: wp-includes/blocks/navigation.php:606
 #: wp-includes/widgets/class-wp-nav-menu-widget.php:50
 #: wp-includes/js/dist/block-library.js:33812
@@ -15816,7 +15816,7 @@ msgstr "유효하지 않은 사용자 ID입니다."
 msgid "Random Order"
 msgstr "무작위 순서"
 
-#: wp-includes/media.php:4844 wp-includes/js/dist/block-editor.js:63198
+#: wp-includes/media.php:4844 wp-includes/js/dist/block-editor.js:63235
 msgid "Insert from URL"
 msgstr "URL에서 삽입"
 
@@ -15845,7 +15845,7 @@ msgid "Reverse order"
 msgstr "순서 뒤집기"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/media-template.php:632 wp-includes/js/dist/edit-site.js:25245
+#: wp-includes/media-template.php:632 wp-includes/js/dist/edit-site.js:25248
 msgid "Deselect"
 msgstr "선택 해제"
 
@@ -15886,7 +15886,7 @@ msgid "Manage Video"
 msgstr "비디오 관리"
 
 #: wp-includes/widgets/class-wp-widget-media-video.php:28
-#: wp-includes/js/dist/block-editor.js:63410
+#: wp-includes/js/dist/block-editor.js:63447
 #: wp-includes/js/dist/block-library.js:62624
 #: wp-includes/js/dist/editor.js:13084
 msgid "Video"
@@ -15921,7 +15921,7 @@ msgid "Insert into page"
 msgstr "페이지에 삽입"
 
 #: wp-includes/widgets/class-wp-widget-media-audio.php:28
-#: wp-includes/js/dist/block-editor.js:63406
+#: wp-includes/js/dist/block-editor.js:63443
 #: wp-includes/js/dist/editor.js:13060 wp-includes/js/dist/editor.js:19136
 msgid "Audio"
 msgstr "오디오"
@@ -15941,11 +15941,11 @@ msgid "Custom URL"
 msgstr "사용자 정의 URL"
 
 #: wp-includes/class-wp-editor.php:1313 wp-includes/media-template.php:961
-#: wp-includes/js/dist/block-editor.js:20450
-#: wp-includes/js/dist/block-editor.js:20470
-#: wp-includes/js/dist/block-editor.js:20485
-#: wp-includes/js/dist/block-editor.js:29102
-#: wp-includes/js/dist/block-editor.js:29108
+#: wp-includes/js/dist/block-editor.js:20459
+#: wp-includes/js/dist/block-editor.js:20479
+#: wp-includes/js/dist/block-editor.js:20494
+#: wp-includes/js/dist/block-editor.js:29111
+#: wp-includes/js/dist/block-editor.js:29117
 #: wp-includes/js/dist/block-library.js:7996
 #: wp-includes/js/dist/block-library.js:21434
 #: wp-includes/js/dist/block-library.js:22321
@@ -15966,10 +15966,10 @@ msgid "Attachment Details"
 msgstr "첨부 상세"
 
 #. translators: %s: Digit to indicate multiple of sizing, eg. 2X-Large.
-#: wp-includes/block-editor.php:173 wp-includes/class-wp-theme-json.php:4065
+#: wp-includes/block-editor.php:173 wp-includes/class-wp-theme-json.php:4086
 #: wp-includes/media-template.php:914 wp-includes/media-template.php:994
 #: wp-includes/media-template.php:1185 wp-includes/media.php:4426
-#: wp-includes/js/dist/block-editor.js:8354
+#: wp-includes/js/dist/block-editor.js:8352
 #: wp-includes/js/dist/block-library.js:55610
 #: wp-includes/js/dist/components.js:59580
 #: wp-admin/includes/class-custom-background.php:650
@@ -16015,7 +16015,7 @@ msgstr "업로드할 파일 놓기"
 msgid "Create gallery"
 msgstr "갤러리 생성"
 
-#: wp-includes/media.php:4807 wp-includes/js/dist/block-editor.js:63478
+#: wp-includes/media.php:4807 wp-includes/js/dist/block-editor.js:63515
 #: wp-admin/includes/media.php:21 wp-admin/upload.php:204
 #: wp-admin/upload.php:358
 msgid "Media Library"
@@ -16160,7 +16160,7 @@ msgstr "%1$s %2$s"
 msgid "Could not insert term relationship into the database."
 msgstr "데이터베이스에 용어 관계를 삽입할 수 없습니다."
 
-#: wp-includes/media-template.php:814 wp-includes/js/dist/block-editor.js:25821
+#: wp-includes/media-template.php:814 wp-includes/js/dist/block-editor.js:25830
 #: wp-includes/js/dist/components.js:39288
 #: wp-includes/js/dist/components.js:45170
 #: wp-includes/js/dist/components.js:58579 wp-admin/theme-install.php:244
@@ -16170,11 +16170,11 @@ msgstr "지우기"
 
 #: wp-includes/media.php:4856 wp-includes/media.php:4857
 msgid "Add to gallery"
-msgstr "갤러리에 추가하기"
+msgstr "갤러리에 추가"
 
 #: wp-includes/class-wp-post-type.php:989
 msgid "Insert into post"
-msgstr "글에 삽입하기"
+msgstr "글에 삽입"
 
 #: wp-includes/media.php:4809
 msgid "Create a new gallery"
@@ -16257,7 +16257,7 @@ msgid "Header Text Color"
 msgstr "헤더 텍스트 색상"
 
 #: wp-includes/class-wp-customize-manager.php:5267
-#: wp-includes/js/dist/block-editor.js:68250
+#: wp-includes/js/dist/block-editor.js:68287
 #: wp-includes/js/dist/edit-site.js:12163
 #: wp-includes/js/dist/edit-site.js:20447
 msgid "Colors"
@@ -16278,15 +16278,15 @@ msgstr "저장 및 발행"
 msgid "Select file"
 msgstr "파일 선택"
 
-#: wp-includes/admin-bar.php:535
+#: wp-includes/admin-bar.php:537
 #: wp-includes/customize/class-wp-customize-theme-control.php:240
-#: wp-admin/customize.php:208
+#: wp-admin/customize.php:210
 #: wp-admin/includes/class-theme-upgrader-skin.php:92
 #: wp-admin/includes/theme.php:1066 wp-admin/menu.php:217
 #: wp-admin/theme-install.php:422 wp-admin/themes.php:610
 #: wp-admin/themes.php:981 wp-admin/themes.php:1214
 msgid "Customize"
-msgstr "사용자 정의하기"
+msgstr "사용자 정의"
 
 #: wp-includes/class-wp-xmlrpc-server.php:785
 msgid "Insufficient arguments passed to this XML-RPC method."
@@ -16397,10 +16397,10 @@ msgstr "허용한 파일"
 #: wp-includes/customize/class-wp-customize-media-control.php:261
 #: wp-includes/customize/class-wp-customize-nav-menu-item-control.php:175
 #: wp-includes/media-template.php:623 wp-includes/media.php:4792
-#: wp-includes/js/dist/block-editor.js:24416
-#: wp-includes/js/dist/block-editor.js:39255
+#: wp-includes/js/dist/block-editor.js:24425
+#: wp-includes/js/dist/block-editor.js:39292
 #: wp-includes/js/dist/block-library.js:62804
-#: wp-includes/js/dist/edit-site.js:31951 wp-includes/js/dist/editor.js:12845
+#: wp-includes/js/dist/edit-site.js:31954 wp-includes/js/dist/editor.js:12845
 #: wp-admin/includes/class-walker-nav-menu-edit.php:289
 #: wp-admin/includes/class-wp-users-list-table.php:276
 #: wp-admin/includes/class-wp-users-list-table.php:487
@@ -16408,9 +16408,9 @@ msgid "Remove"
 msgstr "제거"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/js/dist/block-editor.js:24015
-#: wp-includes/js/dist/block-editor.js:63508
-#: wp-includes/js/dist/block-editor.js:63524
+#: wp-includes/js/dist/block-editor.js:24024
+#: wp-includes/js/dist/block-editor.js:63545
+#: wp-includes/js/dist/block-editor.js:63561
 #: wp-includes/js/dist/block-library.js:62574
 #: wp-includes/js/dist/edit-site.js:19831 wp-includes/js/dist/editor.js:16199
 #: wp-admin/includes/class-custom-background.php:357
@@ -16507,7 +16507,7 @@ msgid "Stylesheet"
 msgstr "스타일시트"
 
 #: wp-includes/class-wp-xmlrpc-server.php:569
-#: wp-includes/js/dist/edit-site.js:8296 wp-includes/js/dist/edit-site.js:37353
+#: wp-includes/js/dist/edit-site.js:8296 wp-includes/js/dist/edit-site.js:37356
 #: wp-includes/js/dist/editor.js:10472 wp-includes/js/dist/editor.js:10488
 #: wp-includes/js/dist/editor.js:11645 wp-includes/js/dist/editor.js:11651
 #: wp-admin/includes/class-wp-posts-list-table.php:1875
@@ -16543,7 +16543,7 @@ msgstr "스타일시트를 읽을 수 없습니다."
 #. translators: %s: Document title from the preview.
 #: wp-includes/class-wp-customize-manager.php:4584
 msgid "Customize: %s"
-msgstr "사용자 정의하기: %s"
+msgstr "사용자 정의: %s"
 
 #: wp-includes/class-wp-customize-control.php:590
 #: wp-includes/class-wp-customize-nav-menus.php:709
@@ -16561,7 +16561,7 @@ msgstr "&mdash; 선택 &mdash;"
 msgid "Tagline"
 msgstr "태그라인"
 
-#: wp-includes/js/dist/edit-site.js:33393 wp-includes/js/dist/editor.js:26344
+#: wp-includes/js/dist/edit-site.js:33396 wp-includes/js/dist/editor.js:26347
 #: wp-admin/includes/file.php:32
 msgid "Posts Page"
 msgstr "글 페이지"
@@ -16576,9 +16576,9 @@ msgstr "최신 글"
 #: wp-includes/js/dist/block-library.js:33686
 #: wp-includes/js/dist/block-library.js:34671
 #: wp-includes/js/dist/core-commands.js:476
-#: wp-includes/js/dist/edit-site.js:8299 wp-includes/js/dist/edit-site.js:38107
-#: wp-includes/js/dist/edit-site.js:39074
-#: wp-includes/js/dist/edit-site.js:40421 wp-includes/js/dist/editor.js:28071
+#: wp-includes/js/dist/edit-site.js:8299 wp-includes/js/dist/edit-site.js:38110
+#: wp-includes/js/dist/edit-site.js:39077
+#: wp-includes/js/dist/edit-site.js:40424 wp-includes/js/dist/editor.js:28074
 #: wp-admin/index.php:57
 msgid "Navigation"
 msgstr "내비게이션"
@@ -16762,7 +16762,7 @@ msgstr "하나 이상의 데이터베이스 테이블이 사용가능하지 않�
 msgid "You are posting comments too quickly. Slow down."
 msgstr "댓글을 너무 빨리 달고 있습니다. 천천히 하세요."
 
-#: wp-includes/admin-bar.php:992 wp-includes/admin-bar.php:1000
+#: wp-includes/admin-bar.php:994 wp-includes/admin-bar.php:1002
 msgctxt "admin bar menu group label"
 msgid "New"
 msgstr "새로 추가"
@@ -16805,8 +16805,8 @@ msgid "The menu ID should not be empty."
 msgstr "메뉴 ID는 비어있으면 안 됩니다."
 
 #. translators: Hidden accessibility text.
-#: wp-includes/admin-bar.php:139 wp-includes/admin-bar.php:143
-#: wp-includes/admin-bar.php:162
+#: wp-includes/admin-bar.php:141 wp-includes/admin-bar.php:145
+#: wp-includes/admin-bar.php:164
 msgid "About WordPress"
 msgstr "워드프레스 소개"
 
@@ -16815,7 +16815,7 @@ msgstr "워드프레스 소개"
 msgid "%s exceeds the maximum upload size for this site."
 msgstr "%s은(는) 이 사이트에 대한 최대 업로드 크기를 초과합니다."
 
-#: wp-includes/admin-bar.php:225
+#: wp-includes/admin-bar.php:227
 msgid "Feedback"
 msgstr "의견"
 
@@ -16827,7 +16827,7 @@ msgstr "<strong>오류</strong>: 댓글 텍스트를 입력해주세요."
 msgid "<strong>Error:</strong> Please enter a valid email address."
 msgstr "<strong>오류</strong>: 유효한 이메일 주소를 입력해주세요."
 
-#: wp-includes/admin-bar.php:195
+#: wp-includes/admin-bar.php:197
 msgid "Documentation"
 msgstr "문서"
 
@@ -16853,14 +16853,14 @@ msgid "%s Comment"
 msgid_plural "%s Comments"
 msgstr[0] "%s개의 댓글"
 
-#: wp-includes/admin-bar.php:185
+#: wp-includes/admin-bar.php:187
 #: wp-includes/widgets/class-wp-widget-meta.php:92
 msgid "WordPress.org"
 msgstr "WordPress.org"
 
 #. translators: %s: Site title.
 #. translators: Network admin screen title. %s: Network title.
-#: wp-includes/admin-bar.php:383 wp-admin/admin-header.php:40
+#: wp-includes/admin-bar.php:385 wp-admin/admin-header.php:40
 msgid "Network Admin: %s"
 msgstr "네트워크 관리자: %s"
 
@@ -16906,12 +16906,12 @@ msgstr "파랑"
 msgid "The timezone you have entered is not valid. Please select a valid timezone."
 msgstr "입력한 시간대는 유효하지 않습니다. 유효한 시간대를 선택해주세요."
 
-#: wp-includes/admin-bar.php:1023
+#: wp-includes/admin-bar.php:1025
 msgctxt "add new from admin bar"
 msgid "Site"
 msgstr "사이트"
 
-#: wp-includes/admin-bar.php:985
+#: wp-includes/admin-bar.php:987
 msgctxt "add new from admin bar"
 msgid "User"
 msgstr "사용자"
@@ -16944,10 +16944,10 @@ msgid "Your account is now activated. <a href=\"%1$s\">View your site</a> or <a 
 msgstr "계정이 활성화되었습니다. <a href=\"%1$s\">사이트 보기</a> 또는 <a href=\"%2$s\">로그인</a>"
 
 #: wp-includes/class-wp-editor.php:1265
-#: wp-includes/js/dist/block-editor.js:22939
-#: wp-includes/js/dist/block-editor.js:27260
-#: wp-includes/js/dist/block-editor.js:66090
-#: wp-includes/js/dist/block-editor.js:68239
+#: wp-includes/js/dist/block-editor.js:22948
+#: wp-includes/js/dist/block-editor.js:27269
+#: wp-includes/js/dist/block-editor.js:66127
+#: wp-includes/js/dist/block-editor.js:68276
 #: wp-includes/js/dist/block-library.js:5119
 #: wp-includes/js/dist/block-library.js:37315
 #: wp-includes/js/dist/block-library.js:37557
@@ -17144,7 +17144,7 @@ msgstr "휴지통에 글 없음."
 msgid "No pages found."
 msgstr "페이지를 찾을 수 없음."
 
-#: wp-includes/admin-bar.php:783 wp-includes/admin-bar.php:788
+#: wp-includes/admin-bar.php:785 wp-includes/admin-bar.php:790
 msgid "Shortlink"
 msgstr "단축링크"
 
@@ -17230,11 +17230,11 @@ msgstr "누군가 다음 계정의 비밀번호 초기화를  요청했습니다
 msgid "Invalid post."
 msgstr "유효하지 않은 글."
 
-#: wp-includes/admin-bar.php:420
+#: wp-includes/admin-bar.php:422
 msgid "Manage Site"
 msgstr "사이트 관리"
 
-#: wp-includes/admin-bar.php:749
+#: wp-includes/admin-bar.php:751
 msgid "Manage Comments"
 msgstr "댓글 관리"
 
@@ -17271,13 +17271,13 @@ msgstr "링크 카테고리 검색"
 msgid "Link Category"
 msgstr "링크 카테고리"
 
-#: wp-includes/user.php:3970 wp-includes/js/dist/block-editor.js:46315
+#: wp-includes/user.php:3970 wp-includes/js/dist/block-editor.js:46352
 #: wp-includes/js/dist/block-library.js:2068
 #: wp-includes/js/dist/core-data.js:2854 wp-includes/js/dist/edit-site.js:22856
 msgid "User"
 msgstr "사용자"
 
-#: wp-includes/admin-bar.php:589
+#: wp-includes/admin-bar.php:591
 msgid "Network Admin"
 msgstr "네트워크 관리자"
 
@@ -17698,7 +17698,7 @@ msgstr "아직 만든 메뉴가 없습니다. <a href=\"%s\">몇 개 만드세�
 
 #: wp-includes/link-template.php:4236
 msgid "This is the short link."
-msgstr "이것은 단축 링크입니다."
+msgstr "이것은 단축링크입니다."
 
 #. translators: %d: Number of available theme updates.
 #: wp-includes/update.php:955
@@ -17832,7 +17832,7 @@ msgstr "검색 결과: \"%s\""
 msgid "One response to %s"
 msgstr "%s 에 하나의 답글"
 
-#: wp-includes/admin-bar.php:1109
+#: wp-includes/admin-bar.php:1111
 #: wp-includes/class-wp-customize-nav-menus.php:675
 #: wp-includes/customize/class-wp-customize-nav-menus-panel.php:113
 #: wp-includes/js/dist/block-library.js:33583 wp-admin/menu.php:221
@@ -18283,7 +18283,7 @@ msgstr "-"
 
 #: wp-includes/class-wp-editor.php:1221 wp-includes/script-loader.php:964
 #: wp-includes/widgets/class-wp-widget-media-image.php:28
-#: wp-includes/js/dist/block-editor.js:63408
+#: wp-includes/js/dist/block-editor.js:63445
 #: wp-includes/js/dist/block-library.js:27456
 #: wp-includes/js/dist/editor.js:13069 wp-admin/includes/media.php:2954
 msgid "Image"
@@ -18421,7 +18421,7 @@ msgid "Home"
 msgstr "홈"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/post-template.php:960 wp-includes/js/dist/block-editor.js:45428
+#: wp-includes/post-template.php:960 wp-includes/js/dist/block-editor.js:45465
 #: wp-includes/js/dist/edit-site.js:15669
 #: wp-includes/js/dist/edit-site.js:23007
 #: wp-includes/js/dist/edit-site.js:24622
@@ -18431,7 +18431,7 @@ msgid "Previous page"
 msgstr "이전 페이지"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/post-template.php:959 wp-includes/js/dist/block-editor.js:45447
+#: wp-includes/post-template.php:959 wp-includes/js/dist/block-editor.js:45484
 #: wp-includes/js/dist/edit-site.js:15699
 #: wp-includes/js/dist/edit-site.js:23024
 #: wp-includes/js/dist/edit-site.js:24634
@@ -18481,7 +18481,7 @@ msgstr[0] "현재 %s개의 댓글이 승인을 기다리고 있습니다. 검토
 #. translators: Comment moderation. %s: Comment action URL.
 #: wp-includes/pluggable.php:1972
 msgid "Approve it: %s"
-msgstr "승인하기: %s"
+msgstr "승인: %s"
 
 #: wp-includes/pluggable.php:1947
 msgid "Pingback excerpt: "
@@ -18655,13 +18655,13 @@ msgid "Fill Screen"
 msgstr "화면 채우기"
 
 #: wp-includes/class-wp-editor.php:1262
-#: wp-includes/js/dist/block-editor.js:23257
-#: wp-includes/js/dist/block-editor.js:66076
+#: wp-includes/js/dist/block-editor.js:23266
+#: wp-includes/js/dist/block-editor.js:66113
 msgid "Remove link"
 msgstr "링크 제거"
 
 #: wp-includes/class-wp-editor.php:1266 wp-includes/script-loader.php:778
-#: wp-includes/js/dist/block-editor.js:65782
+#: wp-includes/js/dist/block-editor.js:65819
 msgid "Insert link"
 msgstr "링크 삽입"
 
@@ -18669,8 +18669,8 @@ msgstr "링크 삽입"
 msgid "Check Spelling"
 msgstr "맞춤법 검사"
 
-#: wp-includes/class-wp-editor.php:1182 wp-includes/js/dist/edit-site.js:25238
-#: wp-includes/js/dist/edit-site.js:25427
+#: wp-includes/class-wp-editor.php:1182 wp-includes/js/dist/edit-site.js:25241
+#: wp-includes/js/dist/edit-site.js:25430
 msgid "Select all"
 msgstr "모두 선택"
 
@@ -18688,7 +18688,7 @@ msgid "Link Rel"
 msgstr "링크 관계"
 
 #: wp-includes/class-wp-editor.php:1225
-#: wp-includes/js/dist/block-editor.js:46347
+#: wp-includes/js/dist/block-editor.js:46384
 msgid "Source"
 msgstr "원본"
 
@@ -18725,7 +18725,7 @@ msgid "Fullscreen"
 msgstr "전체화면"
 
 #: wp-includes/media-template.php:1086 wp-includes/media-template.php:1150
-#: wp-includes/js/dist/block-editor.js:20868
+#: wp-includes/js/dist/block-editor.js:20877
 msgid "Align"
 msgstr "정렬"
 
@@ -18737,8 +18737,8 @@ msgstr "정렬"
 msgid "Loop"
 msgstr "연속재생"
 
-#: wp-includes/js/dist/block-editor.js:20563
-#: wp-includes/js/dist/block-editor.js:46357
+#: wp-includes/js/dist/block-editor.js:20572
+#: wp-includes/js/dist/block-editor.js:46394
 #: wp-includes/js/dist/components.js:44869
 #: wp-admin/includes/ajax-actions.php:2261
 msgid "Type"
@@ -18748,7 +18748,7 @@ msgstr "유형"
 msgid "Constrain proportions"
 msgstr "종횡비 유지"
 
-#: wp-includes/class-wp-editor.php:1223 wp-includes/js/dist/editor.js:27979
+#: wp-includes/class-wp-editor.php:1223 wp-includes/js/dist/editor.js:27982
 msgid "General"
 msgstr "일반"
 
@@ -18762,7 +18762,7 @@ msgstr "입력한 URL은 이메일 주소인 것 같습니다. 필수인 mailto:
 
 #: wp-includes/class-wp-editor.php:1345
 #: wp-includes/customize/class-wp-customize-background-position-control.php:75
-#: wp-includes/js/dist/block-editor.js:18414
+#: wp-includes/js/dist/block-editor.js:18423
 #: wp-admin/includes/class-custom-background.php:421
 msgid "Bottom"
 msgstr "하단"
@@ -18773,7 +18773,7 @@ msgstr "중간"
 
 #: wp-includes/class-wp-editor.php:1343
 #: wp-includes/customize/class-wp-customize-background-position-control.php:47
-#: wp-includes/js/dist/block-editor.js:18413
+#: wp-includes/js/dist/block-editor.js:18422
 #: wp-includes/js/dist/components.js:58863
 #: wp-admin/includes/class-custom-background.php:393
 msgid "Top"
@@ -18788,17 +18788,17 @@ msgid "Vertical space"
 msgstr "세로 공간"
 
 #: wp-includes/class-wp-editor.php:1231
-#: wp-includes/js/dist/block-editor.js:31370
-#: wp-includes/js/dist/block-editor.js:66578
-#: wp-includes/js/dist/block-editor.js:67013
-#: wp-includes/js/dist/block-editor.js:67133
+#: wp-includes/js/dist/block-editor.js:31379
+#: wp-includes/js/dist/block-editor.js:66615
+#: wp-includes/js/dist/block-editor.js:67050
+#: wp-includes/js/dist/block-editor.js:67170
 msgid "Dimensions"
 msgstr "치수"
 
 #: wp-includes/class-wp-editor.php:1226
-#: wp-includes/js/dist/block-editor.js:26168
-#: wp-includes/js/dist/block-editor.js:26183
-#: wp-includes/js/dist/block-editor.js:26440
+#: wp-includes/js/dist/block-editor.js:26177
+#: wp-includes/js/dist/block-editor.js:26192
+#: wp-includes/js/dist/block-editor.js:26449
 msgid "Border"
 msgstr "테두리"
 
@@ -18816,7 +18816,7 @@ msgstr "붙여 넣기"
 
 #: wp-includes/class-wp-customize-manager.php:4386
 #: wp-includes/class-wp-editor.php:1180
-#: wp-includes/js/dist/block-editor.js:53978
+#: wp-includes/js/dist/block-editor.js:54015
 #: wp-includes/js/dist/components.js:37796 wp-includes/js/dist/editor.js:16464
 #: wp-includes/js/dist/editor.js:18383
 msgid "Copy"
@@ -18824,7 +18824,7 @@ msgstr "복사"
 
 #: wp-includes/class-wp-editor.php:1179
 msgid "Cut"
-msgstr "자르기"
+msgstr "잘라내기"
 
 #: wp-includes/class-wp-editor.php:1163
 #: wp-includes/js/dist/format-library.js:1646
@@ -18837,13 +18837,13 @@ msgid "Subscript"
 msgstr "아래첨자"
 
 #: wp-includes/class-wp-editor.php:1161
-#: wp-includes/js/dist/block-editor.js:28648
+#: wp-includes/js/dist/block-editor.js:28657
 #: wp-includes/js/dist/format-library.js:1145
 msgid "Strikethrough"
 msgstr "취소선"
 
 #: wp-includes/class-wp-editor.php:1160
-#: wp-includes/js/dist/block-editor.js:28644
+#: wp-includes/js/dist/block-editor.js:28653
 #: wp-includes/js/dist/format-library.js:1191
 msgid "Underline"
 msgstr "밑줄"
@@ -18892,7 +18892,7 @@ msgid "Heading 1"
 msgstr "헤딩 1"
 
 #: wp-includes/class-wp-editor.php:1152
-#: wp-includes/js/dist/block-editor.js:59887
+#: wp-includes/js/dist/block-editor.js:59924
 msgid "Paragraph"
 msgstr "문단"
 
@@ -18916,12 +18916,12 @@ msgid "The changes you made will be lost if you navigate away from this page."
 msgstr "이 페이지에서 다른 곳으로 이동하면 변경 사항이 손실됩니다."
 
 #: wp-includes/class-wp-editor.php:1312
-#: wp-includes/js/dist/block-editor.js:31098
+#: wp-includes/js/dist/block-editor.js:31107
 msgid "Column"
 msgstr "컬럼"
 
 #: wp-includes/class-wp-editor.php:1310
-#: wp-includes/js/dist/block-editor.js:31118
+#: wp-includes/js/dist/block-editor.js:31127
 msgid "Row"
 msgstr "행"
 
@@ -19211,7 +19211,7 @@ msgstr "파일명이 비어 있음"
 #: wp-includes/class-wp-image-editor-imagick.php:906
 #: wp-includes/functions.php:2404 wp-includes/functions.php:2939
 msgid "Unable to create directory %s. Is its parent directory writable by the server?"
-msgstr "디렉터리 %s 생성 불가. 서버의 부모 디렉토리가 쓰기 가능한가요?"
+msgstr "디렉터리 %s 생성 불가. 서버의 부모 디렉터리가 쓰기 가능한가요?"
 
 #. translators: %s: Option name.
 #: wp-includes/option.php:552
@@ -19220,7 +19220,7 @@ msgstr "%s은(는) 보호된 WP 옵션이며 수정 가능하지 않습니다"
 
 #. translators: Used between list items, there is a space after the comma.
 #: wp-includes/class-wp-locale.php:241 wp-includes/l10n.php:1965
-#: wp-includes/js/dist/block-editor.js:68408
+#: wp-includes/js/dist/block-editor.js:68445
 msgid ", "
 msgstr ", "
 
@@ -19351,10 +19351,10 @@ msgid "Automatically add paragraphs"
 msgstr "단락 자동 추가"
 
 #: wp-includes/widgets/class-wp-widget-text.php:43
-#: wp-includes/js/dist/block-editor.js:23770
-#: wp-includes/js/dist/block-editor.js:27225
-#: wp-includes/js/dist/block-editor.js:27232
-#: wp-includes/js/dist/block-editor.js:27326
+#: wp-includes/js/dist/block-editor.js:23779
+#: wp-includes/js/dist/block-editor.js:27234
+#: wp-includes/js/dist/block-editor.js:27241
+#: wp-includes/js/dist/block-editor.js:27335
 #: wp-includes/js/dist/block-library.js:35812
 #: wp-includes/js/dist/block-library.js:37302
 #: wp-includes/js/dist/block-library.js:38430
@@ -19420,7 +19420,7 @@ msgid "Page order"
 msgstr "페이지 순서"
 
 #: wp-includes/widgets/class-wp-widget-pages.php:171
-#: wp-includes/js/dist/edit-site.js:32958
+#: wp-includes/js/dist/edit-site.js:32961
 msgid "Page title"
 msgstr "페이지 제목"
 
@@ -19598,7 +19598,7 @@ msgstr "%s에 댓글"
 #: wp-includes/class-wp-customize-nav-menus.php:336
 #: wp-includes/script-loader.php:1245
 #: wp-includes/js/dist/block-directory.js:1814
-#: wp-includes/js/dist/block-editor.js:45126
+#: wp-includes/js/dist/block-editor.js:45163
 #: wp-includes/js/dist/block-library.js:10721
 #: wp-includes/js/dist/block-library.js:44212
 #: wp-includes/js/dist/block-library.js:60408
@@ -19621,7 +19621,7 @@ msgstr "&laquo; 이전 페이지"
 msgid "Sorry, comments are closed for this item."
 msgstr "죄송합니다. 이 항목에는 댓글이 닫혔습니다."
 
-#: wp-includes/admin-bar.php:1098
+#: wp-includes/admin-bar.php:1100
 #: wp-includes/class-wp-customize-widgets.php:419
 #: wp-includes/functions.php:5407 wp-includes/js/dist/blocks.js:7830
 #: wp-includes/js/dist/core-data.js:2843
@@ -19674,11 +19674,11 @@ msgstr "HTML"
 #: wp-includes/customize/class-wp-customize-media-control.php:239
 #: wp-includes/customize/class-wp-customize-media-control.php:250
 #: wp-includes/customize/class-wp-customize-media-control.php:260
-#: wp-includes/js/dist/block-editor.js:27267
-#: wp-includes/js/dist/block-editor.js:27867
-#: wp-includes/js/dist/block-editor.js:27971
-#: wp-includes/js/dist/block-editor.js:30592
-#: wp-includes/js/dist/block-editor.js:33411
+#: wp-includes/js/dist/block-editor.js:27276
+#: wp-includes/js/dist/block-editor.js:27876
+#: wp-includes/js/dist/block-editor.js:27980
+#: wp-includes/js/dist/block-editor.js:30601
+#: wp-includes/js/dist/block-editor.js:33420
 #: wp-includes/js/dist/components.js:57580
 #: wp-includes/js/dist/components.js:59440
 #: wp-includes/js/dist/edit-site.js:7601 wp-includes/js/dist/edit-site.js:7749
@@ -19691,12 +19691,12 @@ msgstr "기본값"
 
 #: wp-includes/class-wp-editor.php:1333 wp-includes/media-template.php:1213
 #: wp-includes/widgets/class-wp-widget-media-image.php:84
-#: wp-includes/js/dist/block-editor.js:30841
-#: wp-includes/js/dist/block-editor.js:30971
-#: wp-includes/js/dist/block-editor.js:31141
-#: wp-includes/js/dist/block-editor.js:62882
-#: wp-includes/js/dist/block-editor.js:71121
-#: wp-includes/js/dist/block-editor.js:71127
+#: wp-includes/js/dist/block-editor.js:30850
+#: wp-includes/js/dist/block-editor.js:30980
+#: wp-includes/js/dist/block-editor.js:31150
+#: wp-includes/js/dist/block-editor.js:62919
+#: wp-includes/js/dist/block-editor.js:71158
+#: wp-includes/js/dist/block-editor.js:71164
 #: wp-includes/js/dist/block-library.js:43019
 #: wp-includes/js/dist/block-library.js:43029
 #: wp-includes/js/dist/block-library.js:56161 wp-admin/options-media.php:70
@@ -19733,7 +19733,7 @@ msgstr "이메일"
 msgid "Site Title"
 msgstr "사이트 제목"
 
-#: wp-includes/taxonomy.php:196 wp-includes/js/dist/block-editor.js:61238
+#: wp-includes/taxonomy.php:196 wp-includes/js/dist/block-editor.js:61275
 #: wp-includes/js/dist/blocks.js:7833 wp-includes/js/dist/edit-site.js:20624
 #: wp-includes/js/dist/edit-site.js:20696
 #: wp-includes/js/dist/edit-site.js:20846
@@ -19753,7 +19753,7 @@ msgid "First Post"
 msgstr "첫번째 글"
 
 #. translators: accessibility text for the settings landmark region.
-#: wp-includes/admin-bar.php:652 wp-includes/js/dist/block-editor.js:66340
+#: wp-includes/admin-bar.php:654 wp-includes/js/dist/block-editor.js:66377
 #: wp-includes/js/dist/block-library.js:1772
 #: wp-includes/js/dist/block-library.js:2107
 #: wp-includes/js/dist/block-library.js:3373
@@ -19807,16 +19807,16 @@ msgstr "첫번째 글"
 #: wp-includes/js/dist/block-library.js:62774
 #: wp-includes/js/dist/edit-widgets.js:1449
 #: wp-includes/js/dist/edit-widgets.js:3346 wp-includes/js/dist/editor.js:7617
-#: wp-includes/js/dist/editor.js:27471 wp-admin/includes/ms.php:1083
+#: wp-includes/js/dist/editor.js:27474 wp-admin/includes/ms.php:1083
 #: wp-admin/menu.php:377 wp-admin/options.php:22 wp-admin/network/menu.php:109
 msgid "Settings"
 msgstr "설정"
 
-#: wp-includes/admin-bar.php:572 wp-admin/menu.php:29 wp-admin/my-sites.php:38
+#: wp-includes/admin-bar.php:574 wp-admin/menu.php:29 wp-admin/my-sites.php:38
 msgid "My Sites"
 msgstr "내 사이트"
 
-#: wp-includes/admin-bar.php:630 wp-includes/admin-bar.php:1083
+#: wp-includes/admin-bar.php:632 wp-includes/admin-bar.php:1085
 #: wp-includes/customize/class-wp-customize-themes-panel.php:82
 #: wp-includes/taxonomy.php:195 wp-includes/js/dist/core-data.js:2914
 #: wp-admin/includes/ms.php:1078 wp-admin/themes.php:127
@@ -19827,7 +19827,7 @@ msgid "Themes"
 msgstr "테마"
 
 #. translators: Sites menu item.
-#: wp-includes/admin-bar.php:608
+#: wp-includes/admin-bar.php:610
 #: wp-admin/includes/class-wp-ms-users-list-table.php:197
 #: wp-admin/network/menu.php:51 wp-admin/network/sites.php:21
 #: wp-admin/network/sites.php:388
@@ -19860,8 +19860,8 @@ msgid "Strength indicator"
 msgstr "강도 표시기"
 
 #. translators: Network menu item.
-#: wp-includes/admin-bar.php:431 wp-includes/admin-bar.php:598
-#: wp-includes/admin-bar.php:718 wp-includes/deprecated.php:2822
+#: wp-includes/admin-bar.php:433 wp-includes/admin-bar.php:600
+#: wp-includes/admin-bar.php:720 wp-includes/deprecated.php:2822
 #: wp-includes/deprecated.php:2824 wp-admin/index.php:33 wp-admin/menu.php:24
 #: wp-admin/my-sites.php:142 wp-admin/user/menu.php:10
 #: wp-admin/includes/class-wp-ms-sites-list-table.php:746
@@ -19882,11 +19882,11 @@ msgstr "<strong>오류</strong>: 사용자명을 입력하세요."
 
 #: wp-includes/class-wp-editor.php:1334 wp-includes/media-template.php:1208
 #: wp-includes/widgets/class-wp-widget-media-image.php:78
-#: wp-includes/js/dist/block-editor.js:30971
-#: wp-includes/js/dist/block-editor.js:31141
-#: wp-includes/js/dist/block-editor.js:62875
-#: wp-includes/js/dist/block-editor.js:71105
-#: wp-includes/js/dist/block-editor.js:71111
+#: wp-includes/js/dist/block-editor.js:30980
+#: wp-includes/js/dist/block-editor.js:31150
+#: wp-includes/js/dist/block-editor.js:62912
+#: wp-includes/js/dist/block-editor.js:71142
+#: wp-includes/js/dist/block-editor.js:71148
 #: wp-includes/js/dist/block-library.js:7260
 #: wp-includes/js/dist/block-library.js:43039
 #: wp-includes/js/dist/block-library.js:43049
@@ -19900,7 +19900,7 @@ msgstr "너비"
 msgid "Yellow"
 msgstr "노란색"
 
-#: wp-includes/class-wp-theme.php:1080 wp-includes/js/dist/block-editor.js:8281
+#: wp-includes/class-wp-theme.php:1080 wp-includes/js/dist/block-editor.js:8279
 msgid "White"
 msgstr "흰색"
 
@@ -19936,7 +19936,7 @@ msgstr "갈색"
 msgid "Blue"
 msgstr "파란색"
 
-#: wp-includes/class-wp-theme.php:1069 wp-includes/js/dist/block-editor.js:8273
+#: wp-includes/class-wp-theme.php:1069 wp-includes/js/dist/block-editor.js:8271
 msgid "Black"
 msgstr "검정색"
 
@@ -19947,7 +19947,7 @@ msgstr "검정색"
 #: wp-includes/customize/class-wp-customize-themes-panel.php:91
 #: wp-includes/js/dist/customize-widgets.js:958
 #: wp-includes/js/dist/edit-widgets.js:4110 wp-includes/js/dist/editor.js:23234
-#: wp-admin/customize.php:243 wp-admin/includes/class-wp-screen.php:979
+#: wp-admin/customize.php:245 wp-admin/includes/class-wp-screen.php:979
 msgid "Help"
 msgstr "도움말"
 
@@ -19961,11 +19961,11 @@ msgstr "도움말"
 #: wp-includes/js/dist/block-library.js:39493
 #: wp-includes/js/dist/core-commands.js:326
 #: wp-includes/js/dist/core-commands.js:411
-#: wp-includes/js/dist/core-data.js:5688 wp-includes/js/dist/edit-site.js:33245
-#: wp-includes/js/dist/edit-site.js:33380
-#: wp-includes/js/dist/edit-site.js:33382
-#: wp-includes/js/dist/edit-site.js:37179
-#: wp-includes/js/dist/edit-site.js:37190 wp-includes/js/dist/editor.js:11211
+#: wp-includes/js/dist/core-data.js:5688 wp-includes/js/dist/edit-site.js:33248
+#: wp-includes/js/dist/edit-site.js:33383
+#: wp-includes/js/dist/edit-site.js:33385
+#: wp-includes/js/dist/edit-site.js:37182
+#: wp-includes/js/dist/edit-site.js:37193 wp-includes/js/dist/editor.js:11211
 #: wp-includes/js/dist/editor.js:16441 wp-admin/includes/ajax-actions.php:2264
 #: wp-admin/includes/media.php:3348 wp-admin/includes/revision.php:61
 #: wp-admin/includes/revision.php:64 wp-admin/includes/template.php:2097
@@ -19985,7 +19985,7 @@ msgstr "미디어 편집"
 msgid "New Page"
 msgstr "새 페이지"
 
-#: wp-includes/media.php:4788 wp-includes/js/dist/block-editor.js:65687
+#: wp-includes/media.php:4788 wp-includes/js/dist/block-editor.js:65724
 #: wp-includes/js/dist/block-library.js:62794
 #: wp-admin/includes/template.php:2062 wp-admin/nav-menus.php:1019
 #: wp-admin/plugin-editor.php:259 wp-admin/theme-editor.php:260
@@ -19997,8 +19997,8 @@ msgstr "선택"
 #: wp-includes/class-wp-customize-manager.php:5734
 #: wp-includes/class-wp-editor.php:1188 wp-includes/class-wp-editor.php:1885
 #: wp-includes/script-loader.php:966 wp-includes/script-loader.php:1289
-#: wp-includes/script-loader.php:1962 wp-includes/js/dist/block-editor.js:65799
-#: wp-includes/js/dist/block-editor.js:67640
+#: wp-includes/script-loader.php:1962 wp-includes/js/dist/block-editor.js:65836
+#: wp-includes/js/dist/block-editor.js:67677
 #: wp-includes/js/dist/block-library.js:33839
 #: wp-includes/js/dist/block-library.js:36119
 #: wp-includes/js/dist/block-library.js:62461
@@ -20017,9 +20017,9 @@ msgstr "닫기"
 #: wp-includes/widgets/class-wp-widget-pages.php:31
 #: wp-includes/widgets/class-wp-widget-pages.php:44
 #: wp-includes/js/dist/core-commands.js:514
-#: wp-includes/js/dist/edit-site.js:33514
-#: wp-includes/js/dist/edit-site.js:38120
-#: wp-includes/js/dist/edit-site.js:39961 wp-admin/export.php:250
+#: wp-includes/js/dist/edit-site.js:33517
+#: wp-includes/js/dist/edit-site.js:38123
+#: wp-includes/js/dist/edit-site.js:39964 wp-admin/export.php:250
 msgid "Pages"
 msgstr "페이지"
 
@@ -20079,13 +20079,13 @@ msgid "Version"
 msgstr "버전"
 
 #. translators: Hidden accessibility text.
-#: wp-includes/admin-bar.php:1194 wp-includes/admin-bar.php:1196
+#: wp-includes/admin-bar.php:1196 wp-includes/admin-bar.php:1198
 #: wp-includes/blocks/search.php:27 wp-includes/blocks/search.php:28
 #: wp-includes/blocks/search.php:52 wp-includes/class-wp-editor.php:1908
-#: wp-includes/media.php:4787 wp-includes/js/dist/block-editor.js:45357
-#: wp-includes/js/dist/block-editor.js:47165
-#: wp-includes/js/dist/block-editor.js:47655
-#: wp-includes/js/dist/block-editor.js:47872
+#: wp-includes/media.php:4787 wp-includes/js/dist/block-editor.js:45394
+#: wp-includes/js/dist/block-editor.js:47202
+#: wp-includes/js/dist/block-editor.js:47692
+#: wp-includes/js/dist/block-editor.js:47909
 #: wp-includes/js/dist/block-library.js:48108
 #: wp-includes/js/dist/block-library.js:51977
 #: wp-includes/js/dist/block-library.js:52172
@@ -20097,8 +20097,8 @@ msgstr "버전"
 #: wp-includes/js/dist/components.js:62339
 #: wp-includes/js/dist/edit-site.js:13148
 #: wp-includes/js/dist/edit-site.js:15558
-#: wp-includes/js/dist/edit-site.js:31725
-#: wp-includes/js/dist/edit-site.js:32226
+#: wp-includes/js/dist/edit-site.js:31728
+#: wp-includes/js/dist/edit-site.js:32229
 #: wp-admin/includes/class-wp-theme-install-list-table.php:59
 #: wp-admin/includes/nav-menu.php:599 wp-admin/includes/nav-menu.php:684
 #: wp-admin/includes/nav-menu.php:695 wp-admin/includes/nav-menu.php:971
@@ -20159,8 +20159,8 @@ msgid "Public"
 msgstr "공개"
 
 #: wp-includes/post.php:1300 wp-includes/post.php:1320
-#: wp-includes/js/dist/edit-site.js:32862
-#: wp-includes/js/dist/edit-site.js:33209 wp-includes/js/dist/editor.js:14154
+#: wp-includes/js/dist/edit-site.js:32865
+#: wp-includes/js/dist/edit-site.js:33212 wp-includes/js/dist/editor.js:14154
 #: wp-includes/js/dist/editor.js:16753 wp-includes/js/dist/editor.js:16777
 #: wp-admin/includes/class-wp-posts-list-table.php:1784
 #: wp-admin/includes/class-wp-posts-list-table.php:1985
@@ -20175,7 +20175,7 @@ msgstr "비공개"
 #: wp-admin/includes/meta-boxes.php:223 wp-admin/includes/template.php:897
 #: wp-admin/js/post.js:1029
 msgid "OK"
-msgstr "OK"
+msgstr "확인"
 
 #: wp-includes/media-template.php:1110 wp-includes/media-template.php:1232
 msgid "Image URL"
@@ -20183,11 +20183,11 @@ msgstr "이미지 URL"
 
 #: wp-includes/js/dist/edit-site.js:15518
 #: wp-includes/js/dist/edit-site.js:25046
-#: wp-includes/js/dist/edit-site.js:25628
-#: wp-includes/js/dist/edit-site.js:26051
-#: wp-includes/js/dist/edit-site.js:34723
-#: wp-includes/js/dist/edit-site.js:38293
-#: wp-includes/js/dist/edit-site.js:39712 wp-includes/js/dist/editor.js:26150
+#: wp-includes/js/dist/edit-site.js:25631
+#: wp-includes/js/dist/edit-site.js:26054
+#: wp-includes/js/dist/edit-site.js:34726
+#: wp-includes/js/dist/edit-site.js:38296
+#: wp-includes/js/dist/edit-site.js:39715 wp-includes/js/dist/editor.js:26153
 #: wp-admin/includes/media.php:2592
 #: wp-admin/includes/class-wp-ms-sites-list-table.php:374
 msgid "Actions"
@@ -20196,8 +20196,8 @@ msgstr "액션"
 #. translators: Media tab title in the block inserter.
 #. translators: Default privacy policy heading.
 #: wp-includes/class-wp-editor.php:1238 wp-includes/media.php:4784
-#: wp-includes/media.php:5446 wp-includes/js/dist/block-editor.js:47503
-#: wp-includes/js/dist/block-editor.js:63404
+#: wp-includes/media.php:5446 wp-includes/js/dist/block-editor.js:47540
+#: wp-includes/js/dist/block-editor.js:63441
 #: wp-includes/js/dist/block-library.js:53325
 #: wp-includes/js/dist/blocks.js:7824 wp-includes/js/dist/core-data.js:2807
 #: wp-admin/export.php:311
@@ -20215,7 +20215,7 @@ msgstr "이미지 편집"
 #: wp-includes/media-template.php:641 wp-includes/media-template.php:789
 #: wp-includes/media-template.php:1080 wp-includes/media-template.php:1143
 #: wp-includes/widgets/class-wp-widget-media-image.php:91
-#: wp-includes/js/dist/block-editor.js:68238 wp-admin/includes/media.php:1405
+#: wp-includes/js/dist/block-editor.js:68275 wp-admin/includes/media.php:1405
 #: wp-admin/includes/media.php:3259
 msgid "Caption"
 msgstr "캡션"
@@ -20228,9 +20228,9 @@ msgstr "정렬"
 #: wp-includes/media-template.php:901 wp-includes/media-template.php:980
 #: wp-includes/media-template.php:1172
 #: wp-includes/widgets/class-wp-widget-media-image.php:72
-#: wp-includes/js/dist/block-editor.js:24528
-#: wp-includes/js/dist/block-editor.js:24541
-#: wp-includes/js/dist/block-editor.js:29041
+#: wp-includes/js/dist/block-editor.js:24537
+#: wp-includes/js/dist/block-editor.js:24550
+#: wp-includes/js/dist/block-editor.js:29050
 #: wp-includes/js/dist/block-library.js:55739
 #: wp-includes/js/dist/block-library.js:55740
 #: wp-includes/js/dist/components.js:59707
@@ -20240,16 +20240,16 @@ msgstr "크기"
 
 #: wp-includes/block-editor.php:174 wp-includes/media-template.php:915
 #: wp-includes/media-template.php:995 wp-includes/media-template.php:1186
-#: wp-includes/media.php:4427 wp-includes/js/dist/block-editor.js:8357
+#: wp-includes/media.php:4427 wp-includes/js/dist/block-editor.js:8355
 #: wp-admin/includes/class-custom-background.php:651
 #: wp-admin/includes/media.php:1206
 msgid "Full Size"
 msgstr "최대 사이즈"
 
-#: wp-includes/block-editor.php:172 wp-includes/class-wp-theme-json.php:4047
+#: wp-includes/block-editor.php:172 wp-includes/class-wp-theme-json.php:4068
 #: wp-includes/media-template.php:913 wp-includes/media-template.php:993
 #: wp-includes/media-template.php:1184 wp-includes/media.php:4425
-#: wp-includes/js/dist/block-editor.js:8351
+#: wp-includes/js/dist/block-editor.js:8349
 #: wp-includes/js/dist/components.js:59580
 #: wp-admin/includes/class-custom-background.php:649
 #: wp-admin/includes/media.php:1204
@@ -20260,7 +20260,7 @@ msgstr "보통"
 #: wp-includes/customize/class-wp-customize-background-position-control.php:65
 #: wp-includes/media-template.php:840 wp-includes/media-template.php:1096
 #: wp-includes/media-template.php:1160
-#: wp-includes/js/dist/block-editor.js:18416
+#: wp-includes/js/dist/block-editor.js:18425
 #: wp-admin/includes/class-custom-background.php:411
 #: wp-admin/includes/media.php:1163 wp-admin/includes/media.php:2994
 msgid "Right"
@@ -20280,7 +20280,7 @@ msgstr "중앙"
 #: wp-includes/customize/class-wp-customize-background-position-control.php:57
 #: wp-includes/media-template.php:834 wp-includes/media-template.php:1090
 #: wp-includes/media-template.php:1154
-#: wp-includes/js/dist/block-editor.js:18415
+#: wp-includes/js/dist/block-editor.js:18424
 #: wp-includes/js/dist/components.js:58856
 #: wp-admin/includes/class-custom-background.php:403
 #: wp-admin/includes/media.php:1161 wp-admin/includes/media.php:2990
@@ -20313,14 +20313,14 @@ msgstr "파일 &#8220;%s&#8221;&#8217;이(가) 없나요?"
 
 #: wp-includes/block-editor.php:171 wp-includes/media-template.php:912
 #: wp-includes/media-template.php:992 wp-includes/media-template.php:1183
-#: wp-includes/media.php:4424 wp-includes/js/dist/block-editor.js:8348
+#: wp-includes/media.php:4424 wp-includes/js/dist/block-editor.js:8346
 #: wp-admin/includes/class-custom-background.php:648
 #: wp-admin/includes/image-edit.php:310 wp-admin/includes/media.php:1203
 msgid "Thumbnail"
 msgstr "썸네일"
 
-#: wp-includes/js/dist/block-editor.js:68728
-#: wp-includes/js/dist/block-editor.js:68734
+#: wp-includes/js/dist/block-editor.js:68765
+#: wp-includes/js/dist/block-editor.js:68771
 #: wp-admin/includes/image-edit.php:64 wp-admin/includes/image-edit.php:161
 msgid "Scale"
 msgstr "스케일"
@@ -20412,36 +20412,36 @@ msgid "Tags"
 msgstr "태그"
 
 #. translators: accessibility text for the content landmark region.
-#: wp-includes/revision.php:33 wp-includes/js/dist/block-editor.js:19608
-#: wp-includes/js/dist/block-editor.js:31596
-#: wp-includes/js/dist/block-editor.js:66950
+#: wp-includes/revision.php:33 wp-includes/js/dist/block-editor.js:19617
+#: wp-includes/js/dist/block-editor.js:31605
+#: wp-includes/js/dist/block-editor.js:66987
 #: wp-includes/js/dist/edit-widgets.js:1445 wp-includes/js/dist/editor.js:7613
-#: wp-includes/js/dist/editor.js:27331 wp-admin/includes/dashboard.php:598
+#: wp-includes/js/dist/editor.js:27334 wp-admin/includes/dashboard.php:598
 #: wp-admin/index.php:104
 msgid "Content"
 msgstr "콘텐츠"
 
 #: wp-includes/class-wp-editor.php:1187 wp-includes/class-wp-editor.php:1938
 #: wp-includes/media.php:4789 wp-includes/script-loader.php:1288
-#: wp-includes/js/dist/block-editor.js:23834
-#: wp-includes/js/dist/block-editor.js:36203
-#: wp-includes/js/dist/block-editor.js:36414
-#: wp-includes/js/dist/block-editor.js:46821
-#: wp-includes/js/dist/block-editor.js:62704
-#: wp-includes/js/dist/block-editor.js:63442
-#: wp-includes/js/dist/block-editor.js:63445
-#: wp-includes/js/dist/block-editor.js:68633
+#: wp-includes/js/dist/block-editor.js:23843
+#: wp-includes/js/dist/block-editor.js:36240
+#: wp-includes/js/dist/block-editor.js:36451
+#: wp-includes/js/dist/block-editor.js:46858
+#: wp-includes/js/dist/block-editor.js:62741
+#: wp-includes/js/dist/block-editor.js:63479
+#: wp-includes/js/dist/block-editor.js:63482
+#: wp-includes/js/dist/block-editor.js:68670
 #: wp-includes/js/dist/block-library.js:6521
 #: wp-includes/js/dist/block-library.js:39293
 #: wp-includes/js/dist/components.js:47333
 #: wp-includes/js/dist/edit-site.js:15169
 #: wp-includes/js/dist/edit-site.js:21336
-#: wp-includes/js/dist/edit-site.js:32377
-#: wp-includes/js/dist/edit-site.js:32969
-#: wp-includes/js/dist/edit-site.js:36766
-#: wp-includes/js/dist/edit-site.js:38195
-#: wp-includes/js/dist/edit-site.js:39574
-#: wp-includes/js/dist/edit-site.js:39669 wp-includes/js/dist/editor.js:9201
+#: wp-includes/js/dist/edit-site.js:32380
+#: wp-includes/js/dist/edit-site.js:32972
+#: wp-includes/js/dist/edit-site.js:36769
+#: wp-includes/js/dist/edit-site.js:38198
+#: wp-includes/js/dist/edit-site.js:39577
+#: wp-includes/js/dist/edit-site.js:39672 wp-includes/js/dist/editor.js:9201
 #: wp-includes/js/dist/editor.js:10262 wp-includes/js/dist/editor.js:16592
 #: wp-includes/js/dist/editor.js:21154 wp-includes/js/dist/editor.js:22646
 #: wp-includes/js/dist/editor.js:25285 wp-includes/js/dist/editor.js:25357
@@ -20466,8 +20466,8 @@ msgstr "콘텐츠"
 msgid "Cancel"
 msgstr "취소"
 
-#: wp-includes/admin-bar.php:445 wp-includes/admin-bar.php:641
-#: wp-includes/js/dist/block-editor.js:36942
+#: wp-includes/admin-bar.php:447 wp-includes/admin-bar.php:643
+#: wp-includes/js/dist/block-editor.js:36979
 #: wp-includes/js/dist/core-data.js:2924 wp-includes/js/dist/editor.js:23218
 #: wp-admin/plugins.php:621 wp-admin/update-core.php:469
 #: wp-admin/update-core.php:488 wp-admin/network/menu.php:103
@@ -20483,10 +20483,10 @@ msgstr "최신 댓글"
 
 #: wp-includes/class-wp-customize-manager.php:4330
 #: wp-includes/class-wp-editor.php:1254 wp-includes/media-template.php:1546
-#: wp-includes/js/dist/block-editor.js:52201
+#: wp-includes/js/dist/block-editor.js:52238
 #: wp-includes/js/dist/block-library.js:25053
-#: wp-includes/js/dist/edit-site.js:35131
-#: wp-includes/js/dist/edit-site.js:37339 wp-admin/customize.php:209
+#: wp-includes/js/dist/edit-site.js:35134
+#: wp-includes/js/dist/edit-site.js:37342 wp-admin/customize.php:211
 #: wp-admin/includes/class-custom-background.php:282
 #: wp-admin/includes/class-custom-image-header.php:553
 #: wp-admin/includes/class-wp-posts-list-table.php:1542
@@ -20504,8 +20504,8 @@ msgstr "미리보기"
 msgid "RSS"
 msgstr "RSS"
 
-#: wp-includes/js/dist/block-editor.js:23795
-#: wp-includes/js/dist/block-editor.js:65807
+#: wp-includes/js/dist/block-editor.js:23804
+#: wp-includes/js/dist/block-editor.js:65844
 #: wp-includes/js/dist/block-library.js:19332
 #: wp-admin/includes/dashboard.php:1406 wp-admin/setup-config.php:272
 msgid "Submit"
@@ -20519,13 +20519,13 @@ msgstr "익명"
 
 #: wp-includes/customize/class-wp-customize-nav-menu-control.php:57
 #: wp-includes/customize/class-wp-widget-area-customize-control.php:61
-#: wp-includes/js/dist/block-editor.js:36675
+#: wp-includes/js/dist/block-editor.js:36712
 #: wp-includes/js/dist/components.js:46061 wp-admin/includes/widgets.php:299
 #: wp-admin/js/set-post-thumbnail.js:21
 msgid "Done"
 msgstr "완료"
 
-#: wp-includes/admin-bar.php:619 wp-admin/includes/ms.php:866
+#: wp-includes/admin-bar.php:621 wp-admin/includes/ms.php:866
 #: wp-admin/includes/ms.php:1073 wp-admin/menu.php:312 wp-admin/users.php:25
 #: wp-admin/includes/class-wp-ms-sites-list-table.php:370
 #: wp-admin/network/menu.php:55 wp-admin/network/users.php:34
@@ -20546,9 +20546,9 @@ msgstr "글 보기"
 msgid "Edit Tag"
 msgstr "태그 편집"
 
-#: wp-includes/script-loader.php:1084 wp-includes/js/dist/block-editor.js:28549
-#: wp-includes/js/dist/block-editor.js:28640
-#: wp-includes/js/dist/block-editor.js:30580
+#: wp-includes/script-loader.php:1084 wp-includes/js/dist/block-editor.js:28558
+#: wp-includes/js/dist/block-editor.js:28649
+#: wp-includes/js/dist/block-editor.js:30589
 #: wp-includes/js/dist/block-library.js:22012
 #: wp-includes/js/dist/editor.js:10029 wp-admin/edit-tag-form.php:184
 #: wp-admin/edit-tags.php:480 wp-admin/includes/class-wp-debug-data.php:1142
@@ -20562,7 +20562,7 @@ msgstr "없음"
 #: wp-includes/media-template.php:545 wp-includes/media-template.php:793
 #: wp-includes/js/dist/block-library.js:37325
 #: wp-includes/js/dist/block-library.js:38451
-#: wp-includes/js/dist/edit-site.js:37368 wp-includes/js/dist/editor.js:12503
+#: wp-includes/js/dist/edit-site.js:37371 wp-includes/js/dist/editor.js:12503
 #: wp-includes/js/dist/editor.js:12564 wp-admin/edit-link-form.php:139
 #: wp-admin/edit-tag-form.php:201 wp-admin/edit-tags.php:518
 #: wp-admin/includes/class-walker-nav-menu-edit.php:235
@@ -20581,9 +20581,9 @@ msgstr "설명"
 #: wp-includes/js/dist/block-library.js:18993
 #: wp-includes/js/dist/block-library.js:60226
 #: wp-includes/js/dist/edit-post.js:1660 wp-includes/js/dist/edit-site.js:21322
-#: wp-includes/js/dist/edit-site.js:36751
-#: wp-includes/js/dist/edit-site.js:39562
-#: wp-includes/js/dist/edit-site.js:39657 wp-includes/js/dist/editor.js:10251
+#: wp-includes/js/dist/edit-site.js:36754
+#: wp-includes/js/dist/edit-site.js:39565
+#: wp-includes/js/dist/edit-site.js:39660 wp-includes/js/dist/editor.js:10251
 #: wp-includes/js/dist/editor.js:22595 wp-includes/js/dist/editor.js:25727
 #: wp-includes/js/dist/patterns.js:624 wp-includes/js/dist/patterns.js:828
 #: wp-includes/js/dist/patterns.js:1225 wp-includes/js/dist/patterns.js:1313
@@ -20599,7 +20599,7 @@ msgid "Name"
 msgstr "이름"
 
 #: wp-includes/class-wp-editor.php:1224
-#: wp-includes/js/dist/block-editor.js:66380
+#: wp-includes/js/dist/block-editor.js:66417
 #: wp-includes/js/dist/edit-post.js:2220 wp-includes/js/dist/edit-site.js:13507
 #: wp-admin/edit-link-form.php:34
 msgid "Advanced"
@@ -20626,13 +20626,13 @@ msgstr "카테고리"
 
 #. translators: button label text should, if possible, be under 16 characters.
 #: wp-includes/class-wp-editor.php:1256
-#: wp-includes/js/dist/block-editor.js:23840
-#: wp-includes/js/dist/block-editor.js:36420
+#: wp-includes/js/dist/block-editor.js:23849
+#: wp-includes/js/dist/block-editor.js:36457
 #: wp-includes/js/dist/block-library.js:6532
 #: wp-includes/js/dist/block-library.js:41469
 #: wp-includes/js/dist/edit-site.js:21342
 #: wp-includes/js/dist/edit-site.js:23828
-#: wp-includes/js/dist/edit-site.js:38214 wp-includes/js/dist/editor.js:9131
+#: wp-includes/js/dist/edit-site.js:38217 wp-includes/js/dist/editor.js:9131
 #: wp-includes/js/dist/editor.js:13899 wp-includes/js/dist/editor.js:17081
 #: wp-includes/js/dist/editor.js:25744 wp-includes/js/dist/patterns.js:843
 #: wp-includes/js/dist/patterns.js:1248 wp-includes/js/dist/widgets.js:327
@@ -20656,19 +20656,19 @@ msgstr "카테고리 업데이트"
 msgid "Edit Link Category"
 msgstr "링크 카테고리 편집"
 
-#: wp-includes/js/dist/block-editor.js:54177
-#: wp-includes/js/dist/block-editor.js:56220
-#: wp-includes/js/dist/block-editor.js:68637
+#: wp-includes/js/dist/block-editor.js:54214
+#: wp-includes/js/dist/block-editor.js:56257
+#: wp-includes/js/dist/block-editor.js:68674
 #: wp-includes/js/dist/block-library.js:34130
 #: wp-includes/js/dist/edit-site.js:15123
 #: wp-includes/js/dist/edit-site.js:15170
 #: wp-includes/js/dist/edit-site.js:21197
 #: wp-includes/js/dist/edit-site.js:21305
-#: wp-includes/js/dist/edit-site.js:34645
-#: wp-includes/js/dist/edit-site.js:34650
-#: wp-includes/js/dist/edit-site.js:38242
-#: wp-includes/js/dist/edit-site.js:38330
-#: wp-includes/js/dist/edit-site.js:39747 wp-includes/js/dist/editor.js:25248
+#: wp-includes/js/dist/edit-site.js:34648
+#: wp-includes/js/dist/edit-site.js:34653
+#: wp-includes/js/dist/edit-site.js:38245
+#: wp-includes/js/dist/edit-site.js:38333
+#: wp-includes/js/dist/edit-site.js:39750 wp-includes/js/dist/editor.js:25248
 #: wp-includes/js/dist/editor.js:25303 wp-admin/edit-tag-form.php:300
 #: wp-admin/includes/class-wp-links-list-table.php:90
 #: wp-admin/includes/class-wp-links-list-table.php:352
@@ -20705,7 +20705,7 @@ msgstr "링크 카테고리"
 
 #: wp-includes/post.php:111 wp-includes/js/dist/edit-site.js:22575
 #: wp-includes/js/dist/edit-site.js:23711
-#: wp-includes/js/dist/edit-site.js:37825 wp-includes/js/dist/editor.js:13288
+#: wp-includes/js/dist/edit-site.js:37828 wp-includes/js/dist/editor.js:13288
 #: wp-admin/includes/meta-boxes.php:1583 wp-admin/revision.php:114
 msgid "Revisions"
 msgstr "리비전"
@@ -20713,22 +20713,22 @@ msgstr "리비전"
 #. translators: Hidden accessibility text.
 #: wp-includes/revision.php:34 wp-includes/js/dist/block-library.js:28533
 #: wp-includes/js/dist/editor.js:12503 wp-includes/js/dist/editor.js:12564
-#: wp-includes/js/dist/editor.js:28014 wp-admin/includes/meta-boxes.php:750
+#: wp-includes/js/dist/editor.js:28017 wp-admin/includes/meta-boxes.php:750
 #: wp-admin/includes/meta-boxes.php:1642 wp-admin/options-reading.php:193
 msgid "Excerpt"
 msgstr "요약글"
 
-#: wp-includes/js/dist/block-editor.js:37263 wp-admin/network/site-info.php:208
+#: wp-includes/js/dist/block-editor.js:37300 wp-admin/network/site-info.php:208
 msgid "Attributes"
 msgstr "속성"
 
 #. translators: accessibility text for the publish landmark region.
 #: wp-includes/class-wp-customize-manager.php:4857
-#: wp-includes/script-loader.php:1276 wp-includes/js/dist/block-editor.js:67685
+#: wp-includes/script-loader.php:1276 wp-includes/js/dist/block-editor.js:67722
 #: wp-includes/js/dist/edit-widgets.js:1451 wp-includes/js/dist/editor.js:7619
 #: wp-includes/js/dist/editor.js:13896 wp-includes/js/dist/editor.js:13904
 #: wp-includes/js/dist/editor.js:14293 wp-includes/js/dist/editor.js:17206
-#: wp-admin/customize.php:195 wp-admin/includes/meta-boxes.php:388
+#: wp-admin/customize.php:197 wp-admin/includes/meta-boxes.php:388
 #: wp-admin/includes/meta-boxes.php:389 wp-admin/includes/meta-boxes.php:1597
 #: wp-admin/js/post.js:797
 msgid "Publish"
@@ -20756,10 +20756,10 @@ msgstr "댓글"
 
 #: wp-includes/class-wp-customize-widgets.php:801
 #: wp-includes/class-wp-editor.php:1395 wp-includes/media.php:4829
-#: wp-includes/js/dist/block-editor.js:36209
-#: wp-includes/js/dist/block-editor.js:62701
-#: wp-includes/js/dist/block-editor.js:63022
-#: wp-includes/js/dist/block-editor.js:63174
+#: wp-includes/js/dist/block-editor.js:36246
+#: wp-includes/js/dist/block-editor.js:62738
+#: wp-includes/js/dist/block-editor.js:63059
+#: wp-includes/js/dist/block-editor.js:63211
 #: wp-includes/js/dist/block-library.js:51402
 #: wp-includes/js/dist/block-library.js:55293
 #: wp-includes/js/dist/edit-site.js:22914
@@ -20827,8 +20827,8 @@ msgstr "복원"
 #: wp-includes/class-walker-comment.php:260
 #: wp-includes/class-walker-comment.php:459
 #: wp-includes/class-wp-editor.php:1393
-#: wp-includes/js/dist/block-editor.js:62979
-#: wp-includes/js/dist/block-editor.js:65682
+#: wp-includes/js/dist/block-editor.js:63016
+#: wp-includes/js/dist/block-editor.js:65719
 #: wp-includes/js/dist/block-library.js:6494
 #: wp-includes/js/dist/block-library.js:8854
 #: wp-includes/js/dist/block-library.js:10058
@@ -20838,10 +20838,10 @@ msgstr "복원"
 #: wp-includes/js/dist/block-library.js:39587
 #: wp-includes/js/dist/block-library.js:61050
 #: wp-includes/js/dist/block-library.js:62360
-#: wp-includes/js/dist/edit-post.js:2849 wp-includes/js/dist/edit-site.js:24241
+#: wp-includes/js/dist/edit-post.js:2840 wp-includes/js/dist/edit-site.js:24241
 #: wp-includes/js/dist/edit-site.js:24499
-#: wp-includes/js/dist/edit-site.js:33055
-#: wp-includes/js/dist/edit-site.js:38315 wp-admin/comment.php:251
+#: wp-includes/js/dist/edit-site.js:33058
+#: wp-includes/js/dist/edit-site.js:38318 wp-admin/comment.php:251
 #: wp-admin/edit-form-comment.php:159
 #: wp-admin/includes/class-walker-nav-menu-edit.php:187
 #: wp-admin/includes/class-wp-comments-list-table.php:824
@@ -20892,8 +20892,8 @@ msgstr "댓글"
 #: wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php:62
 #: wp-includes/sitemaps/class-wp-sitemaps-stylesheet.php:176
 #: wp-includes/widgets/class-wp-widget-media-image.php:113
-#: wp-includes/js/dist/block-editor.js:22144
-#: wp-includes/js/dist/block-editor.js:63167
+#: wp-includes/js/dist/block-editor.js:22153
+#: wp-includes/js/dist/block-editor.js:63204
 #: wp-includes/js/dist/block-library.js:17712 wp-admin/comment.php:196
 #: wp-admin/edit-form-comment.php:69
 #: wp-admin/includes/class-walker-nav-menu-edit.php:198
@@ -20910,10 +20910,10 @@ msgstr "URL"
 #: wp-includes/js/dist/block-library.js:40883
 #: wp-includes/js/dist/block-library.js:40890
 #: wp-includes/js/dist/components.js:64905
-#: wp-includes/js/dist/edit-site.js:33406
-#: wp-includes/js/dist/edit-site.js:35179
-#: wp-includes/js/dist/edit-site.js:35901
-#: wp-includes/js/dist/edit-site.js:37391 wp-includes/js/dist/editor.js:11789
+#: wp-includes/js/dist/edit-site.js:33409
+#: wp-includes/js/dist/edit-site.js:35182
+#: wp-includes/js/dist/edit-site.js:35904
+#: wp-includes/js/dist/edit-site.js:37394 wp-includes/js/dist/editor.js:11789
 #: wp-includes/js/dist/editor.js:11831 wp-includes/js/dist/editor.js:11979
 #: wp-includes/js/dist/editor.js:11997 wp-admin/comment.php:185
 #: wp-admin/edit-form-comment.php:48
@@ -20934,11 +20934,11 @@ msgstr "URL"
 msgid "Author"
 msgstr "글쓴이"
 
-#: wp-includes/admin-bar.php:351
+#: wp-includes/admin-bar.php:353
 msgid "Log Out"
 msgstr "로그아웃"
 
-#: wp-includes/admin-bar.php:410 wp-includes/admin-bar.php:759
+#: wp-includes/admin-bar.php:412 wp-includes/admin-bar.php:761
 #: wp-includes/deprecated.php:2820
 msgid "Visit Site"
 msgstr "사이트 방문"
@@ -20962,7 +20962,7 @@ msgstr "Y/m/d"
 
 #: wp-includes/post.php:1298 wp-includes/post.php:1319
 #: wp-includes/js/dist/block-library.js:37549
-#: wp-includes/js/dist/edit-site.js:33200 wp-includes/js/dist/editor.js:16750
+#: wp-includes/js/dist/edit-site.js:33203 wp-includes/js/dist/editor.js:16750
 #: wp-includes/js/dist/editor.js:16751 wp-includes/js/dist/editor.js:16759
 #: wp-admin/includes/ajax-actions.php:2279
 #: wp-admin/includes/class-wp-posts-list-table.php:1990
@@ -20971,7 +20971,7 @@ msgstr "Y/m/d"
 msgid "Draft"
 msgstr "임시글"
 
-#: wp-includes/post.php:1299 wp-includes/js/dist/edit-site.js:33206
+#: wp-includes/post.php:1299 wp-includes/js/dist/edit-site.js:33209
 #: wp-admin/includes/ajax-actions.php:2276
 #: wp-admin/includes/class-wp-posts-list-table.php:1989
 #: wp-admin/includes/meta-boxes.php:118 wp-admin/includes/meta-boxes.php:158
@@ -20979,8 +20979,8 @@ msgid "Pending Review"
 msgstr "검토 대기 중"
 
 #: wp-includes/post.php:1301 wp-includes/post.php:1321
-#: wp-includes/script-loader.php:1277 wp-includes/js/dist/edit-site.js:32814
-#: wp-includes/js/dist/edit-site.js:33212 wp-includes/js/dist/editor.js:16755
+#: wp-includes/script-loader.php:1277 wp-includes/js/dist/edit-site.js:32817
+#: wp-includes/js/dist/edit-site.js:33215 wp-includes/js/dist/editor.js:16755
 #: wp-includes/js/dist/editor.js:16795 wp-admin/includes/ajax-actions.php:2270
 #: wp-admin/includes/class-wp-posts-list-table.php:1209
 #: wp-admin/includes/class-wp-posts-list-table.php:1982
@@ -20994,8 +20994,8 @@ msgstr "발행함"
 #: wp-includes/revision.php:32 wp-includes/js/dist/block-library.js:26910
 #: wp-includes/js/dist/block-library.js:44930
 #: wp-includes/js/dist/block-library.js:60684
-#: wp-includes/js/dist/edit-site.js:33365
-#: wp-includes/js/dist/edit-site.js:35143 wp-includes/js/dist/editor.js:8400
+#: wp-includes/js/dist/edit-site.js:33368
+#: wp-includes/js/dist/edit-site.js:35146 wp-includes/js/dist/editor.js:8400
 #: wp-includes/js/dist/editor.js:25830 wp-includes/js/dist/widgets.js:1404
 #: wp-admin/includes/ajax-actions.php:2261
 #: wp-admin/includes/class-wp-posts-list-table.php:774
